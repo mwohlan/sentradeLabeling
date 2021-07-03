@@ -1,10 +1,37 @@
 <script>
-import { defineComponent } from 'vue'
-import ButtonRepo from '@/components/ButtonRepo.vue'
+import { onMounted, ref } from '@vue/runtime-core'
+import  {projectFirestore} from '../firebase/config'
 
-export default defineComponent({
-  components: { ButtonRepo },
-})
+export default{
+  setup(){
+
+    const posts = ref([])
+
+    onMounted( async ()=>{
+        try {
+          const response = await projectFirestore.collection('posts').get()
+
+          posts.value = response.docs.map(doc => {
+            return {...doc.data(),id: doc.id}
+          })
+
+          posts
+        } catch (error) {
+
+          console.log(error)
+          
+          
+
+         
+          
+        }
+    })
+
+return{ posts}
+  }
+}
+
+
 </script>
 
 <template>
@@ -27,8 +54,16 @@ export default defineComponent({
               >Next Page</router-link
             >
           </div>
-          <ButtonRepo />
+        
         </div>
+      </div>
+
+      <div v-for="post in posts" :key="post.id">
+        {{post}}
+        
+        
+        
+
       </div>
     </div>
 </template>
