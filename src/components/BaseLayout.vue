@@ -507,7 +507,7 @@ export default {
       posts: computed(() => props.posts),
       user: computed(() => store.user),
       count: computed(() => "Label count: " + store.sentimentCount),
-      allCommentsRoute: computed(() => route.name == "AllCommentsView"),
+      allCommentsRoute: computed(() => route.name == "all comments"),
       addRandomComment,
       currentRouteName
     };
