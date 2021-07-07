@@ -245,7 +245,7 @@
                     focus:border-transparent
                     sm:text-sm
                   "
-                  placeholder="Search Content"
+                  :placeholder="'Search '+ currentRouteName"
                   type="search"
                 />
               </div>
@@ -408,7 +408,9 @@ import {
   HomeIcon,
   MenuAlt1Icon,
   MailIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  ChatIcon,
+  SwitchVerticalIcon
 } from "@heroicons/vue/outline";
 import {
   PresentationChartLineIcon,
@@ -421,22 +423,35 @@ import {
 const navigation = [
   {
     name: "Unlabled",
-    to: { name: "UnlabeledView" },
+    to: { name: "unlabeled" },
     icon: MailIcon,
     current: false,
   },
   {
     name: "Labeled by Others",
-    to: { name: "LabeledByOthersView" },
+    to: { name: "labeled by others" },
     icon: UserGroupIcon,
+    current: false,
+  },
+   {
+    name: "Conflicts",
+    to: { name: "conflicts" },
+    icon: SwitchVerticalIcon,
+    current: false,
+  },
+  {
+    name: "Discussions",
+    to: { name: "discussions" },
+    icon: ChatIcon,
     current: false,
   },
   {
     name: "All Comments",
-    to: { name: "AllCommentsView" },
+    to: { name: "all comments" },
     icon: DocumentReportIcon,
     current: false,
   },
+  
 ];
 
 export default {
@@ -454,7 +469,9 @@ export default {
     XIcon,
     PlusIcon,
     MailIcon,
-    UserGroupIcon
+    UserGroupIcon,
+    ChatIcon,
+    SwitchVerticalIcon
   },
   props: {
     posts: Array,
@@ -463,13 +480,17 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
     const route = useRoute();
+    const currentRouteName = ref('')
+
 
     watchEffect(() => {
+      currentRouteName.value = route.name
       navigation.forEach((navItem) => {
         navItem.current = route.name == navItem.to.name ? true : false;
       });
     });
 
+   
     const addRandomComment = () => {
       store.addRandomComment()
     }
@@ -487,7 +508,8 @@ export default {
       user: computed(() => store.user),
       count: computed(() => "Label count: " + store.sentimentCount),
       allCommentsRoute: computed(() => route.name == "AllCommentsView"),
-      addRandomComment
+      addRandomComment,
+      currentRouteName
     };
   },
 };

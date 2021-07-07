@@ -15,7 +15,7 @@
             'bg-red-100': value == 0,
             'bg-green-100': value == 1,
             'bg-gray-100': value == -1,
-             'text-red-800': value == 0,
+            'text-red-800': value == 0,
             'text-green-800': value == 1,
             'text-gray-800': value == -1,
           }"
@@ -24,10 +24,10 @@
         </div>
       </template>
     </div>
-    <div class="mt-6 flex justify-between md:justify-start space-x-10">
+    <div class="mt-6 flex justify-between md:justify-start space-x-20">
       <div class="flex space-x-10 items-center">
         <button
-          @click="addSentiment(post.id, 1)"
+          @click="addSentiment(post, 1)"
           class="text-green-500 hover:text-green-600"
         >
           <ThumbUpIcon class="h-6 w-6" aria-hidden="true" />
@@ -35,13 +35,21 @@
 
         <button class="text-red-500 pt-1 hover:text-red-600">
           <ThumbDownIcon
-            @click="addSentiment(post.id, 0)"
+            @click="addSentiment(post, 0)"
             class="h-6 w-6"
             aria-hidden="true"
           />
         </button>
       </div>
       <div class="text-sm flex space-x-8">
+        <button :class="[post.discussion ? 'text-yellow-500 hover:text-yellow-600' :'text-gray-400 hover:text-gray-500' ]">
+          <ChatIcon
+            @click="addDiscussion(post.id, !post.discussion)"
+            class="h-6 w-6"
+            aria-hidden="true"
+          />
+        </button>
+
         <a
           class="text-gray-400 pt-1 hover:text-gray-500"
           :href="post.link"
@@ -49,7 +57,7 @@
         >
           <LinkIcon class="h-6 w-6" aria-hidden="true" />
         </a>
-        <button class="text-gray-400 hover:text-gray-500">
+        <button  class="text-gray-400 hover:text-gray-500">
           <TrashIcon
             @click="removePost(post.id)"
             class="h-6 w-6"
@@ -69,6 +77,7 @@ import {
   ThumbDownIcon,
   LinkIcon,
 } from "@heroicons/vue/solid";
+import { ChatIcon } from "@heroicons/vue/outline";
 import { ref } from "@vue/reactivity";
 import { computed } from "@vue/runtime-core";
 export default {
@@ -77,6 +86,7 @@ export default {
     ThumbDownIcon,
     TrashIcon,
     LinkIcon,
+    ChatIcon,
   },
   props: {
     post: Object,
@@ -87,21 +97,22 @@ export default {
     const userSet = computed(
       () => new Set(store.users.map((user) => user.name))
     );
-
-    
+    const addDiscussion = (postId, discussion) => {
+      store.addDiscussion(postId, discussion);
+    };
 
     const isLoading = ref(false);
 
-    const addSentiment = async (postId, sentiment) => {
+    const addSentiment = async (post, sentiment) => {
       isLoading.value = true;
-      await store.addSentiment(postId, sentiment);
+      await store.addSentiment(post, sentiment);
       isLoading.value = false;
     };
     const removePost = (postId) => {
       store.removePost(postId);
     };
 
-    return {  addSentiment, removePost, isLoading, userSet };
+    return { addSentiment, removePost, addDiscussion, isLoading, userSet };
   },
 };
 </script>

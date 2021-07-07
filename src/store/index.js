@@ -7,9 +7,11 @@ export const useMainStore = defineStore({
     postsWithoutSentiment: [],
     postsWithSentiment: [],
     allPosts: [],
+    discussionPosts: [],
+    conflictPosts: [],
     user: null,
     sentimentCount: 0,
-    users:[]
+    users: []
   }),
   getters: {
 
@@ -24,7 +26,7 @@ export const useMainStore = defineStore({
     },
     setPostsWithoutSentiment() {
 
-      projectFirestore.collection("posts").where(this.user.name, "==", -1).where("labeled","==",false).onSnapshot((snap) => {
+      projectFirestore.collection("posts").where(this.user.name, "==", -1).where("labeled", "==", false).onSnapshot((snap) => {
         this.postsWithoutSentiment = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
@@ -53,6 +55,26 @@ export const useMainStore = defineStore({
 
 
     },
+    setConflictPosts() {
+      projectFirestore.collection("posts").where("conflict", "==", true).onSnapshot((snap) => {
+        this.conflictPosts = snap.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+      });
+
+
+    },
+
+    setDiscussionPosts() {
+
+      projectFirestore.collection("posts").where("discussion", "==", true).onSnapshot((snap) => {
+        this.discussionPosts = snap.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+      });
+
+
+    },
 
     setSentimentCount() {
       projectFirestore.collection("posts").where(this.user.name, "!=", -1).onSnapshot((snap) => {
@@ -60,16 +82,32 @@ export const useMainStore = defineStore({
       });
 
     },
-     addSentiment(postId, sentiment) {
+    addSentiment(post, sentiment) {
+      let conflict = false;
 
-       projectFirestore.collection("posts").doc(postId).update({
+      for (const user of this.users.filter((user) => user.name !== this.user.name)) {
+        if (post[user] != -1 && post[user] != sentiment) {
+          conflict = true;
+        }
+      }
+
+      projectFirestore.collection("posts").doc(post.id).update({
         [this.user.name]: sentiment
         ,
-        labeled: true
+        labeled: true,
+        conflict: conflict
       })
 
 
     },
+    addDiscussion(postId, discussion) {
+
+      projectFirestore.collection("posts").doc(postId).update({
+        discussion: discussion
+      })
+
+    }
+    ,
     addRandomComment() {
       const names = ['Yannik', 'Markus']
 
@@ -81,11 +119,11 @@ export const useMainStore = defineStore({
 
       for (let index = 0; index < 6; index++) {
         randomComment += names[Math.floor(Math.random() * names.length)] + phrases[Math.floor(Math.random() * phrases.length)]
-        
+
       }
 
-      console.log(randomComment)
-      
+
+
 
       projectFirestore.collection("posts").add({
         threadTitle: randomTitle,
@@ -93,13 +131,15 @@ export const useMainStore = defineStore({
         labeled: false,
         link: "https://www.google.com",
         yanikovic: -1,
-        starkus: -1
+        starkus: -1,
+        discussion: false,
+        conflict: false
 
       })
-      
-     
-      
-     },
+
+
+
+    },
 
     removePost(postId) {
       projectFirestore.collection("posts").doc(postId).delete()
@@ -111,7 +151,7 @@ export const useMainStore = defineStore({
           this.users.push({ ...doc.data() })
         })
       })
-     
+
 
     },
   },

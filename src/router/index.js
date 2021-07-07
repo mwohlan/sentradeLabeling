@@ -4,6 +4,8 @@ import UnlabeledView from "../views/UnlabeledView.vue"
 import LabeledByOthersView from "../views/LabeledByOthersView.vue"
 import LoginPage from '../views/LoginPage.vue'
 import AllCommentsView from '../views/AllCommentsView.vue'
+import DiscussionsView from '../views/DiscussionsView.vue'
+import ConflictsView from "../views/ConflictsView.vue"
 import { useMainStore }from '../store'
 
 
@@ -11,7 +13,7 @@ const routes = [
   {
     path: '/',
     component: UnlabeledView,
-    name:'UnlabeledView'
+    name:'unlabeled'
     // example of route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -20,7 +22,7 @@ const routes = [
   {
     path: '/labeledbyothers',
     component: LabeledByOthersView,
-    name: 'LabeledByOthersView'
+    name: 'labeled by others'
     // example of route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -29,7 +31,25 @@ const routes = [
   {
     path: '/allComments',
     component: AllCommentsView,
-    name: 'AllCommentsView'
+    name: 'all comments'
+    // example of route level code-splitting
+    // this generates a separate chunk (About.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
+  },
+  {
+    path: '/discussions',
+    component: DiscussionsView,
+    name: 'discussions'
+    // example of route level code-splitting
+    // this generates a separate chunk (About.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
+  },
+  {
+    path: '/conflicts',
+    component: ConflictsView,
+    name: 'conflicts'
     // example of route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
