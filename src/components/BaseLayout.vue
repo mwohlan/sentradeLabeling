@@ -88,10 +88,10 @@
               aria-label="Sidebar"
             >
               <div class="px-2 space-y-1">
-                <a
+                <router-link
                   v-for="item in navigation"
                   :key="item.name"
-                  :href="item.href"
+                  :to="item.to"
                   :class="[
                     item.current
                       ? 'bg-cyan-800 text-white'
@@ -106,7 +106,7 @@
                     aria-hidden="true"
                   />
                   {{ item.name }}
-                </a>
+                </router-link>
               </div>
             </nav>
           </div>
@@ -143,10 +143,10 @@
             aria-label="Sidebar"
           >
             <div class="px-2 space-y-1">
-              <a
+              <router-link
                 v-for="item in navigation"
                 :key="item.name"
-                :href="item.href"
+                :to="item.to"
                 :class="[
                   item.current
                     ? 'bg-cyan-800 text-white'
@@ -161,13 +161,13 @@
                   aria-hidden="true"
                 />
                 {{ item.name }}
-              </a>
+              </router-link>
             </div>
           </nav>
         </div>
       </div>
     </div>
-
+    <!-- Cards  !-->
     <div class="flex-1 overflow-auto focus:outline-none">
       <div
         class="
@@ -194,6 +194,7 @@
           <span class="sr-only">Open sidebar</span>
           <MenuAlt1Icon class="h-6 w-6" aria-hidden="true" />
         </button>
+
         <!-- Search bar -->
         <div
           class="
@@ -266,37 +267,36 @@
             >
               <div class="flex-1 min-w-0">
                 <!-- Profile -->
-                <div class="flex items-center py-2">
-                  <div>
-                    <dl
+                <div class="flex items-center py-1">
+                    <div
                       class="
                         mt-2
                         flex flex-wrap
-                        gap-x-2
-                        sm:ml-3
-                        sm:mt-1
-                        sm:flex-row sm:flex-wrap
+                        justify-around
+                        flex-1
                       "
                     >
-                      <dt class="sr-only">Company</dt>
-                      <dd
+                      <div
                         class="
                           flex
                           items-center
                           text-sm text-gray-500
                           font-medium
-                          capitalize
                           sm:mr-6
                         "
                       >
-                        <UserIcon
-                          class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                          aria-hidden="true"
-                        />
-                        Yanikovic
-                      </dd>
-                      <dt class="sr-only">Account status</dt>
-                      <dd
+                        <router-link
+                          class="flex capitalize"
+                          :to="{ name: 'Login' }"
+                        >
+                          <UserIcon
+                            class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                            aria-hidden="true"
+                          />
+                          {{ user.name }}
+                        </router-link>
+                      </div>
+                      <div
                         class="
                           flex
                           items-center
@@ -304,31 +304,82 @@
                           font-medium
                           sm:mr-6
                           sm:mt-0
-                          capitalize
                         "
                       >
                         <PresentationChartLineIcon
                           class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400"
                           aria-hidden="true"
                         />
-                        Stats
-                      </dd>
-                    </dl>
-                  </div>
+                        {{ count }}
+                      </div>
+                      <div
+                        class="
+                          flex
+                          items-center
+                          text-sm text-gray-500
+                          font-medium
+                          sm:mr-6
+                          sm:mt-0
+                        "
+                      >
+                        <button
+                          type="button"
+                          @click="addRandomComment"
+                          class="
+                            inline-flex
+                            items-center
+                            px-1
+                            py-1
+                            border border-transparent
+                            shadow-sm
+                            text-sm
+                            leading-4
+                            font-medium
+                            rounded-md
+                            text-white
+                            bg-green-500
+                            hover:bg-green-600
+    
+                            
+                          "
+                        >
+                          <PlusIcon
+                            class="-ml-0.5 mr-2 h-5 w-5"
+                            aria-hidden="true"
+                           
+                          />
+                          Comment
+                        </button>
+                      </div>
+                    </div>
+      
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="mt-8">
-          <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-y-3">
+          <div
+            class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col"
+          >
+          <transition-group v-if="!allCommentsRoute" name="list" tag="ul" class=" relative">
             <LabelCard
-              v-for="post in posts"
+              v-for="(post,index) in posts.slice(0,5)"
               :key="post.id"
               :post="post"
-              class="bg-white px-4 py-6 shadow-lg rounded sm:p-4 sm:rounded-lg "
+              class="bg-white px-4 py-6 shadow-lg rounded sm:p-4 sm:rounded-lg list-item"
+              :class="{'mt-5':index!=0}"
             />
+          </transition-group>
+           <transition-group v-else name="list" tag="ul" class=" relative">
+            <LabelCard
+              v-for="(post,index) in posts"
+              :key="post.id"
+              :post="post"
+              class="bg-white px-4 py-6 shadow-lg rounded sm:p-4 sm:rounded-lg list-item"
+              :class="{'mt-5':index!=0}"
+            />
+          </transition-group>
           </div>
 
           <!-- Activity table (small breakpoint and up) -->
@@ -339,158 +390,127 @@
 </template>
 
 <script>
-import { projectFirestore } from "../firebase/config";
-import LabelCard  from "../components/LabelCard.vue";
+import LabelCard from "../components/LabelCard.vue";
+import LabelList from "../components/LabelList.vue";
+import { useMainStore } from "../store";
+import { useRoute } from "vue-router";
 
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watchEffect, computed } from "vue";
 import {
   Dialog,
   DialogOverlay,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
   TransitionChild,
   TransitionRoot,
 } from "@headlessui/vue";
 import {
-  BellIcon,
   ClockIcon,
-  CogIcon,
   DocumentReportIcon,
   HomeIcon,
   MenuAlt1Icon,
-  QuestionMarkCircleIcon,
-  ScaleIcon,
-  ShieldCheckIcon,
-  XIcon,
+  MailIcon,
+  UserGroupIcon
 } from "@heroicons/vue/outline";
 import {
-  CashIcon,
   PresentationChartLineIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
   UserIcon,
   SearchIcon,
-  ThumbUpIcon,
-  TrashIcon,
-  EyeIcon,
-  ThumbDownIcon,
-  LinkIcon,
+  XIcon,
+  PlusIcon,
 } from "@heroicons/vue/solid";
 
 const navigation = [
-  { name: "Home", href: "#", icon: HomeIcon, current: true },
-  { name: "History", href: "#", icon: ClockIcon, current: false },
-  { name: "Reports", href: "#", icon: DocumentReportIcon, current: false },
-];
-const secondaryNavigation = [
-  { name: "Settings", href: "#", icon: CogIcon },
-  { name: "Help", href: "#", icon: QuestionMarkCircleIcon },
-  { name: "Privacy", href: "#", icon: ShieldCheckIcon },
-];
-const cards = [
-  { name: "Account balance", href: "#", icon: ScaleIcon, amount: "$30,659.45" },
-  // More items...
-];
-const transactions = [
   {
-    id: 1,
-    name: "Payment to Molly Sanders",
-    href: "#",
-    amount: "$20,000",
-    currency: "USD",
-    status: "success",
-    date: "July 11, 2020",
-    datetime: "2020-07-11",
+    name: "Unlabled",
+    to: { name: "UnlabeledView" },
+    icon: MailIcon,
+    current: false,
   },
-  // More transactions...
+  {
+    name: "Labeled by Others",
+    to: { name: "LabeledByOthersView" },
+    icon: UserGroupIcon,
+    current: false,
+  },
+  {
+    name: "All Comments",
+    to: { name: "AllCommentsView" },
+    icon: DocumentReportIcon,
+    current: false,
+  },
 ];
-const statusStyles = {
-  success: "bg-green-100 text-green-800",
-  processing: "bg-yellow-100 text-yellow-800",
-  failed: "bg-gray-100 text-gray-800",
-};
 
 export default {
   components: {
     Dialog,
     DialogOverlay,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
     TransitionChild,
     TransitionRoot,
-    BellIcon,
-    CashIcon,
     PresentationChartLineIcon,
-    ChevronDownIcon,
-    ChevronRightIcon,
     MenuAlt1Icon,
     UserIcon,
     SearchIcon,
-    XIcon,
-    ThumbUpIcon,
-    EyeIcon,
-    ThumbDownIcon,
-    TrashIcon,
-    LinkIcon,
     LabelCard,
+    LabelList,
+    XIcon,
+    PlusIcon,
+    MailIcon,
+    UserGroupIcon
   },
-  setup() {
+  props: {
+    posts: Array,
+  },
+  setup(props) {
     const sidebarOpen = ref(false);
+    const store = useMainStore();
+    const route = useRoute();
 
-    const questions = [
-      {
-        id: "81614",
-        likes: "29",
-        replies: "11",
-        views: "2.7k",
-        author: {
-          name: "Dries Vincent",
-          imageUrl:
-            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-          href: "#",
-        },
-        date: "December 9 at 11:43 AM",
-        datetime: "2020-12-09T11:43:00",
-        href: "#",
-        title: "What would you have done differently if you ran Jurassic Park?",
-        body: "\n          <p>\n            Jurassic Park was an incredible idea and a magnificent feat of engineering, but poor protocols and a disregard for human safety killed what could have otherwise been one of the best businesses of our generation.\n          </p>\n          <p>\n            Ultimately, I think that if you wanted to run the park successfully and keep visitors safe, the most important thing to prioritize would be&hellip;\n          </p>\n        ",
-      },
-      // More questions...
-    ];
+    watchEffect(() => {
+      navigation.forEach((navItem) => {
+        navItem.current = route.name == navItem.to.name ? true : false;
+      });
+    });
 
-    const posts = ref([]);
+    const addRandomComment = () => {
+      store.addRandomComment()
+    }
 
-    onMounted(async () => {
-      try {
-        const response = await projectFirestore.collection("posts").get();
-
-        posts.value = response.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
-        });
-
-        posts;
-      } catch (error) {
-        console.log(error);
+    onMounted(() => {
+      if (store.users.length == 0) {
+        store.setUsers();
       }
     });
 
     return {
       navigation,
-      secondaryNavigation,
-      cards,
-      transactions,
-      statusStyles,
       sidebarOpen,
-      posts,
-      questions,
+      posts: computed(() => props.posts),
+      user: computed(() => store.user),
+      count: computed(() => "Label count: " + store.sentimentCount),
+      allCommentsRoute: computed(() => route.name == "AllCommentsView"),
+      addRandomComment
     };
   },
 };
 </script>
+
+<style>
+
+.list-item {
+  transition: all 0.4s linear;
+ 
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translatex(50%);
+}
+
+.list-leave-active {
+  position: absolute;
+}
+
+</style>
 
 
 
