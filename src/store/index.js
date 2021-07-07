@@ -85,8 +85,8 @@ export const useMainStore = defineStore({
     addSentiment(post, sentiment) {
       let conflict = false;
 
-      for (const user of this.users.filter((user) => user.name !== this.user.name)) {
-        if (post[user] != -1 && post[user] != sentiment) {
+      for (const user of this.users.filter((u) => u.name !== this.user.name)) {
+        if (post[user.name] != -1 && post[user.name] != sentiment) {
           conflict = true;
         }
       }

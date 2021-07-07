@@ -100,7 +100,7 @@ export default {
 
     const forwardToMainPage = () => {
       router.push({
-        name: "UnlabeledView",
+        name: "unlabeled",
       });
     };
     onMounted(async () => {
