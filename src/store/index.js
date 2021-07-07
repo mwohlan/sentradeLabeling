@@ -19,6 +19,7 @@ export const useMainStore = defineStore({
     setUser(user) {
       this.user = user
       localStorage.setItem('user', JSON.stringify(user));
+      this.setSentimentCount()
 
     },
     setPostsWithoutSentiment() {
@@ -110,6 +111,7 @@ export const useMainStore = defineStore({
           this.users.push({ ...doc.data() })
         })
       })
+     
 
     },
   },
