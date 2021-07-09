@@ -26,7 +26,7 @@ export const useMainStore = defineStore({
     },
     setCommentsWithoutSentiment() {
 
-      projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", false).onSnapshot((snap) => {
+      projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", false).orderBy("created").onSnapshot((snap) => {
         this.commentsWithoutSentiment = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });

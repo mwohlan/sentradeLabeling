@@ -1,11 +1,11 @@
 <template>
   <Disclosure as="li">
     <div>
-      <h2 class="text-sm font-medium text-gray-900">
+      <h2 class="text-xs font-semibold text-gray-800">
         {{ comment.submissionTitle }}
       </h2>
     </div>
-    <div class="mt-3 text-sm text-gray-700 space-y-4">{{ comment.body }}</div>
+    <div class="mt-3 text-sm text-gray-800 space-y-4">{{ comment.body }}</div>
     <div class="mt-3 gap-y-4 flex flex-wrap gap-x-2 justify-between">
       <div class="flex flex-wrap gap-x-2">
         <div
@@ -59,7 +59,7 @@
       </div>
     </div>
     <div class="mt-6 flex justify-between md:justify-start sm:space-x-20">
-      <div class="flex space-x-10 items-center">
+      <div class="flex sm:space-x-10 space-x-7 items-center">
         <button
           @click="addSentiment(comment, 1)"
           class="text-green-500 hover:text-green-600"
@@ -82,10 +82,10 @@
           />
         </button>
       </div>
-      <div class="text-sm flex space-x-8">
+      <div class="text-sm flex space-x-7">
         <DisclosureButton
           :class="[
-            comment.discussions && comment.discussions.length > 0
+            comment.discussions &&comment.discussions.length > 0
               ? 'text-yellow-500 hover:text-yellow-600'
               : 'text-gray-400 hover:text-gray-500',
           ]"
@@ -195,7 +195,7 @@
                         border border-gray-300
                         rounded-md
                       "
-                      placeholder="Add a note"
+                      placeholder="Add to discussion"
                     />
                   </div>
                   <div class="mt-3 flex items-center justify-end">
