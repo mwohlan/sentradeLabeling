@@ -56,15 +56,19 @@ export const useMainStore = defineStore({
 
     },
     addUserDiscussion(comment, body) {
-  
+
       const userComment = {
         user: this.current_user.name,
         body: body,
         created: Date.now()
-         }
-      
+      }
 
-      comment.discussions.push(userComment);
+      if (comment.discussions) {
+        comment.discussions.push(userComment)
+      } else {
+        comment.discussions = [].push(userComment)
+      }
+
 
       projectFirestore.collection("comments").doc(comment.id).update({
         discussions: comment.discussions
@@ -123,7 +127,7 @@ export const useMainStore = defineStore({
       projectFirestore.collection("comments").doc(comment.id).update({
         discussions: comment.discussions
       })
-       
+
     },
     addRandomComment() {
       const names = ['Yannik', 'Markus']
