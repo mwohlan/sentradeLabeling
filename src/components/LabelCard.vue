@@ -136,10 +136,10 @@
                           >{{ discussion.user }}</a
                         >
                       </div>
-                      <div class="mt-1 text-sm text-gray-700">
-                        <p style="white-space: pre">{{ discussion.body }}</p>
+                      <div class="mt-1 text-sm text-gray-700 flex flex-wrap">
+                        <p  class="whitespace-pre-line">{{ discussion.body }}</p>
                       </div>
-                      <div class="flex justify-between">
+                      <div class="flex flex-wrap justify-between">
                         <div class="mt-2 text-sm space-x-2">
                           <span class="text-gray-500 font-medium"
                             ><UseTimeAgo
@@ -151,7 +151,7 @@
                           >
                         </div>
 
-                        <div class="flex gap-x-10 text-sm font-medium">
+                        <div class=" text-sm font-medium">
                           <button class="text-gray-400 hover:text-gray-500">
                             <TrashIcon
                               @click="
