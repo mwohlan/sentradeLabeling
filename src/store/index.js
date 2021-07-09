@@ -64,9 +64,10 @@ export const useMainStore = defineStore({
       }
 
       if (comment.discussions) {
+        console.log(comment.discussions)
         comment.discussions.push(userComment)
       } else {
-        comment.discussions = [].push(userComment)
+        comment.discussions = [userComment]
       }
 
 
@@ -154,7 +155,6 @@ export const useMainStore = defineStore({
         yanikovic: -2,
         starkus: -2,
         conflict: false,
-        discussions: [],
         created: timestamp(),
         updated: timestamp(),
         subredditName: "random",
