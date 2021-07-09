@@ -245,7 +245,7 @@
                     focus:border-transparent
                     sm:text-sm
                   "
-                  :placeholder="'Search '+ currentRouteName"
+                  :placeholder="'Search ' + currentRouteName"
                   type="search"
                 />
               </div>
@@ -268,118 +268,128 @@
               <div class="flex-1 min-w-0">
                 <!-- Profile -->
                 <div class="flex items-center py-1">
+                  <div class="mt-2 flex flex-wrap justify-around flex-1">
                     <div
                       class="
-                        mt-2
-                        flex flex-wrap
-                        justify-around
-                        flex-1
+                        flex
+                        items-center
+                        text-sm text-gray-500
+                        font-medium
+                        sm:mr-6
                       "
                     >
-                      <div
-                        class="
-                          flex
-                          items-center
-                          text-sm text-gray-500
-                          font-medium
-                          sm:mr-6
-                        "
+                      <router-link
+                        class="flex capitalize"
+                        :to="{ name: 'Login' }"
                       >
-                        <router-link
-                          class="flex capitalize"
-                          :to="{ name: 'Login' }"
-                        >
-                          <UserIcon
-                            class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                            aria-hidden="true"
-                          />
-                          {{ user.name }}
-                        </router-link>
-                      </div>
-                      <div
-                        class="
-                          flex
-                          items-center
-                          text-sm text-gray-500
-                          font-medium
-                          sm:mr-6
-                          sm:mt-0
-                        "
-                      >
-                        <PresentationChartLineIcon
-                          class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400"
+                        <UserIcon
+                          class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                           aria-hidden="true"
                         />
-                        {{ count }}
-                      </div>
-                      <div
+                        {{ current_user.name }}
+                      </router-link>
+                    </div>
+                    <div
+                      class="
+                        flex
+                        items-center
+                        text-sm text-gray-500
+                        font-medium
+                        sm:mr-6
+                        sm:mt-0
+                      "
+                    >
+                      <PresentationChartLineIcon
+                        class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400"
+                        aria-hidden="true"
+                      />
+                      {{ count }}
+                    </div>
+                    <div
+                      class="
+                        flex
+                        items-center
+                        text-sm text-gray-500
+                        font-medium
+                        sm:mr-6
+                        sm:mt-0
+                      "
+                    >
+                      <button
+                        type="button"
+                        @click="addRandomComment"
                         class="
-                          flex
+                          inline-flex
                           items-center
-                          text-sm text-gray-500
+                          px-1
+                          py-1
+                          border border-transparent
+                          shadow-sm
+                          text-sm
+                          leading-4
                           font-medium
-                          sm:mr-6
-                          sm:mt-0
+                          rounded-md
+                          text-white
+                          bg-green-500
+                          hover:bg-green-600
                         "
                       >
-                        <button
-                          type="button"
-                          @click="addRandomComment"
-                          class="
-                            inline-flex
-                            items-center
-                            px-1
-                            py-1
-                            border border-transparent
-                            shadow-sm
-                            text-sm
-                            leading-4
-                            font-medium
-                            rounded-md
-                            text-white
-                            bg-green-500
-                            hover:bg-green-600
-    
-                            
-                          "
-                        >
-                          <PlusIcon
-                            class="-ml-0.5 mr-2 h-5 w-5"
-                            aria-hidden="true"
-                           
-                          />
-                          Comment
-                        </button>
-                      </div>
+                        <PlusIcon
+                          class="-ml-0.5 mr-2 h-5 w-5"
+                          aria-hidden="true"
+                        />
+                        Comment
+                      </button>
                     </div>
-      
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="mt-8">
-          <div
-            class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col"
-          >
-          <transition-group v-if="!allCommentsRoute" name="list" tag="ul" class=" relative">
-            <LabelCard
-              v-for="(post,index) in posts.slice(0,5)"
-              :key="post.id"
-              :post="post"
-              class="bg-white px-4 py-6 shadow-lg rounded sm:p-4 sm:rounded-lg list-item"
-              :class="{'mt-5':index!=0}"
-            />
-          </transition-group>
-           <transition-group v-else name="list" tag="ul" class=" relative">
-            <LabelCard
-              v-for="(post,index) in posts"
-              :key="post.id"
-              :post="post"
-              class="bg-white px-4 py-6 shadow-lg rounded sm:p-4 sm:rounded-lg list-item"
-              :class="{'mt-5':index!=0}"
-            />
-          </transition-group>
+          <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
+            <transition-group
+              v-if="!allCommentsRoute"
+              name="list"
+              tag="ul"
+              class="relative"
+            >
+              <LabelCard
+                v-for="(comment, index) in comments.slice(0, 5)"
+                :key="comment.id"
+                :comment="comment"
+                class="
+                  bg-white
+                  px-4
+                  py-6
+                  shadow-lg
+                  rounded
+                  sm:p-4
+                  sm:rounded-lg
+                  list-item
+                "
+                :class="{ 'mt-5': index != 0 }"
+              />
+            </transition-group>
+            <transition-group v-else name="list" tag="ul" class="relative">
+              <LabelCard
+                v-for="(comment, index) in comments"
+                :key="comment.id"
+                :comment="comment"
+                class="
+                  bg-white
+                  px-4
+                  py-6
+                  shadow-lg
+                  rounded
+                  sm:p-4
+                  sm:rounded-lg
+                  list-item
+                "
+                :class="{ 'mt-5': index != 0 }"
+              />
+            </transition-group>
           </div>
 
           <!-- Activity table (small breakpoint and up) -->
@@ -391,7 +401,6 @@
 
 <script>
 import LabelCard from "../components/LabelCard.vue";
-import LabelList from "../components/LabelList.vue";
 import { useMainStore } from "../store";
 import { useRoute } from "vue-router";
 
@@ -410,7 +419,7 @@ import {
   MailIcon,
   UserGroupIcon,
   ChatIcon,
-  SwitchVerticalIcon
+  SwitchVerticalIcon,
 } from "@heroicons/vue/outline";
 import {
   PresentationChartLineIcon,
@@ -433,7 +442,7 @@ const navigation = [
     icon: UserGroupIcon,
     current: false,
   },
-   {
+  {
     name: "Conflicts",
     to: { name: "conflicts" },
     icon: SwitchVerticalIcon,
@@ -451,7 +460,6 @@ const navigation = [
     icon: DocumentReportIcon,
     current: false,
   },
-  
 ];
 
 export default {
@@ -465,61 +473,56 @@ export default {
     UserIcon,
     SearchIcon,
     LabelCard,
-    LabelList,
     XIcon,
     PlusIcon,
     MailIcon,
     UserGroupIcon,
     ChatIcon,
-    SwitchVerticalIcon
+    SwitchVerticalIcon,
   },
   props: {
-    posts: Array,
+    comments: Array,
   },
   setup(props) {
     const sidebarOpen = ref(false);
     const store = useMainStore();
     const route = useRoute();
-    const currentRouteName = ref('')
-
-
-    watchEffect(() => {
-      currentRouteName.value = route.name
-      navigation.forEach((navItem) => {
-        navItem.current = route.name == navItem.to.name ? true : false;
-      });
-    });
-
-   
-    const addRandomComment = () => {
-      store.addRandomComment()
-    }
-
+    const currentRouteName = ref("");
+    
     onMounted(() => {
       if (store.users.length == 0) {
         store.setUsers();
       }
     });
 
+    watchEffect(() => {
+      currentRouteName.value = route.name;
+      navigation.forEach((navItem) => {
+        navItem.current = route.name == navItem.to.name ? true : false;
+      });
+    });
+
+    const addRandomComment = () => {
+      store.addRandomComment();
+    };
+
     return {
       navigation,
       sidebarOpen,
-      posts: computed(() => props.posts),
-      user: computed(() => store.user),
+      posts: computed(() => props.comments),
+      current_user: computed(() => store.current_user),
       count: computed(() => "Label count: " + store.sentimentCount),
       allCommentsRoute: computed(() => route.name == "all comments"),
       addRandomComment,
-      currentRouteName
+      currentRouteName,
     };
   },
 };
 </script>
 
 <style>
-
 .list-item {
   transition: all 0.4s linear;
- 
 }
 
 .list-enter-from,
@@ -531,7 +534,6 @@ export default {
 .list-leave-active {
   position: absolute;
 }
-
 </style>
 
 

@@ -72,12 +72,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
  
-  const isAuthenticated = localStorage.getItem('user') !== null;
+  const isAuthenticated = localStorage.getItem('current_user') !== null;
   if (!isAuthenticated && to.name !== 'Login') {
     next({ name: 'Login' })
   } else {
     const store = useMainStore()
-    store.user = store.user === null ? JSON.parse(localStorage.getItem('user')) : store.user
+    store.current_user = store.current_user === null ? JSON.parse(localStorage.getItem('current_user')) : store.current_user
     next()
   }
  

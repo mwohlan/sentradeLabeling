@@ -1,11 +1,10 @@
 
 <template>
-  <base-layout :posts="posts"/>
+  <base-layout :comments="comments"/>
 </template>
 
 <script>
 import LabelCard from "../components/LabelCard.vue";
-import LabelList from "../components/LabelList.vue";
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
@@ -71,7 +70,6 @@ export default {
     TrashIcon,
     LinkIcon,
     LabelCard,
-    LabelList,
     BaseLayout,
   },
   setup() {
@@ -79,15 +77,15 @@ export default {
     const store = useMainStore();
 
     onMounted( () => {
-      if (store.discussionPosts.length == 0) {
-        store.setDiscussionPosts();
+      if (store.commentsWithDiscussions.length == 0) {
+        store.setCommentsWithDiscussions();
         store.setSentimentCount();
       }
     });
 
     return {
       sidebarOpen,
-      posts: computed(() => store.discussionPosts),
+      comments: computed(() => store.commentsWithDiscussions),
     };
   },
 };

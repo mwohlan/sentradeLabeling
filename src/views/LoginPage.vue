@@ -93,25 +93,24 @@ export default {
 
   setup() {
     const store = useMainStore();
-    const people = ref([]);
     const router = useRouter();
 
     const userSelected = ref(false);
+    
+    onMounted( () => {
+      if (store.users.length == 0) {
+         store.setUsers();
+      }
+    });
 
     const forwardToMainPage = () => {
       router.push({
         name: "unlabeled",
       });
     };
-    onMounted(async () => {
-      if (store.users.length == 0) {
-        await store.setUsers();
-      }
-    });
 
     const changeUser = (selected) => {
-      console.log(userSelected);
-      store.setUser({ id: selected.id, name: selected.name });
+      store.setCurrentUser({ id: selected.id, name: selected.name });
       userSelected.value = true;
     };
 

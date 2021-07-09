@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia'
-import { projectFirestore } from "../firebase/config";
+import { projectFirestore, timestamp } from "../firebase/config";
 
 export const useMainStore = defineStore({
   id: 'main',
   state: () => ({
-    postsWithoutSentiment: [],
-    postsWithSentiment: [],
-    allPosts: [],
-    discussionPosts: [],
-    conflictPosts: [],
-    user: null,
+    commentsWithoutSentiment: [],
+    commentsWithSentiment: [],
+    allComments: [],
+    commentsWithDiscussions: [],
+    commentsWithConflicts: [],
+    current_user: null,
     sentimentCount: 0,
     users: []
   }),
@@ -18,16 +18,16 @@ export const useMainStore = defineStore({
   }
   ,
   actions: {
-    setUser(user) {
-      this.user = user
-      localStorage.setItem('user', JSON.stringify(user));
+    setCurrentUser(user) {
+      this.current_user = user
+      localStorage.setItem('current_user', JSON.stringify(user));
       this.setSentimentCount()
 
     },
-    setPostsWithoutSentiment() {
+    setCommentsWithoutSentiment() {
 
-      projectFirestore.collection("posts").where(this.user.name, "==", -1).where("labeled", "==", false).onSnapshot((snap) => {
-        this.postsWithoutSentiment = snap.docs.map((doc) => {
+      projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", false).onSnapshot((snap) => {
+        this.commentsWithoutSentiment = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
       });
@@ -35,29 +35,46 @@ export const useMainStore = defineStore({
 
     },
 
-    setPostsWithSentiment() {
+    setCommentsWithSentiment() {
 
-      projectFirestore.collection("posts").where(this.user.name, "==", -1).where("labeled", "==", true).onSnapshot((snap) => {
-        this.postsWithSentiment = snap.docs.map((doc) => {
+      projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).onSnapshot((snap) => {
+        this.commentsWithSentiment = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
       });
 
 
     },
-    setAllPosts() {
+    setAllComments() {
 
-      projectFirestore.collection("posts").onSnapshot((snap) => {
-        this.allPosts = snap.docs.map((doc) => {
+      projectFirestore.collection("comments").onSnapshot((snap) => {
+        this.allComments = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
       });
 
 
     },
-    setConflictPosts() {
-      projectFirestore.collection("posts").where("conflict", "==", true).onSnapshot((snap) => {
-        this.conflictPosts = snap.docs.map((doc) => {
+    addUserDiscussion(comment, body) {
+  
+      const userComment = {
+        user: this.current_user.name,
+        body: body,
+        created: Date.now()
+         }
+      
+
+      comment.discussions.push(userComment);
+
+      projectFirestore.collection("comments").doc(comment.id).update({
+        discussions: comment.discussions
+
+      })
+
+    },
+    setCommentsWithConflicts() {
+      projectFirestore.collection("comments").where("conflict", "==", true).onSnapshot((snap) => {
+        this.commentsWithConflicts = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
       });
@@ -65,10 +82,10 @@ export const useMainStore = defineStore({
 
     },
 
-    setDiscussionPosts() {
+    setCommentsWithDiscussions() {
 
-      projectFirestore.collection("posts").where("discussion", "==", true).onSnapshot((snap) => {
-        this.discussionPosts = snap.docs.map((doc) => {
+      projectFirestore.collection("comments").where("discussions", "!=", []).onSnapshot((snap) => {
+        this.commentsWithDiscussions = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
       });
@@ -77,22 +94,22 @@ export const useMainStore = defineStore({
     },
 
     setSentimentCount() {
-      projectFirestore.collection("posts").where(this.user.name, "!=", -1).onSnapshot((snap) => {
+      projectFirestore.collection("comments").where(this.current_user.name, "!=", -2).onSnapshot((snap) => {
         this.sentimentCount = snap.docs.length
       });
 
     },
-    addSentiment(post, sentiment) {
+    addSentiment(comment, sentiment) {
       let conflict = false;
 
-      for (const user of this.users.filter((u) => u.name !== this.user.name)) {
-        if (post[user.name] != -1 && post[user.name] != sentiment) {
+      for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
+        if (comment[user.name] != -2 && comment[user.name] != sentiment) {
           conflict = true;
         }
       }
 
-      projectFirestore.collection("posts").doc(post.id).update({
-        [this.user.name]: sentiment
+      projectFirestore.collection("comments").doc(comment.id).update({
+        [this.current_user.name]: sentiment
         ,
         labeled: true,
         conflict: conflict
@@ -100,14 +117,14 @@ export const useMainStore = defineStore({
 
 
     },
-    addDiscussion(postId, discussion) {
 
-      projectFirestore.collection("posts").doc(postId).update({
-        discussion: discussion
+    removeUserDiscussion(comment, timestamp) {
+      comment.discussions = comment.discussions.filter((discussion) => discussion.created != timestamp);
+      projectFirestore.collection("comments").doc(comment.id).update({
+        discussions: comment.discussions
       })
-
-    }
-    ,
+       
+    },
     addRandomComment() {
       const names = ['Yannik', 'Markus']
 
@@ -125,15 +142,19 @@ export const useMainStore = defineStore({
 
 
 
-      projectFirestore.collection("posts").add({
-        threadTitle: randomTitle,
-        content: randomComment,
+      projectFirestore.collection("comments").add({
+        submissionTitle: randomTitle,
+        body: randomComment,
         labeled: false,
-        link: "https://www.google.com",
-        yanikovic: -1,
-        starkus: -1,
-        discussion: false,
-        conflict: false
+        permalink: "https://www.google.com",
+        yanikovic: -2,
+        starkus: -2,
+        conflict: false,
+        discussions: [],
+        created: timestamp(),
+        updated: timestamp(),
+        subredditName: "random",
+        score: -1
 
       })
 
@@ -141,8 +162,8 @@ export const useMainStore = defineStore({
 
     },
 
-    removePost(postId) {
-      projectFirestore.collection("posts").doc(postId).delete()
+    removeComment(commentId) {
+      projectFirestore.collection("comments").doc(commentId).delete()
     },
     setUsers() {
 
