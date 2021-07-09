@@ -306,6 +306,7 @@
                       {{ count }}
                     </div>
                     <div
+                    v-if="testMode"
                       class="
                         flex
                         items-center
@@ -488,6 +489,9 @@ export default {
     const store = useMainStore();
     const route = useRoute();
     const currentRouteName = ref("");
+    const testMode = ref(false);
+    
+    
     
     onMounted(() => {
       if (store.users.length == 0) {
@@ -515,6 +519,7 @@ export default {
       allCommentsRoute: computed(() => route.name == "all comments"),
       addRandomComment,
       currentRouteName,
+      testMode
     };
   },
 };
