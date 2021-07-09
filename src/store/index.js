@@ -64,7 +64,6 @@ export const useMainStore = defineStore({
       }
 
       if (comment.discussions) {
-        console.log(comment.discussions)
         comment.discussions.push(userComment)
       } else {
         comment.discussions = [userComment]
