@@ -30,6 +30,8 @@ export const useMainStore = defineStore({
         this.commentsWithoutSentiment = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
+      }, (error) => {
+        console.log(error.message);
       });
 
 
@@ -41,6 +43,8 @@ export const useMainStore = defineStore({
         this.commentsWithSentiment = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
+      }, (error) => {
+        console.log(error.message);
       });
 
 
@@ -51,6 +55,8 @@ export const useMainStore = defineStore({
         this.allComments = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
+      }, (error) => {
+        console.log(error.message);
       });
 
 
@@ -71,7 +77,8 @@ export const useMainStore = defineStore({
 
 
       projectFirestore.collection("comments").doc(comment.id).update({
-        discussions: comment.discussions
+        discussions: comment.discussions,
+        updated: timestamp()
 
       })
 
@@ -81,6 +88,8 @@ export const useMainStore = defineStore({
         this.commentsWithConflicts = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
+      }, (error) => {
+        console.log(error.message);
       });
 
 
@@ -92,6 +101,8 @@ export const useMainStore = defineStore({
         this.commentsWithDiscussions = snap.docs.map((doc) => {
           return { ...doc.data(), id: doc.id };
         });
+      }, (error) => {
+        console.log(error.message);
       });
 
 
@@ -116,7 +127,8 @@ export const useMainStore = defineStore({
         [this.current_user.name]: sentiment
         ,
         labeled: true,
-        conflict: conflict
+        conflict: conflict,
+        updated: timestamp()
       })
 
 
