@@ -40,35 +40,8 @@
               bg-cyan-700
             "
           >
-            <TransitionChild
-              as="template"
-              enter="ease-in-out duration-300"
-              enter-from="opacity-0"
-              enter-to="opacity-100"
-              leave="ease-in-out duration-300"
-              leave-from="opacity-100"
-              leave-to="opacity-0"
-            >
-              <div class="absolute top-0 right-0 -mr-12 pt-2">
-                <button
-                  class="
-                    ml-1
-                    flex
-                    items-center
-                    justify-center
-                    h-10
-                    w-10
-                    rounded-full
-                    focus:outline-none
-                    focus:ring-2 focus:ring-inset focus:ring-white
-                  "
-                  @click="sidebarOpen = false"
-                >
-                  <span class="sr-only">Close sidebar</span>
-                  <XIcon class="h-6 w-6 text-white" aria-hidden="true" />
-                </button>
-              </div>
-            </TransitionChild>
+            <div class="absolute top-0 right-0 -mr-12 pt-2"></div>
+
             <div class="flex-shrink-0 flex items-center gap-x-2 px-4">
               <img
                 class="h-8 w-auto"
@@ -111,7 +84,7 @@
             </nav>
           </div>
         </TransitionChild>
-        <div class="flex-shrink-0 w-14" aria-hidden="true">
+        <div class="flex-shrink-0 w-32" aria-hidden="true">
           <!-- Dummy element to force sidebar to shrink to fit close icon -->
         </div>
       </Dialog>
@@ -168,25 +141,30 @@
       </div>
     </div>
     <!-- Cards  !-->
-    <div class="flex-1 overflow-auto focus:outline-none">
+    <div
+      ref="scrollComponent"
+      @scroll.passive="handleScroll"
+      class="flex-1 overflow-auto focus:outline-none"
+    >
       <div
         class="
-          relative
+          sticky
+          top-0
           z-10
           flex-shrink-0 flex
-          h-16
+          h-14
           bg-white
           border-b border-gray-200
           lg:border-none
         "
+        :class="{shadow: shadow }"
       >
         <button
           class="
             px-4
             border-r border-gray-200
             text-gray-400
-            focus:outline-none
-            focus:ring-2 focus:ring-inset focus:ring-cyan-500
+            
             lg:hidden
           "
           @click="sidebarOpen = true"
@@ -256,7 +234,7 @@
       <main class="flex-1 relative pb-8 z-0 overflow-y-auto">
         <!-- Page header -->
         <div class="bg-white shadow">
-          <div class="px-4 sm:px-6 lg:max-w-7xl lg:mx-auto lg:px-8">
+          <div class=" px-4 sm:px-6 lg:max-w-7xl lg:mx-auto lg:px-8">
             <div
               class="
                 md:flex
@@ -305,8 +283,9 @@
                       />
                       {{ count }}
                     </div>
+
                     <div
-                    v-if="testMode"
+                      v-if="testMode"
                       class="
                         flex
                         items-center
@@ -350,41 +329,18 @@
         </div>
         <div class="mt-8">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
-            <transition-group
-              v-if="!allCommentsRoute"
-              name="list"
-              tag="ul"
-              class="relative"
-            >
-              <LabelCard
-                v-for="(comment, index) in comments.slice(0, 5)"
-                :key="comment.id"
-                :comment="comment"
-                class="
-                  bg-white
-                  px-4
-                  py-6
-                  shadow-lg
-                  rounded
-                  sm:p-4
-                  sm:rounded-lg
-                  list-item
-                "
-                :class="{ 'mt-5': index != 0 }"
-              />
-            </transition-group>
-            <transition-group v-else name="list" tag="ul" class="relative">
+            <transition-group name="list" tag="ul" class="relative">
               <LabelCard
                 v-for="(comment, index) in comments"
                 :key="comment.id"
                 :comment="comment"
                 class="
                   bg-white
-                  px-4
-                  py-6
-                  shadow-lg
+      
+                  shadow-md
+                  sm:shadow-lg
                   rounded
-                  sm:p-4
+                  p-4
                   sm:rounded-lg
                   list-item
                 "
@@ -405,7 +361,7 @@ import LabelCard from "../components/LabelCard.vue";
 import { useMainStore } from "../store";
 import { useRoute } from "vue-router";
 
-import { onMounted, ref, watchEffect, computed } from "vue";
+import { onMounted, ref, watchEffect, computed, onUnmounted } from "vue";
 import {
   Dialog,
   DialogOverlay,
@@ -413,9 +369,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import {
-  ClockIcon,
   DocumentReportIcon,
-  HomeIcon,
   MenuAlt1Icon,
   MailIcon,
   UserGroupIcon,
@@ -484,25 +438,48 @@ export default {
   props: {
     comments: Array,
   },
-  setup(props) {
+  emits:['scrollReload'],
+  setup(props,{emit}) {
     const sidebarOpen = ref(false);
     const store = useMainStore();
     const route = useRoute();
     const currentRouteName = ref("");
     const testMode = ref(false);
+    const scrollComponent = ref(null);
+
+    const shadow = ref(false)
+
+    const handleScroll = ({
+      target: { scrollTop, clientHeight, scrollHeight },
+    }) => {
+      if (scrollTop + clientHeight >= scrollHeight) {
     
-    
-    
+       emit('scrollReload');
+      }
+
+      if (scrollTop === 0){
+        shadow.value = false;
+      }else{
+        shadow.value = true;
+      }
+    };
+
+    const listener = ref(null);
+
     onMounted(() => {
       if (store.users.length == 0) {
         store.setUsers();
       }
+      listener.value = store.setSentimentCount();
     });
 
-    watchEffect(() => {
+    watchEffect((onInvalidate) => {
       currentRouteName.value = route.name;
       navigation.forEach((navItem) => {
         navItem.current = route.name == navItem.to.name ? true : false;
+      });
+      onInvalidate(() => {
+        listener.value();
       });
     });
 
@@ -519,7 +496,10 @@ export default {
       allCommentsRoute: computed(() => route.name == "all comments"),
       addRandomComment,
       currentRouteName,
-      testMode
+      testMode,
+      handleScroll,
+      scrollComponent,
+      shadow
     };
   },
 };

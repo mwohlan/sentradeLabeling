@@ -1,7 +1,5 @@
-
 <template>
-
-  <base-layout @scrollReload="scrollReload()" :comments="comments" />
+  <base-layout :comments="comments" />
 </template>
 
 <script>
@@ -14,34 +12,30 @@ export default {
   components: {
     BaseLayout,
   },
-  setup() {
+  props: {
+      id: String
+  },
+  setup(props) {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-    const {unsub, executeScrollQuery} = store.setCommentsWithoutSentiment();
-    
-    
+    const unsub = ref(null);
 
+    onMounted(() => {
+      unsub.value = store.setLinkComment(props.id);
+    });
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
-        unsub();
+        unsub.value();
       });
     });
 
-    const scrollReload = () => {
-        executeScrollQuery()
-    }
-
     return {
       sidebarOpen,
-      comments: computed(() =>store.commentsWithoutSentiment),
-      scrollReload,
+      comments: computed(() => store.linkComment),
     };
   },
 };
+
 </script>
-
-
-
-

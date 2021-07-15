@@ -22,6 +22,7 @@ const projectFirestore = firebase.firestore();
 
 
 const timestamp = firebase.firestore.FieldValue.serverTimestamp
+const increment = firebase.firestore.FieldValue.increment
 
 
-export { projectFirestore,timestamp}
+export { projectFirestore,timestamp,increment}

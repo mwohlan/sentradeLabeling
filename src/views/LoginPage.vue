@@ -94,6 +94,7 @@ export default {
   setup() {
     const store = useMainStore();
     const router = useRouter();
+      
 
     const userSelected = ref(false);
     

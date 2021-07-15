@@ -6,6 +6,7 @@ import LoginPage from '../views/LoginPage.vue'
 import AllCommentsView from '../views/AllCommentsView.vue'
 import DiscussionsView from '../views/DiscussionsView.vue'
 import ConflictsView from "../views/ConflictsView.vue"
+import LinkView from "../views/LinkView.vue"
 import { useMainStore }from '../store'
 
 
@@ -50,6 +51,17 @@ const routes = [
     path: '/conflicts',
     component: ConflictsView,
     name: 'conflicts'
+    // example of route level code-splitting
+    // this generates a separate chunk (About.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
+  },
+  {
+    path: '/link/:id',
+    component: LinkView,
+    name: 'link',
+    props: true
+
     // example of route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.

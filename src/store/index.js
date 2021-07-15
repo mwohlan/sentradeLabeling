@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { projectFirestore, timestamp } from "../firebase/config";
+import { projectFirestore, timestamp, increment } from "../firebase/config";
+import getCollection from '../composables/getCollection'
 
 export const useMainStore = defineStore({
   id: 'main',
@@ -10,10 +11,18 @@ export const useMainStore = defineStore({
     commentsWithDiscussions: [],
     commentsWithConflicts: [],
     current_user: null,
-    sentimentCount: 0,
-    users: []
+    sentimentCount: null,
+    users: [],
+    linkComment: []
   }),
   getters: {
+
+    sortedCommentsWithDiscussions() {
+      return this.commentsWithDiscussions.sort(function (a, b) {
+        return b.discussions[b.discussions.length - 1].created - a.discussions[a.discussions.length - 1].created
+      });
+
+    }
 
   }
   ,
@@ -26,38 +35,65 @@ export const useMainStore = defineStore({
     },
     setCommentsWithoutSentiment() {
 
-      projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", false).orderBy("created").onSnapshot((snap) => {
-        this.commentsWithoutSentiment = snap.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
-        });
-      }, (error) => {
-        console.log(error.message);
-      });
+      const watchQuery = projectFirestore.collection("comments").where("labeled", "==", false).orderBy("created").limit(Math.max(5, this.commentsWithoutSentiment.length))
 
+      const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithoutSentiment)
+
+      return { unsub, executeScrollQuery: () => { executeScrollQuery(projectFirestore.collection("comments").where("labeled", "==", false).where("created", ">", this.commentsWithoutSentiment[this.commentsWithoutSentiment.length - 1].created).orderBy("created").limit(5)) } }
 
     },
 
     setCommentsWithSentiment() {
 
-      projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).onSnapshot((snap) => {
-        this.commentsWithSentiment = snap.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
-        });
-      }, (error) => {
-        console.log(error.message);
-      });
+      const watchQuery = projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).orderBy("created").limit(Math.max(5, this.commentsWithSentiment.length))
 
+      const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithSentiment)
+
+      return { unsub, executeScrollQuery: () => { executeScrollQuery(projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).where("created", ">", this.commentsWithSentiment[this.commentsWithSentiment.length - 1].created).orderBy("created").limit(5)) } }
 
     },
     setAllComments() {
 
-      projectFirestore.collection("comments").onSnapshot((snap) => {
-        this.allComments = snap.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
-        });
-      }, (error) => {
-        console.log(error.message);
-      });
+      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(5, this.allComments.length))
+
+      const { unsub, executeScrollQuery } = getCollection(watchQuery, this.allComments)
+
+      return { unsub, executeScrollQuery: () => { executeScrollQuery(projectFirestore.collection("comments").where("created", ">", this.allComments[this.allComments.length - 1].created).orderBy("created").limit(5)) } }
+
+    },
+    setCommentsWithConflicts() {
+      const watchQuery = projectFirestore.collection("comments").where("conflict", "==", true).orderBy("created").limit(Math.max(5, this.commentsWithConflicts.length))
+
+      const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithConflicts)
+
+      return { unsub, executeScrollQuery: () => { executeScrollQuery(projectFirestore.collection("comments").where("conflict", "==", true).limit(10).orderBy("created").limit(5)) } }
+
+
+    },
+
+    setCommentsWithDiscussions() {
+
+      const watchQuery = projectFirestore.collection("comments").where("discussions", "!=", []).orderBy("discussions").orderBy("created")
+
+
+      const { unsub } = getCollection(watchQuery, this.commentsWithDiscussions)
+
+
+      return unsub
+
+
+
+    },
+    setLinkComment(id) {
+
+      const watchQuery = projectFirestore.collection("comments").doc(id)
+
+
+      const { unsub } = getCollection(watchQuery, this.linkComment)
+
+
+      return unsub
+
 
 
     },
@@ -83,38 +119,16 @@ export const useMainStore = defineStore({
       })
 
     },
-    setCommentsWithConflicts() {
-      projectFirestore.collection("comments").where("conflict", "==", true).onSnapshot((snap) => {
-        this.commentsWithConflicts = snap.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
-        });
-      }, (error) => {
-        console.log(error.message);
-      });
 
-
-    },
-
-    setCommentsWithDiscussions() {
-
-      projectFirestore.collection("comments").where("discussions", "!=", []).onSnapshot((snap) => {
-        this.commentsWithDiscussions = snap.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
-        });
-      }, (error) => {
-        console.log(error.message);
-      });
-
-
-    },
 
     setSentimentCount() {
-      projectFirestore.collection("comments").where(this.current_user.name, "!=", -2).onSnapshot((snap) => {
-        this.sentimentCount = snap.docs.length
+
+      return projectFirestore.collection("users").where("name", "==", this.current_user.name).onSnapshot((snap) => {
+        this.sentimentCount = snap.docs[0].data().sentimentCount
       });
 
     },
-    addSentiment(comment, sentiment) {
+    async addSentiment(comment, sentiment) {
       let conflict = false;
 
       for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
@@ -123,13 +137,27 @@ export const useMainStore = defineStore({
         }
       }
 
-      projectFirestore.collection("comments").doc(comment.id).update({
-        [this.current_user.name]: sentiment
-        ,
-        labeled: true,
-        conflict: conflict,
-        updated: timestamp()
-      })
+      try {
+        await projectFirestore.collection("comments").doc(comment.id).update({
+          [this.current_user.name]: sentiment
+          ,
+          labeled: true,
+          conflict: conflict,
+          updated: timestamp()
+        })
+        if (comment[this.current_user.name] == -2) {
+          projectFirestore.collection("users").doc(this.current_user.id).update({
+            sentimentCount: increment(1)
+          })
+        }
+
+      } catch (error) {
+        console.log(error.message);
+
+      }
+
+
+
 
 
     },
@@ -177,18 +205,32 @@ export const useMainStore = defineStore({
 
     },
 
-    removeComment(commentId) {
-      projectFirestore.collection("comments").doc(commentId).delete()
+    async removeComment(comment) {
+      try {
+        await projectFirestore.collection("comments").doc(comment.id).delete()
+        for (const user of this.users) {
+          if (comment[user.name] != -2) {
+            projectFirestore.collection("users").doc(user.id).update({
+              sentimentCount: increment(-1)
+            })
+          }
+        }
+      } catch (error) {
+        console.error(error.message)
+      }
+
     },
     setUsers() {
 
-      projectFirestore.collection("users").onSnapshot((snap) => {
+      projectFirestore.collection("users").get().then((snap) => {
         snap.docs.forEach((doc) => {
-          this.users.push({ ...doc.data() })
+          this.users.push({ ...doc.data(), id: doc.id })
         })
       })
 
 
     },
+
+
   },
 })
