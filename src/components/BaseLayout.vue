@@ -231,7 +231,7 @@
           </div>
         </div>
       </div>
-      <main class="flex-1 h-screen relative pb-8 z-0 overflow-y-auto">
+      <main class="flex-1 relative pb-24 z-0 overflow-y-auto">
         <!-- Page header -->
         <div class="bg-white shadow">
           <div class=" px-4 sm:px-6 lg:max-w-7xl lg:mx-auto lg:px-8">
