@@ -153,28 +153,6 @@
                     ]"
                     :href="
                       encodeURI(
-                        'https://api.whatsapp.com/send?text=http://192.168.188.70:3000/link/' +
-                          comment.id
-                      )
-                    "
-                    target="_blank"
-                  >
-                    <ShareIcon
-                      :active="active"
-                      class="w-6 h-6 mr-2"
-                      aria-hidden="true"
-                    />
-                    Share
-                  </a>
-                </MenuItem>
-                <MenuItem v-if="isMobile" v-slot="{ active }">
-                  <a
-                    :class="[
-                      active ? ' text-gray-800 bg-gray-100' : 'text-gray-600',
-                      'group flex  items-center w-full px-2 py-2 font-medium',
-                    ]"
-                    :href="
-                      encodeURI(
                         'https://api.whatsapp.com/send?text=https://peaceful-murdock-181b26.netlify.app/link/' +
                           comment.id
                       )
