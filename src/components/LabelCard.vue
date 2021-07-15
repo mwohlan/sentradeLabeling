@@ -415,7 +415,7 @@ export default {
     };
     const store = useMainStore();
 
-    const copyLink = ref("https://peaceful-murdock-181b26.netlify.app/"+props.comment.id);
+    const copyLink = ref("https://peaceful-murdock-181b26.netlify.app/link/"+props.comment.id);
 
     const { copy} = useClipboard();
 
