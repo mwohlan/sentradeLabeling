@@ -225,7 +225,7 @@
           </div>
         </div>
       </div>
-      <main class="flex-1 relative">
+      <main class="flex-1 relative pb-32 sm:pb-16">
         <!-- Page header -->
         <div class="bg-white shadow">
           <div class="px-4 sm:px-6 lg:max-w-7xl lg:mx-auto lg:px-8">
