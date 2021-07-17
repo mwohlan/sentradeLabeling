@@ -147,13 +147,13 @@
                   </a>
                 </MenuItem>
                 <MenuItem v-if="isMobile" v-slot="{ active }">
-                  <a
+                  <button
                     :class="[
                       active ? ' text-gray-800 bg-gray-100' : 'text-gray-600',
                       'group flex  items-center w-full px-2 py-2 font-medium',
                     ]"
 
-                    :href="'https://api.whatsapp.com/send?text=https://peaceful-murdock-181b26.netlify.app/link/' +comment.id"
+                    @click="openWhatsApp()"
                     
                   >
                     <ShareIcon
@@ -162,7 +162,7 @@
                       aria-hidden="true"
                     />
                     Whatsapp
-                  </a>
+                  </button>
                 </MenuItem>
                 <MenuItem v-else v-slot="{ active }">
                   <button
@@ -404,7 +404,9 @@ export default {
 
     const userDiscussion = ref("");
 
- 
+    const openWhatsApp = ()=>{
+      window.open('https://api.whatsapp.com/send?text=https://peaceful-murdock-181b26.netlify.app/link/' +props.comment.id,"_blank");
+    }
 
     const addSentiment = (comment, sentiment) => {
       isLoading.value = true;
@@ -438,6 +440,7 @@ export default {
       openCommentSection,
       copy,
       copyLink,
+      openWhatsApp,
       defaultOpen: computed(
         () => props.comment.discussions && props.comment.discussions.length > 0
       ),
