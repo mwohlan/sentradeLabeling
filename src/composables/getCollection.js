@@ -54,11 +54,13 @@ const getCollection = (watchQuery, storeReference) => {
     function snapShotHandler(snap) {
         if (!snap.metadata.hasPendingWrites) {
 
-            let docChanges = snap.docChanges();
 
             if (storeReference === store.linkComment) {
                 storeReference.splice(0, 1, { ...snap.data(), id: snap.id })
             } else {
+
+                let docChanges = snap.docChanges();
+
 
                 if (docChanges.length < 5) {
 
