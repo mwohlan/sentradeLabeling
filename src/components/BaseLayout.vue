@@ -386,7 +386,7 @@ import {
 
 const navigation = [
   {
-    name: "Unlabled",
+    name: "Unlabeled",
     to: { name: "unlabeled" },
     icon: MailIcon,
     current: false,

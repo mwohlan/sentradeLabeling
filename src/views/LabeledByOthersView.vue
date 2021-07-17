@@ -31,7 +31,7 @@ export default {
 
     const scrollReload = () => {
       unsub()
-       unsub = setCommentsWithSentiment(5).unsub
+       unsub = store.setCommentsWithSentiment(5).unsub
     }
 
     return {
