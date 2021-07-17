@@ -11,7 +11,7 @@ export const useMainStore = defineStore({
     commentsWithDiscussions: [],
     commentsWithConflicts: [],
     current_user: null,
-    sentimentCount: null,
+    stats: {},
     users: [],
     linkComment: []
   }),
@@ -123,9 +123,15 @@ export const useMainStore = defineStore({
 
     setSentimentCount() {
 
-      return projectFirestore.collection("users").where("name", "==", this.current_user.name).onSnapshot((snap) => {
-        this.sentimentCount = snap.docs[0].data().sentimentCount
+      const setSentimentCount = projectFirestore.collection("users").where("name", "==", this.current_user.name).onSnapshot((snap) => {
+        this.stats.sentimentCount = snap.docs[0].data().sentimentCount
       });
+
+      const unlabeledComments = projectFirestore.collection("stats").doc("stats").onSnapshot((snap) => {
+        this.stats.unlabeledComments = snap.data().unlabeledComments;
+      });
+
+      return () => { setSentimentCount(); unlabeledComments();}
 
     },
     async addSentiment(comment, sentiment) {
@@ -148,6 +154,11 @@ export const useMainStore = defineStore({
         if (comment[this.current_user.name] == -2) {
           projectFirestore.collection("users").doc(this.current_user.id).update({
             sentimentCount: increment(1)
+          })
+        }
+        if (!comment.labeled ) {
+          projectFirestore.collection("stats").doc("stats").update({
+            unlabeledComments: increment(-1)
           })
         }
 

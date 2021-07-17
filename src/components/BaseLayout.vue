@@ -228,7 +228,7 @@
       <main class="flex-1 relative pb-32 sm:pb-16">
         <!-- Page header -->
         <div class="bg-white shadow">
-          <div class="px-4 sm:px-6 lg:max-w-7xl lg:mx-auto lg:px-8">
+          <div class="lg:max-w-7xl lg:mx-auto">
             <div
               class="
                 md:flex
@@ -261,6 +261,7 @@
                         {{ current_user.name }}
                       </router-link>
                     </div>
+
                     <div
                       class="
                         flex
@@ -271,11 +272,27 @@
                         sm:mt-0
                       "
                     >
-                      <PresentationChartLineIcon
+                      <ClipboardCheckIcon
                         class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400"
                         aria-hidden="true"
                       />
-                      {{ count }}
+                      {{ stats.sentimentCount }}
+                    </div>
+                    <div
+                      class="
+                        flex
+                        items-center
+                        text-sm text-gray-500
+                        font-medium
+                        sm:mr-6
+                        sm:mt-0
+                      "
+                    >
+                      <DocumentDuplicateIcon
+                        class="flex-shrink-0 mr-1.5 h-5 w-5 text-red-400"
+                        aria-hidden="true"
+                      />
+                      {{ stats.unlabeledComments }}
                     </div>
 
                     <div
@@ -344,7 +361,6 @@
                   mb-5
                   mx-2
                 "
-               
               />
             </transition-group>
           </div>
@@ -375,6 +391,8 @@ import {
   UserGroupIcon,
   ChatIcon,
   SwitchVerticalIcon,
+  ClipboardCheckIcon,
+  DocumentDuplicateIcon,
 } from "@heroicons/vue/outline";
 import {
   PresentationChartLineIcon,
@@ -434,6 +452,8 @@ export default {
     UserGroupIcon,
     ChatIcon,
     SwitchVerticalIcon,
+    ClipboardCheckIcon,
+    DocumentDuplicateIcon,
   },
   props: {
     comments: Array,
@@ -452,7 +472,7 @@ export default {
     const handleScroll = ({
       target: { scrollTop, clientHeight, scrollHeight },
     }) => {
-      if (scrollTop + clientHeight >= scrollHeight -1) {
+      if (scrollTop + clientHeight >= scrollHeight - 1) {
         console.log(scrollTop, clientHeight, scrollHeight);
         emit("scrollReload");
       }
@@ -504,7 +524,7 @@ export default {
       sidebarOpen,
       posts: computed(() => props.comments),
       current_user: computed(() => store.current_user),
-      count: computed(() => "Label count: " + store.sentimentCount),
+      stats: computed(() => store.stats),
       allCommentsRoute: computed(() => route.name == "all comments"),
       addRandomComment,
       currentRouteName,
@@ -512,7 +532,7 @@ export default {
       handleScroll,
       scrollComponent,
       shadow,
-      isMobile
+      isMobile,
     };
   },
 };
