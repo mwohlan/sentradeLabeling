@@ -18,22 +18,18 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-   const queryFunctions = ref(null);
+   let { unsub, executeScrollQuery } = store.setAllComments(0);
 
-    onMounted(() => {
-      queryFunctions.value = store.setAllComments();
-    });
+    const scrollReload = async () => {
+      unsub()
+      unsub = store.setAllComments(5).unsub;
+    };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
-        queryFunctions.value.unsub();
+        unsub();
       });
     });
-
-    const scrollReload = () => {
-      queryFunctions.value.executeScrollQuery();
-    };
-
     return {
       sidebarOpen,
       comments: computed(() => store.allComments),

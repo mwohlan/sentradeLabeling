@@ -1,5 +1,5 @@
 <template>
-  <Disclosure :defaultOpen="defaultOpen" as="li">
+  <Disclosure :defaultOpen="defaultOpen" as="li" >
     <div>
       <h2 class="text-xs font-semibold text-gray-800">
         {{ comment.submissionTitle }}
@@ -119,10 +119,11 @@
             <MenuItems
               class="
                 absolute
+                bottom-10
                 right-0
                 w-32
                 mt-2
-                origin-top-right
+               
                 bg-white
                 rounded-md
                 shadow-lg
@@ -146,13 +147,13 @@
                   </a>
                 </MenuItem>
                 <MenuItem v-if="isMobile" v-slot="{ active }">
-                  <button
+                  <a
                     :class="[
                       active ? ' text-gray-800 bg-gray-100' : 'text-gray-600',
                       'group flex  items-center w-full px-2 py-2 font-medium',
                     ]"
 
-                    @click="openWhatsApp()"
+                    :href="'https://api.whatsapp.com/send?text=https://peaceful-murdock-181b26.netlify.app/link/' +comment.id"
                     
                   >
                     <ShareIcon
@@ -161,7 +162,7 @@
                       aria-hidden="true"
                     />
                     Whatsapp
-                  </button>
+                  </a>
                 </MenuItem>
                 <MenuItem v-else v-slot="{ active }">
                   <button
@@ -380,6 +381,7 @@ export default {
   },
   props: {
     comment: Object,
+    isMobile: Boolean,
   },
   setup(props) {
     const getDate = (time) => {
@@ -393,16 +395,6 @@ export default {
 
     const { copy} = useClipboard();
 
-    const isMobile = ref(false);
-  
-    onMounted(() => {
-
-     
-      if (screen.width <= 760 ) {
-        isMobile.value = true;
-      }
-    });
-
     const userSet = computed(
       () => new Set(store.users.map((user) => user.name))
     );
@@ -412,9 +404,7 @@ export default {
 
     const userDiscussion = ref("");
 
-    const openWhatsApp = ()=>{
-      window.open('https://api.whatsapp.com/send?text=https://peaceful-murdock-181b26.netlify.app/link/' +props.comment.id,"_blank");
-    }
+ 
 
     const addSentiment = (comment, sentiment) => {
       isLoading.value = true;
@@ -446,10 +436,8 @@ export default {
       current_user: computed(() => store.current_user.name),
       removeUserDiscussion,
       openCommentSection,
-      isMobile,
       copy,
       copyLink,
-      openWhatsApp,
       defaultOpen: computed(
         () => props.comment.discussions && props.comment.discussions.length > 0
       ),

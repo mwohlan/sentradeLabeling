@@ -18,20 +18,18 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-    const {unsub, executeScrollQuery} = store.setCommentsWithConflicts();
-    
-    
+     let { unsub, executeScrollQuery } = store.setCommentsWithConflicts(0);
 
+    const scrollReload = async () => {
+      unsub()
+      unsub = store.setCommentsWithConflicts(5).unsub;
+    };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
       });
     });
-
-    const scrollReload = () => {
-        executeScrollQuery()
-    }
 
     return {
       sidebarOpen,

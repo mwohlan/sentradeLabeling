@@ -1,6 +1,5 @@
 
 <template>
-
   <base-layout @scrollReload="scrollReload()" :comments="comments" />
 </template>
 
@@ -18,10 +17,12 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-    const {unsub, executeScrollQuery} = store.setCommentsWithoutSentiment();
-    
-    
+    let { unsub, executeScrollQuery } = store.setCommentsWithoutSentiment(0);
 
+    const scrollReload = async () => {
+      unsub()
+      unsub = store.setCommentsWithoutSentiment(5).unsub;
+    };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
@@ -29,13 +30,9 @@ export default {
       });
     });
 
-    const scrollReload = () => {
-        executeScrollQuery()
-    }
-
     return {
       sidebarOpen,
-      comments: computed(() =>store.commentsWithoutSentiment),
+      comments: computed(() => store.commentsWithoutSentiment),
       scrollReload,
     };
   },

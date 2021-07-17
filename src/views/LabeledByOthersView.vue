@@ -18,7 +18,7 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-    const {unsub, executeScrollQuery} = store.setCommentsWithSentiment();
+    let {unsub, executeScrollQuery} = store.setCommentsWithSentiment(0);
     
     
 
@@ -30,7 +30,8 @@ export default {
     });
 
     const scrollReload = () => {
-        executeScrollQuery()
+      unsub()
+       unsub = setCommentsWithSentiment(5).unsub
     }
 
     return {
