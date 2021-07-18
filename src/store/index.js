@@ -226,6 +226,9 @@ export const useMainStore = defineStore({
             })
           }
         }
+        projectFirestore.collection("stats").doc("stats").update({
+          unlabeledComments: increment(-1)
+        })
       } catch (error) {
         console.error(error.message)
       }
