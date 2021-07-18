@@ -35,7 +35,7 @@ export const useMainStore = defineStore({
     },
     setCommentsWithoutSentiment(reloadAmount) {
 
-      const watchQuery = projectFirestore.collection("comments").where("labeled", "==", false).orderBy("created").limit(Math.max(5, this.commentsWithoutSentiment.length + reloadAmount));
+      const watchQuery = projectFirestore.collection("comments").where("labeled", "==", false).orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.length + reloadAmount));
 
       const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithoutSentiment)
 
@@ -45,7 +45,7 @@ export const useMainStore = defineStore({
 
     setCommentsWithSentiment(reloadAmount) {
 
-      const watchQuery = projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).orderBy("created").limit(Math.max(5, this.commentsWithSentiment.length + reloadAmount))
+      const watchQuery = projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithSentiment.length + reloadAmount))
 
       const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithSentiment)
 
@@ -54,7 +54,7 @@ export const useMainStore = defineStore({
     },
     setAllComments(reloadAmount) {
 
-      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(5, this.allComments.length+reloadAmount))
+      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(8, this.allComments.length+reloadAmount))
 
       const { unsub, executeScrollQuery } = getCollection(watchQuery, this.allComments)
 
@@ -62,7 +62,7 @@ export const useMainStore = defineStore({
 
     },
     setCommentsWithConflicts(reloadAmount) {
-      const watchQuery = projectFirestore.collection("comments").where("conflict", "==", true).orderBy("created").limit(Math.max(5, this.commentsWithConflicts.length + reloadAmount))
+      const watchQuery = projectFirestore.collection("comments").where("conflict", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithConflicts.length + reloadAmount))
 
       const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithConflicts)
 
