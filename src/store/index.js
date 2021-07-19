@@ -54,7 +54,7 @@ export const useMainStore = defineStore({
     },
     setAllComments(reloadAmount) {
 
-      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(8, this.allComments.length+reloadAmount))
+      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(8, this.allComments.length + reloadAmount))
 
       const { unsub, executeScrollQuery } = getCollection(watchQuery, this.allComments)
 
@@ -131,7 +131,7 @@ export const useMainStore = defineStore({
         this.stats.unlabeledComments = snap.data().unlabeledComments;
       });
 
-      return () => { setSentimentCount(); unlabeledComments();}
+      return () => { setSentimentCount(); unlabeledComments(); }
 
     },
     async addSentiment(comment, sentiment) {
@@ -156,7 +156,7 @@ export const useMainStore = defineStore({
             sentimentCount: increment(1)
           })
         }
-        if (!comment.labeled ) {
+        if (!comment.labeled) {
           projectFirestore.collection("stats").doc("stats").update({
             unlabeledComments: increment(-1)
           })
@@ -226,9 +226,12 @@ export const useMainStore = defineStore({
             })
           }
         }
-        projectFirestore.collection("stats").doc("stats").update({
-          unlabeledComments: increment(-1)
-        })
+        if (comment.labeled === false) {
+          projectFirestore.collection("stats").doc("stats").update({
+            unlabeledComments: increment(-1)
+          })
+        }
+
       } catch (error) {
         console.error(error.message)
       }
