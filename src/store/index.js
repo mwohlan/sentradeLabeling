@@ -30,7 +30,7 @@ export const useMainStore = defineStore({
     setCurrentUser(user) {
       this.current_user = user
       localStorage.setItem('current_user', JSON.stringify(user));
-      this.setSentimentCount()
+      this.setStats()
 
     },
     setCommentsWithoutSentiment(reloadAmount) {
@@ -78,8 +78,15 @@ export const useMainStore = defineStore({
 
       const { unsub } = getCollection(watchQuery, this.commentsWithDiscussions)
 
+      const updateLastDiscussionView = () => {
+        projectFirestore.collection("users").doc(this.current_user.id).update({
+          lastDiscussionView: Date.now()
+        })
+      }
 
-      return unsub
+
+
+      return { unsub, updateLastDiscussionView }
 
 
 
@@ -99,10 +106,12 @@ export const useMainStore = defineStore({
     },
     addUserDiscussion(comment, body) {
 
+      const now = Date.now();
+
       const userComment = {
         user: this.current_user.name,
         body: body,
-        created: Date.now()
+        created: now
       }
 
       if (comment.discussions) {
@@ -118,10 +127,13 @@ export const useMainStore = defineStore({
 
       })
 
+     
     },
 
+  
 
-    setSentimentCount() {
+
+    setStats() {
 
       const setSentimentCount = projectFirestore.collection("users").where("name", "==", this.current_user.name).onSnapshot((snap) => {
         this.stats.sentimentCount = snap.docs[0].data().sentimentCount
@@ -131,7 +143,14 @@ export const useMainStore = defineStore({
         this.stats.unlabeledComments = snap.data().unlabeledComments;
       });
 
-      return () => { setSentimentCount(); unlabeledComments(); }
+      const lastDiscussionView = projectFirestore.collection("users").where("name", "==", this.current_user.name).onSnapshot((snap) => {
+        this.stats.lastDiscussionView = snap.docs[0].data().lastDiscussionView;
+
+      })
+
+     
+
+      return () => { setSentimentCount(); unlabeledComments(); lastDiscussionView(); }
 
     },
     async addSentiment(comment, sentiment) {
@@ -173,10 +192,11 @@ export const useMainStore = defineStore({
 
     },
 
-    removeUserDiscussion(comment, timestamp) {
-      comment.discussions = comment.discussions.filter((discussion) => discussion.created != timestamp);
+    removeUserDiscussion(comment, discussionTimestamp) {
+      comment.discussions = comment.discussions.filter((discussion) => discussion.created != discussionTimestamp);
       projectFirestore.collection("comments").doc(comment.id).update({
-        discussions: comment.discussions
+        discussions: comment.discussions,
+         updated: timestamp()
       })
 
     },

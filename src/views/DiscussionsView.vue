@@ -18,23 +18,22 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
     
-    const unsub = ref(null)
-    
-    onMounted(() => {
-        unsub.value = store.setCommentsWithDiscussions();
+    let unsub, updateLastDiscussionView;
+
+
+    onMounted(()=>{
+      let temp = store.setCommentsWithDiscussions();
+
+      unsub = temp.updateLastDiscussionView;
+      updateLastDiscussionView = temp.updateLastDiscussionView;
     })
-    
-
-
-
 
     
     
-
-
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
-        unsub.value();
+        unsub();
+        updateLastDiscussionView();
       });
     });
 

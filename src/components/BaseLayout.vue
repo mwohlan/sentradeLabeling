@@ -487,7 +487,7 @@ export default {
 
     const isMobile = ref(false);
 
-    const sentimentCount = ref(null);
+    const stats = ref(null);
 
     onMounted(() => {
 
@@ -496,7 +496,7 @@ export default {
       if (store.users.length == 0) {
         store.setUsers();
       }
-      sentimentCount.value = store.setSentimentCount();
+      stats.value = store.setStats();
       if (
         /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(
           navigator.userAgent
@@ -516,7 +516,7 @@ export default {
         navItem.current = route.name == navItem.to.name ? true : false;
       });
       onInvalidate(() => {
-        sentimentCount.value();
+        stats.value();
       });
     });
 
@@ -530,7 +530,6 @@ export default {
       posts: computed(() => props.comments),
       current_user: computed(() => store.current_user),
       stats: computed(() => store.stats),
-      allCommentsRoute: computed(() => route.name == "all comments"),
       addRandomComment,
       currentRouteName,
       testMode,

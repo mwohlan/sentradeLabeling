@@ -1,6 +1,5 @@
 
 <template>
- 
   <base-layout @scrollReload="scrollReload()" :comments="comments" />
 </template>
 
@@ -18,10 +17,16 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-   let { unsub, executeScrollQuery } = store.setAllComments(0);
+    let unsub;
+
+    onMounted(() => {
+      let temp = store.setAllComments(0);
+
+      unsub = temp.unsub;
+    });
 
     const scrollReload = async () => {
-      unsub()
+      unsub();
       unsub = store.setAllComments(5).unsub;
     };
 

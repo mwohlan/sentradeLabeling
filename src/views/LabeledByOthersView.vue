@@ -18,7 +18,13 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-    let {unsub, executeScrollQuery} = store.setCommentsWithSentiment(0);
+    let unsub;
+
+    onMounted(() => {
+      let temp = store.setCommentsWithSentiment(0);
+
+      unsub = temp.unsub;
+    });
     
     
 

@@ -1,11 +1,11 @@
 <template>
-  <Disclosure :defaultOpen="defaultOpen" as="li" >
+  <Disclosure :defaultOpen="defaultOpen" as="li">
     <div>
       <h2 class="text-xs font-semibold text-gray-800">
         {{ comment.submissionTitle }}
       </h2>
     </div>
-    <div class="mt-3 text-sm text-gray-800">{{ comment.body }}</div>
+    <div class="mt-3 text-sm text-gray-800">{{ comment.body }} </div>
     <div class="mt-3 gap-y-4 flex flex-wrap gap-x-2 justify-between">
       <div class="flex flex-wrap gap-x-2">
         <div
@@ -123,7 +123,6 @@
                 right-0
                 w-32
                 mt-2
-               
                 bg-white
                 rounded-md
                 shadow-lg
@@ -152,9 +151,7 @@
                       active ? ' text-gray-800 bg-gray-100' : 'text-gray-600',
                       'group flex  items-center w-full px-2 py-2 font-medium',
                     ]"
-
                     @click="openWhatsApp()"
-                    
                   >
                     <ShareIcon
                       :active="active"
@@ -206,16 +203,21 @@
               v-for="discussion in comment.discussions"
               :key="discussion.created"
               class="flex"
+             
             >
               <div class="flex-1 space-x-3">
                 <div>
-                  <div class="text-xs">
+                  <div class="text-xs flex justify-between">
                     <a href="#" class="font-medium text-gray-900 capitalize">{{
                       discussion.user
                     }}</a>
+
+                    <div v-if="discussion.created > lastDiscussionView && discussion.user != current_user" class="bg-green-600 text-white px-2 py-0.5 rounded-2xl">New</div>
                   </div>
                   <div class="mt-1 text-sm text-gray-700 flex flex-wrap">
-                    <p class="whitespace-pre-line">{{ discussion.body }}</p>
+                    <p class="whitespace-pre-line">
+                      {{ discussion.body }} {{ discussion.newPost }}
+                    </p>
                   </div>
                   <div class="flex flex-wrap justify-between">
                     <div class="mt-2 text-xs space-x-2">
@@ -330,7 +332,7 @@
 <script>
 import { useMainStore } from "../store";
 
-import { useClipboard} from "@vueuse/core";
+import { useClipboard } from "@vueuse/core";
 
 import {
   Disclosure,
@@ -352,7 +354,6 @@ import {
   ShareIcon,
   LinkIcon,
   TrashIcon,
- 
 } from "@heroicons/vue/outline";
 import { ChatIcon } from "@heroicons/vue/outline";
 import { ref } from "@vue/reactivity";
@@ -392,9 +393,11 @@ export default {
     };
     const store = useMainStore();
 
-    const copyLink = ref("https://peaceful-murdock-181b26.netlify.app/link/"+props.comment.id);
+    const copyLink = ref(
+      "https://peaceful-murdock-181b26.netlify.app/link/" + props.comment.id
+    );
 
-    const { copy} = useClipboard();
+    const { copy } = useClipboard();
 
     const userSet = computed(
       () => new Set(store.users.map((user) => user.name))
@@ -405,9 +408,13 @@ export default {
 
     const userDiscussion = ref("");
 
-    const openWhatsApp = ()=>{
-      window.open('https://api.whatsapp.com/send?text=https://peaceful-murdock-181b26.netlify.app/link/' +props.comment.id,"_blank");
-    }
+    const openWhatsApp = () => {
+      window.open(
+        "https://api.whatsapp.com/send?text=https://peaceful-murdock-181b26.netlify.app/link/" +
+          props.comment.id,
+        "_blank"
+      );
+    };
 
     const addSentiment = (comment, sentiment) => {
       isLoading.value = true;
@@ -423,6 +430,8 @@ export default {
       openCommentSection.value = false;
       userDiscussion.value = "";
     };
+
+  
 
     const removeUserDiscussion = (comment, timestamp) => {
       store.removeUserDiscussion(comment, timestamp);
@@ -441,7 +450,9 @@ export default {
       openCommentSection,
       copy,
       copyLink,
+      lastDiscussionView: computed(() => store.stats.lastDiscussionView),
       openWhatsApp,
+      decreaseUnreadDiscussion: () => store.decreaseUnreadDiscussion(),
       defaultOpen: computed(
         () => props.comment.discussions && props.comment.discussions.length > 0
       ),

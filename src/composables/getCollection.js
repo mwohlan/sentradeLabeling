@@ -52,8 +52,12 @@ const getCollection = (watchQuery, storeReference) => {
     // }
 
     function snapShotHandler(snap) {
-        if (!snap.metadata.hasPendingWrites) {
 
+
+        if (!snap.metadata.hasPendingWrites) {
+            snap.forEach((doc) => {
+                console.log(doc.data())
+            })
 
             if (storeReference === store.linkComment) {
                 storeReference.splice(0, 1, { ...snap.data(), id: snap.id })
@@ -69,7 +73,10 @@ const getCollection = (watchQuery, storeReference) => {
 
                         let insertIndex = _sortedIndexBy(storeReference, change.doc.data(), (o) => o.created.seconds + o.created.nanoseconds / 1000000000)
                         let findIndex = storeReference.findIndex(comment => comment.id === change.doc.id)
+
                         if (change.type === "added") {
+
+
 
                             if (findIndex !== -1) {
                                 storeReference.splice(findIndex, 1, { ...change.doc.data(), id: change.doc.id });
@@ -93,6 +100,7 @@ const getCollection = (watchQuery, storeReference) => {
 
                 } else {
                     let tempData = []
+
 
                     snap.forEach((doc) => {
                         tempData.push({ ...doc.data(), id: doc.id });

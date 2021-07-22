@@ -16,11 +16,16 @@ export default {
   setup() {
     const sidebarOpen = ref(false);
     const store = useMainStore();
+    let unsub;
 
-    let { unsub, executeScrollQuery } = store.setCommentsWithoutSentiment(0);
+    onMounted(() => {
+      let temp = store.setCommentsWithoutSentiment(0);
+
+      unsub = temp.unsub;
+    });
 
     const scrollReload = async () => {
-      unsub()
+      unsub();
       unsub = store.setCommentsWithoutSentiment(5).unsub;
     };
 

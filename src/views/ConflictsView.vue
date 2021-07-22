@@ -18,7 +18,13 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-     let { unsub, executeScrollQuery } = store.setCommentsWithConflicts(0);
+     let unsub;
+
+    onMounted(() => {
+      let temp = store.setCommentsWithConflicts(0);
+
+      unsub = temp.unsub;
+    });
 
     const scrollReload = async () => {
       unsub()
