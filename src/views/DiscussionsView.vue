@@ -22,10 +22,7 @@ export default {
 
 
     onMounted(()=>{
-      let temp = store.setCommentsWithDiscussions();
-
-      unsub = temp.updateLastDiscussionView;
-      updateLastDiscussionView = temp.updateLastDiscussionView;
+      ({ unsub,updateLastDiscussionView} = store.setCommentsWithDiscussions(0));
     })
 
     

@@ -21,9 +21,7 @@ export default {
     let unsub;
 
     onMounted(() => {
-      let temp = store.setCommentsWithSentiment(0);
-
-      unsub = temp.unsub;
+      ({ unsub} = store.setCommentsWithSentiment(0));
     });
     
     

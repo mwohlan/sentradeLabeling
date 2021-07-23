@@ -21,9 +21,7 @@ export default {
      let unsub;
 
     onMounted(() => {
-      let temp = store.setCommentsWithConflicts(0);
-
-      unsub = temp.unsub;
+      ({ unsub} = store.setCommentsWithConflicts(0));
     });
 
     const scrollReload = async () => {

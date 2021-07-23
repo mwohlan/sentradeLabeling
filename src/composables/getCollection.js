@@ -55,10 +55,7 @@ const getCollection = (watchQuery, storeReference) => {
 
 
         if (!snap.metadata.hasPendingWrites) {
-            snap.forEach((doc) => {
-                console.log(doc.data())
-            })
-
+          
             if (storeReference === store.linkComment) {
                 storeReference.splice(0, 1, { ...snap.data(), id: snap.id })
             } else {

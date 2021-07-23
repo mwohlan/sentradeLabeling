@@ -19,9 +19,7 @@ export default {
     let unsub;
 
     onMounted(() => {
-      let temp = store.setCommentsWithoutSentiment(0);
-
-      unsub = temp.unsub;
+      ({ unsub} = store.setCommentsWithoutSentiment(0));
     });
 
     const scrollReload = async () => {
