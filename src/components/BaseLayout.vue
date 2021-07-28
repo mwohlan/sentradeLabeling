@@ -378,7 +378,7 @@ import LabelCard from "../components/LabelCard.vue";
 import { useMainStore } from "../store";
 import { useRoute } from "vue-router";
 
-import { onMounted, ref, watchEffect, computed, onUnmounted } from "vue";
+import { onMounted, ref, watchEffect, computed } from "vue";
 import {
   Dialog,
   DialogOverlay,

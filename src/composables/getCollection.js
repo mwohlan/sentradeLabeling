@@ -1,8 +1,4 @@
-import { ref, watchEffect } from 'vue'
-import { projectFirestore } from '../firebase/config'
 import { useMainStore } from '../store'
-
-import _sortedIndexBy from 'lodash/sortedIndexBy';
 
 
 const getCollection = (watchQuery, storeReference) => {
