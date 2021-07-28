@@ -347,8 +347,8 @@
               class="relative overflow-hidden"
             >
               <LabelCard
-                v-for="(comment, index) in comments"
-                :key="comment.id"
+                v-for="[key,comment] of comments"
+                :key="key"
                 :comment="comment"
                 :isMobile="isMobile"
                 class="
@@ -457,7 +457,7 @@ export default {
     DocumentDuplicateIcon,
   },
   props: {
-    comments: Array,
+    comments: Map,
   },
   emits: ["scrollReload"],
   setup(props, { emit }) {

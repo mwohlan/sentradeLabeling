@@ -20,9 +20,12 @@ firebase.initializeApp(firebaseConfig);
 
 const projectFirestore = firebase.firestore();
 
+// projectFirestore.enablePersistence();
+
 
 const timestamp = firebase.firestore.FieldValue.serverTimestamp
 const increment = firebase.firestore.FieldValue.increment
+const documentId = firebase.firestore.FieldPath.documentId
 
 
-export { projectFirestore,timestamp,increment}
+export { projectFirestore,timestamp,increment,documentId}

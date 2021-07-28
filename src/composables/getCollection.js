@@ -9,105 +9,92 @@ const getCollection = (watchQuery, storeReference) => {
 
     const store = useMainStore();
 
+
     // function snapShotHandler(snap) {
+
+
     //     if (!snap.metadata.hasPendingWrites) {
-
-
-    //         console.log("hello")
 
     //         if (storeReference === store.linkComment) {
     //             storeReference.splice(0, 1, { ...snap.data(), id: snap.id })
     //         } else {
 
-    //             snap.docChanges().forEach((change) => {
+    //             let docChanges = snap.docChanges();
 
-    //                 let insertIndex = _sortedIndexBy(storeReference, change.doc.data(), (o) => o.created.seconds + o.created.nanoseconds / 1000000000)
-    //                 let findIndex = storeReference.findIndex(comment => comment.id === change.doc.id)
-    //                 // console.log(change.type + " " + insertIndex + " " + findIndex)
-    //                 if (change.type === "added") {
 
-    //                     if (findIndex !== -1) {
+    //             if (docChanges.length < 5) {
+
+
+    //                 docChanges.forEach((change) => {
+
+
+
+    //                     let insertIndex = _sortedIndexBy(storeReference, change.doc.data(), (o) => o.created.seconds + o.created.nanoseconds / 1000000000)
+    //                     let findIndex = storeReference.findIndex(comment => comment.id === change.doc.id)
+
+    //                     if (change.type === "added") {
+
+
+
+    //                         if (findIndex !== -1) {
+    //                             storeReference.splice(findIndex, 1, { ...change.doc.data(), id: change.doc.id });
+    //                         } else {
+    //                             storeReference.splice(insertIndex, 0, { ...change.doc.data(), id: change.doc.id });
+    //                         }
+
+
+
+
+    //                     }
+    //                     if (change.type === "modified") {
     //                         storeReference.splice(findIndex, 1, { ...change.doc.data(), id: change.doc.id });
-    //                     } else {
-    //                         storeReference.splice(insertIndex, 0, { ...change.doc.data(), id: change.doc.id });
+    //                     }
+    //                     if (change.type === "removed") {
+    //                         storeReference.splice(findIndex, 1);
     //                     }
 
 
+    //                 });
+
+    //             } else {
+    //                 let tempData = []
 
 
-    //                 }
-    //                 if (change.type === "modified") {
-    //                     storeReference.splice(findIndex, 1, { ...change.doc.data(), id: change.doc.id });
-    //                 }
-    //                 if (change.type === "removed") {
-    //                     storeReference.splice(findIndex, 1);
-    //                 }
-
-
-    //             });
+    //                 snap.forEach((doc) => {
+    //                     tempData.push({ ...doc.data(), id: doc.id });
+    //                 })
+    //                 storeReference.splice(0, storeReference.length, ...tempData);
+    //             }
 
     //         }
+
+
 
     //     }
     // }
 
+
     function snapShotHandler(snap) {
 
-
         if (!snap.metadata.hasPendingWrites) {
-          
-            if (storeReference === store.linkComment) {
-                storeReference.splice(0, 1, { ...snap.data(), id: snap.id })
-            } else {
 
-                let docChanges = snap.docChanges();
+            snap.docChanges().forEach((change) => {
 
+                let { newIndex, oldIndex, doc, type } = change;
+                if (type === "added") {
+                    
+                    storeReference.set(doc.id,{ ...doc.data(), id: doc.id });
 
-                if (docChanges.length < 5) {
-
-
-                    docChanges.forEach((change) => {
-
-                        let insertIndex = _sortedIndexBy(storeReference, change.doc.data(), (o) => o.created.seconds + o.created.nanoseconds / 1000000000)
-                        let findIndex = storeReference.findIndex(comment => comment.id === change.doc.id)
-
-                        if (change.type === "added") {
-
-
-
-                            if (findIndex !== -1) {
-                                storeReference.splice(findIndex, 1, { ...change.doc.data(), id: change.doc.id });
-                            } else {
-                                storeReference.splice(insertIndex, 0, { ...change.doc.data(), id: change.doc.id });
-                            }
-
-
-
-
-                        }
-                        if (change.type === "modified") {
-                            storeReference.splice(findIndex, 1, { ...change.doc.data(), id: change.doc.id });
-                        }
-                        if (change.type === "removed") {
-                            storeReference.splice(findIndex, 1);
-                        }
-
-
-                    });
-
-                } else {
-                    let tempData = []
-
-
-                    snap.forEach((doc) => {
-                        tempData.push({ ...doc.data(), id: doc.id });
-                    })
-                    storeReference.splice(0, storeReference.length, ...tempData);
+                }
+                else if (type === "modified") {
+                    storeReference.set(doc.id, { ...doc.data(), id: doc.id });
+                }
+                else if (type === "removed") {
+                     storeReference.delete(doc.id);
                 }
 
-            }
 
-
+            });
 
         }
     }

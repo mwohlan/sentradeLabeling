@@ -5,7 +5,7 @@
         {{ comment.submissionTitle }}
       </h2>
     </div>
-    <div class="mt-3 text-sm text-gray-800">{{ comment.body }} </div>
+    <div class="mt-3 text-sm text-gray-800">{{ comment.body }}</div>
     <div class="mt-3 gap-y-4 flex flex-wrap gap-x-2 justify-between">
       <div class="flex flex-wrap gap-x-2">
         <div
@@ -452,7 +452,6 @@ export default {
       copyLink,
       lastDiscussionView: computed(() => store.stats.lastDiscussionView),
       openWhatsApp,
-      decreaseUnreadDiscussion: () => store.decreaseUnreadDiscussion(),
       defaultOpen: computed(
         () => props.comment.discussions && props.comment.discussions.length > 0
       ),

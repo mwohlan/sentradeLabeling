@@ -1,26 +1,26 @@
 import { defineStore } from 'pinia'
-import { projectFirestore, timestamp, increment } from "../firebase/config";
+import { projectFirestore, timestamp, increment, documentId } from "../firebase/config";
 import getCollection from '../composables/getCollection'
 
 export const useMainStore = defineStore({
   id: 'main',
   state: () => ({
-    commentsWithoutSentiment: [],
-    commentsWithSentiment: [],
-    allComments: [],
-    commentsWithDiscussions: [],
-    commentsWithConflicts: [],
+    commentsWithoutSentiment: new Map(),
+    commentsWithSentiment: new Map(),
+    allComments: new Map(),
+    commentsWithDiscussions: new Map(),
+    commentsWithConflicts: new Map(),
     current_user: null,
     stats: {},
     users: [],
-    linkComment: []
+    linkComment: new Map(),
   }),
   getters: {
 
     sortedCommentsWithDiscussions() {
-      return this.commentsWithDiscussions.sort(function (a, b) {
+      return new Map([...this.commentsWithDiscussions.entries()].sort(function (a, b) {
         return b.discussions[b.discussions.length - 1].created - a.discussions[a.discussions.length - 1].created
-      });
+      }));
 
     }
 
@@ -35,38 +35,38 @@ export const useMainStore = defineStore({
     },
     setCommentsWithoutSentiment(reloadAmount) {
 
-      const watchQuery = projectFirestore.collection("comments").where("labeled", "==", false).orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.length + reloadAmount));
+      const watchQuery = projectFirestore.collection("comments").where("labeled", "==", false).orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.size+ reloadAmount));
 
-      const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithoutSentiment)
+      const { unsub } = getCollection(watchQuery, this.commentsWithoutSentiment)
 
-      return { unsub, executeScrollQuery: () => { executeScrollQuery(projectFirestore.collection("comments").where("labeled", "==", false).where("created", ">", this.commentsWithoutSentiment[this.commentsWithoutSentiment.length - 1].created).orderBy("created").limit(5)) } }
+      return { unsub }
 
     },
 
     setCommentsWithSentiment(reloadAmount) {
 
-      const watchQuery = projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithSentiment.length + reloadAmount))
+      const watchQuery = projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.size + reloadAmount));
 
-      const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithSentiment)
+      const { unsub } = getCollection(watchQuery, this.commentsWithSentiment)
 
-      return { unsub, executeScrollQuery: () => { executeScrollQuery(projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).where("created", ">", this.commentsWithSentiment[this.commentsWithSentiment.length - 1].created).orderBy("created").limit(5)) } }
+      return { unsub }
 
     },
     setAllComments(reloadAmount) {
 
-      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(8, this.allComments.length + reloadAmount))
+      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.size + reloadAmount));
 
-      const { unsub, executeScrollQuery } = getCollection(watchQuery, this.allComments)
+      const { unsub } = getCollection(watchQuery, this.allComments)
 
-      return { unsub, executeScrollQuery: () => { executeScrollQuery(projectFirestore.collection("comments").where("created", ">", this.allComments[this.allComments.length - 1].created).orderBy("created").limit(5)) } }
+      return { unsub }
 
     },
     setCommentsWithConflicts(reloadAmount) {
-      const watchQuery = projectFirestore.collection("comments").where("conflict", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithConflicts.length + reloadAmount))
+      const watchQuery = projectFirestore.collection("comments").where("conflict", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.size + reloadAmount));
 
-      const { unsub, executeScrollQuery } = getCollection(watchQuery, this.commentsWithConflicts)
+      const { unsub } = getCollection(watchQuery, this.commentsWithConflicts)
 
-      return { unsub, executeScrollQuery: () => { executeScrollQuery(projectFirestore.collection("comments").where("conflict", "==", true).where("created", ">", this.commentsWithConflicts[this.commentsWithConflicts.length - 1].created).orderBy("created").limit(5)) } }
+      return { unsub }
 
 
     },
@@ -93,7 +93,7 @@ export const useMainStore = defineStore({
     },
     setLinkComment(id) {
 
-      const watchQuery = projectFirestore.collection("comments").doc(id)
+      const watchQuery = projectFirestore.collection("comments").where(documentId(), "==", id)
 
 
       const { unsub } = getCollection(watchQuery, this.linkComment)
@@ -127,10 +127,10 @@ export const useMainStore = defineStore({
 
       })
 
-     
+
     },
 
-  
+
 
 
     setStats() {
@@ -148,7 +148,7 @@ export const useMainStore = defineStore({
 
       })
 
-     
+
 
       return () => { setSentimentCount(); unlabeledComments(); lastDiscussionView(); }
 
@@ -196,7 +196,7 @@ export const useMainStore = defineStore({
       comment.discussions = comment.discussions.filter((discussion) => discussion.created != discussionTimestamp);
       projectFirestore.collection("comments").doc(comment.id).update({
         discussions: comment.discussions,
-         updated: timestamp()
+        updated: timestamp()
       })
 
     },
