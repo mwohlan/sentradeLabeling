@@ -72,10 +72,13 @@ const getCollection = (watchQuery, storeReference) => {
 
     function snapShotHandler(snap) {
 
+        
+       
+     
         if (!snap.metadata.hasPendingWrites) {
-
+            
+          
             snap.docChanges().forEach((change) => {
-
                 let { newIndex, oldIndex, doc, type } = change;
                 if (type === "added") {
                     
@@ -91,6 +94,10 @@ const getCollection = (watchQuery, storeReference) => {
 
 
             });
+
+            store.loading = false;
+          
+        
 
         }
     }

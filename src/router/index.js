@@ -1,28 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import UnlabeledView from "../views/UnlabeledView.vue"
-import LabeledByOthersView from "../views/LabeledByOthersView.vue"
-import LoginPage from '../views/LoginPage.vue'
-import AllCommentsView from '../views/AllCommentsView.vue'
-import DiscussionsView from '../views/DiscussionsView.vue'
-import ConflictsView from "../views/ConflictsView.vue"
-import LinkView from "../views/LinkView.vue"
 import { useMainStore }from '../store'
 
 
 const routes = [
   {
     path: '/',
-    component: UnlabeledView,
-    name:'unlabeled'
-    // example of route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
+    name:'unlabeled',
+    component: () => import('../views/UnlabeledView.vue'),
   },
   {
     path: '/labeledbyothers',
-    component: LabeledByOthersView,
+    component: () => import('../views/LabeledByOthersView.vue'),
     name: 'labeled by others'
     // example of route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
@@ -31,7 +20,7 @@ const routes = [
   },
   {
     path: '/allComments',
-    component: AllCommentsView,
+    component: () => import('../views/AllCommentsView.vue'),
     name: 'all comments'
     // example of route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
@@ -40,7 +29,7 @@ const routes = [
   },
   {
     path: '/discussions',
-    component: DiscussionsView,
+    component: () => import('../views/DiscussionsView.vue'),
     name: 'discussions'
     // example of route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
@@ -49,7 +38,7 @@ const routes = [
   },
   {
     path: '/conflicts',
-    component: ConflictsView,
+    component: () => import('../views/ConflictsView.vue'),
     name: 'conflicts'
     // example of route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
@@ -58,7 +47,7 @@ const routes = [
   },
   {
     path: '/link/:id',
-    component: LinkView,
+    component: () => import('../views/LinkView.vue'),
     name: 'link',
     props: true
 
@@ -69,7 +58,7 @@ const routes = [
   },
   {
     path: '/login',
-    component: LoginPage,
+    component: () => import('../views/LoginPage.vue'),
     name: 'Login'
   }
 ]

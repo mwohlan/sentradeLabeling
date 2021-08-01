@@ -8,7 +8,7 @@
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
-import { onMounted, ref, computed, watchEffect } from "vue";
+import { onMounted, ref, onBeforeMount, computed, watchEffect } from "vue";
 
 export default {
   components: {

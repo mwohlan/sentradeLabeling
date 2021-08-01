@@ -14,15 +14,16 @@ export const useMainStore = defineStore({
     stats: {},
     users: [],
     linkComment: new Map(),
+    loading: false,
   }),
   getters: {
 
     sortedCommentsWithDiscussions() {
-      return new Map([...this.commentsWithDiscussions.entries()].sort(function (a, b) {
-        return b.discussions[b.discussions.length - 1].created - a.discussions[a.discussions.length - 1].created
-      }));
-
+      let sortedArrayWithDiscussions = [...this.commentsWithDiscussions.values()].sort((a, b) => b.latestDiscussion - a.latestDiscussion
+      ).map(obj => [obj.id, obj]);
+      return new Map(sortedArrayWithDiscussions);
     }
+
 
   }
   ,
@@ -45,7 +46,7 @@ export const useMainStore = defineStore({
 
     setCommentsWithSentiment(reloadAmount) {
 
-      const watchQuery = projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.size + reloadAmount));
+      const watchQuery = projectFirestore.collection("comments").where(this.current_user.name, "==", -2).where("labeled", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithSentiment.size + reloadAmount));
 
       const { unsub } = getCollection(watchQuery, this.commentsWithSentiment)
 
@@ -53,8 +54,11 @@ export const useMainStore = defineStore({
 
     },
     setAllComments(reloadAmount) {
+   
 
-      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.size + reloadAmount));
+      const watchQuery = projectFirestore.collection("comments").orderBy("created").limit(Math.max(8, this.allComments.size + reloadAmount));
+
+      
 
       const { unsub } = getCollection(watchQuery, this.allComments)
 
@@ -62,7 +66,7 @@ export const useMainStore = defineStore({
 
     },
     setCommentsWithConflicts(reloadAmount) {
-      const watchQuery = projectFirestore.collection("comments").where("conflict", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithoutSentiment.size + reloadAmount));
+      const watchQuery = projectFirestore.collection("comments").where("conflict", "==", true).orderBy("created").limit(Math.max(8, this.commentsWithConflicts.size + reloadAmount));
 
       const { unsub } = getCollection(watchQuery, this.commentsWithConflicts)
 
@@ -73,7 +77,7 @@ export const useMainStore = defineStore({
 
     setCommentsWithDiscussions() {
 
-      const watchQuery = projectFirestore.collection("comments").where("discussions", "!=", []).orderBy("discussions").orderBy("created")
+      const watchQuery = projectFirestore.collection("comments").where("discussionResolved", "==", false).where("latestDiscussion", ">", 0)
 
 
       const { unsub } = getCollection(watchQuery, this.commentsWithDiscussions)
@@ -104,31 +108,7 @@ export const useMainStore = defineStore({
 
 
     },
-    addUserDiscussion(comment, body) {
-
-      const now = Date.now();
-
-      const userComment = {
-        user: this.current_user.name,
-        body: body,
-        created: now
-      }
-
-      if (comment.discussions) {
-        comment.discussions.push(userComment)
-      } else {
-        comment.discussions = [userComment]
-      }
-
-
-      projectFirestore.collection("comments").doc(comment.id).update({
-        discussions: comment.discussions,
-        updated: timestamp()
-
-      })
-
-
-    },
+    
 
 
 
@@ -192,12 +172,50 @@ export const useMainStore = defineStore({
 
     },
 
+    addUserDiscussion(comment, body) {
+
+      const now = Date.now();
+
+      const userComment = {
+        user: this.current_user.name,
+        body: body,
+        created: now
+      }
+
+      if (comment.discussions) {
+        comment.discussions.push(userComment)
+      } else {
+        comment.discussions = [userComment]
+      }
+
+
+      projectFirestore.collection("comments").doc(comment.id).update({
+        discussions: comment.discussions,
+        updated: timestamp(),
+        latestDiscussion: userComment.created,
+        discussionResolved: false
+
+      })
+
+
+    },
+
     removeUserDiscussion(comment, discussionTimestamp) {
       comment.discussions = comment.discussions.filter((discussion) => discussion.created != discussionTimestamp);
       projectFirestore.collection("comments").doc(comment.id).update({
         discussions: comment.discussions,
-        updated: timestamp()
+        updated: timestamp(),
+        latestDiscussion: comment.discussions.length > 0 ? comment.discussions[comment.discussions.length-1].created : 0
       })
+
+    },
+    changeDiscussionStatus(comment) {
+      let newDiscussionStatus = comment.discussionResolved ? false : true;
+      projectFirestore.collection("comments").doc(comment.id).update({
+        discussionResolved: newDiscussionStatus,
+        updated: timestamp(),
+      })
+
 
     },
     addRandomComment() {
