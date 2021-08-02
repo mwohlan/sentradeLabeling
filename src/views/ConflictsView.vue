@@ -1,7 +1,6 @@
 
-<template lang="pug">
-base-layout(@scrollReload="scrollReload()" :comments="comments")
-</template>
+<template>
+<base-layout @scrollReload="scrollReload()" :comments="comments"></base-layout></template>
 
 <script>
 import BaseLayout from "../components/BaseLayout.vue";
