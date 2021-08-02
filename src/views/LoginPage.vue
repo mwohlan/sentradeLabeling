@@ -15,10 +15,10 @@
       <div class="flex-shrink-0 flex items-center gap-x-2 px-4">
         <img
           class="h-8 w-auto"
-          src="https://tailwindui.com/img/logos/workflow-mark-blue-600.svg"
+          src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg"
           alt="Easywire logo"
         />
-        <div class="text-3xl text-cyan-500 font-bold">Sentrade</div>
+        <div class="text-3xl text-gray-600 font-bold">Sentrade</div>
       </div>
     </div>
 
@@ -47,10 +47,10 @@
                 text-sm
                 font-medium
                 text-white
-                bg-cyan-500
-                hover:bg-cyan-600
+                bg-indigo-400
+                hover:bg-indigo-500
                 focus:outline-none
-                focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500
+                focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                 disabled:opacity-50
                 disabled:cursor-not-allowed
               "

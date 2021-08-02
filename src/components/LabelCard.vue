@@ -41,17 +41,17 @@
       </div>
     </div>
     <div class="mt-6 flex justify-between md:justify-start sm:space-x-20">
-      <div class="flex sm:space-x-10 space-x-7 items-center">
-        <button @click="addSentiment(comment, 1)" class="text-green-500 hover:text-green-600">
-          <ThumbUpIcon class="h-6 w-6" aria-hidden="true" />
+      <div class="flex sm:space-x-10 space-x-7 items-center text-gray-400">
+        <button @click="addSentiment(comment, 1)" >
+          <ThumbUpIcon :class="[userSentiment == 1 ? 'text-green-400 hover:text-green-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
         </button>
 
-        <button @click="addSentiment(comment, 0)" class="text-yellow-500 hover:text-yellow-600">
-          <SwitchVerticalIcon class="h-6 w-6" aria-hidden="true" />
+        <button @click="addSentiment(comment, 0)" >
+          <SwitchVerticalIcon :class="[userSentiment == 0 ? 'text-yellow-400 hover:text-yellow-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
         </button>
 
-        <button class="text-red-500 pt-1 hover:text-red-600">
-          <ThumbDownIcon @click="addSentiment(comment, -1)" class="h-6 w-6" aria-hidden="true" />
+        <button >
+          <ThumbDownIcon @click="addSentiment(comment, -1)" :class="[userSentiment == -1 ? 'text-red-400 hover:text-red-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
       <div class="text-sm flex space-x-7">
@@ -203,16 +203,10 @@
               v-if="comment.discussions && comment.discussions.length > 0"
               @click="openCommentSection = !openCommentSection"
             >
-              <PlusCircleIcon
-                v-if="!openCommentSection"
-                class="h-5 w-5 text-green-500 hover:text-green-600"
-                aria-hidden="true"
-              />
-              <MinusCircleIcon
-                v-if="openCommentSection"
-                class="h-5 w-5 text-red-500 hover:text-red-600"
-                aria-hidden="true"
-              />
+
+
+              <ChevronDownIcon class="h-8 w-8  transition ease-out duration-300 transform " :class="[openCommentSection ? 'rotate-180 text-red-400 hover:text-red-600':'rotate-0 text-green-400 hover:text-green-600']"/>
+ 
             </button>
           </div>
 
@@ -242,14 +236,14 @@
                         ref="textInput"
                         name="comment"
                         rows="2"
-                        class="shadow-sm block w-full focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm border border-gray-300 rounded-md"
+                        class="shadow-sm block w-full focus:ring-gray-400 focus:border-gray-400 sm:text-sm border border-gray-300 rounded-md"
                         placeholder="Add to discussion"
                       />
                     </div>
                     <div class="mt-3 flex items-center justify-end">
                       <button type="submit">
                         <ReplyIcon
-                          class="h-6 w-6 text-cyan-500 hover:text-cyan-600"
+                          class="h-6 w-6 text-gray-400 hover:text-gray-500"
                           aria-hidden="true"
                         />
                       </button>
@@ -280,7 +274,7 @@ import {
   MenuButton,
 } from "@headlessui/vue";
 import { UseTimeAgo } from "@vueuse/components";
-import { ThumbUpIcon, ThumbDownIcon } from "@heroicons/vue/solid";
+import {  } from "@heroicons/vue/solid";
 import {
   SwitchVerticalIcon,
   MinusCircleIcon,
@@ -290,6 +284,8 @@ import {
   ShareIcon,
   LinkIcon,
   TrashIcon,
+  ChevronDownIcon,
+  ThumbUpIcon, ThumbDownIcon
 } from "@heroicons/vue/outline";
 import { ChatIcon } from "@heroicons/vue/outline";
 import { ref } from "@vue/reactivity";
@@ -361,6 +357,8 @@ const removeUserDiscussion = (comment, timestamp) => {
 };
 
 const current_user = computed(() => store.current_user.name);
+
+const userSentiment = computed(() => props.comment[current_user.value]);
 
 const lastDiscussionView = computed(() => store.stats.lastDiscussionView)
 

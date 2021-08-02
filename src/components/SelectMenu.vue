@@ -18,8 +18,8 @@
           text-left
           cursor-default
           focus:outline-none
-          focus:ring-1 focus:ring-cyan-500
-          focus:border-cyan-500
+          focus:ring-1 focus:ring-indigo-400
+          focus:border-indigo-400
           sm:text-sm
         "
       >
@@ -72,7 +72,7 @@
           >
             <li
               :class="[
-                active ? 'text-white bg-cyan-600' : 'text-gray-900',
+                active ? 'text-white bg-indigo-400' : 'text-gray-800',
                 'cursor-default select-none relative py-2 pl-3 pr-9',
               ]"
             >
@@ -89,7 +89,7 @@
               <span
                 v-if="selected"
                 :class="[
-                  active ? 'text-white' : 'text-cyan-600',
+                  active ? 'text-white' : 'text-indigo-500',
                   'absolute inset-y-0 right-0 flex items-center pr-4',
                 ]"
               >

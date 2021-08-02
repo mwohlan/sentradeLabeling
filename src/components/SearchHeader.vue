@@ -1,7 +1,7 @@
 <template>
-  <div class="sticky top-0 z-10">
+  <div class=" sticky top-0 z-10">
     <div
-      class="flex h-14 bg-white border-b border-gray-200 lg:border-none"
+      class="md:mx-4 md:shadow flex h-14 bg-white border-b border-gray-200 lg:border-none"
     >
       <button
         class="px-4 border-r border-gray-200 text-gray-400 lg:hidden"

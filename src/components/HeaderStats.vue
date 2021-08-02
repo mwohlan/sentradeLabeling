@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white shadow">
+  <div class="md:mx-4 bg-white shadow">
     <div class="lg:max-w-7xl lg:mx-auto">
       <div class="lg:border-t lg:border-gray-200">
         <div class="flex-1 min-w-0">
