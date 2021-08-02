@@ -1,5 +1,5 @@
 <template>
-  <Disclosure :defaultOpen="defaultOpen" as="li">
+  <Disclosure :defaultOpen="activeDiscussion" as="li">
     <div>
       <h2 class="text-xs font-semibold text-gray-800">{{ comment.submissionTitle }}</h2>
     </div>
@@ -58,9 +58,9 @@
         <DisclosureButton
           :class="[
             comment.discussionResolved ? 'text-green-500 hover:text-green-600' :
-            comment.discussions && comment.discussions.length > 0
-              ? 'text-yellow-500 hover:text-yellow-600'
-              : 'text-gray-400 hover:text-gray-500',
+              comment.discussions && comment.discussions.length > 0
+                ? 'text-yellow-500 hover:text-yellow-600'
+                : 'text-gray-400 hover:text-gray-500',
           ]"
         >
           <ChatIcon class="h-6 w-6" aria-hidden="true" />
@@ -136,14 +136,21 @@
     >
       <DisclosurePanel #default="{ close }">
         <div class="bg-gray-100 flex flex-col mt-3 shadow rounded sm:rounded-lg overflow-hidden">
-          <div @click="changeDiscussionStatus" v-if="comment.discussionResolved"
+          <div
+            @click="changeDiscussionStatus"
+            v-if="resolvedDiscussion"
             class="cursor-pointer justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-green-200 text-green-800"
           >Resolved</div>
-          <div @click="changeDiscussionStatus(); close();" v-else
+          <div
             class="cursor-pointer justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-yellow-200 text-yellow-800"
+            @click="changeDiscussionStatus(); close();"
+            v-else-if="activeDiscussion"
           >Active</div>
 
-          <ul v-if="comment.discussions && comment.discussions.length > 0" class="space-y-3 px-4 sm:px-6">
+          <ul
+            v-if="comment.discussions && comment.discussions.length > 0"
+            class="space-y-3 px-4 sm:px-6"
+          >
             <li v-for="discussion in comment.discussions" :key="discussion.created" class="flex">
               <div class="flex-1 space-x-3">
                 <div>
@@ -357,7 +364,9 @@ const current_user = computed(() => store.current_user.name);
 
 const lastDiscussionView = computed(() => store.stats.lastDiscussionView)
 
-const defaultOpen = computed(() => !props.comment.discussionResolved && props.comment.discussions && props.comment.discussions.length > 0)
+const activeDiscussion = computed(() => !props.comment.discussionResolved && props.comment.discussions && props.comment.discussions.length > 0)
+
+const resolvedDiscussion = computed(() => props.comment.discussionResolved && props.comment.discussions && props.comment.discussions.length > 0)
 
 
 </script>

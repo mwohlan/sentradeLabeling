@@ -5,19 +5,18 @@
       @closeSidebar="sidebarOpen = false"
       :sidebarOpen="sidebarOpen"
       :navigation="navigation"
-    />
-    <DesktopSidebar :navigation="navigation" />
+    ></MobileSidebar>
+    <DesktopSidebar :navigation="navigation"></DesktopSidebar>
     <div
+      class="flex-1 overflow-auto focus:outline-none"
       ref="scrollComponent"
       @scroll.passive="handleScroll"
-      class="flex-1 overflow-auto focus:outline-none"
     >
       <SearchHeader
+        class="mx-1 md:mx-0"
         @openSidebar="sidebarOpen = true"
         :currentRouteName="currentRouteName"
-        class="mx-1 md:mx-0"
-      />
-
+      ></SearchHeader>
       <transition-group
         class="pb-32 sm:pb-16 relative mt-8 max-w-6xl mx-auto"
         name="list"
@@ -25,13 +24,13 @@
         appear
       >
         <LabelCard
+          class="bg-white shadow-md sm:shadow-lg rounded p-3 sm:rounded-lg mb-5 mx-2"
           v-for="[key, comment] of comments"
           :key="key"
           v-if="!isLoading"
           :comment="comment"
           :isMobile="isMobile"
-          class="bg-white shadow-md sm:shadow-lg rounded p-3 sm:rounded-lg mb-5 mx-2"
-        />
+        ></LabelCard>
       </transition-group>
     </div>
   </div>
@@ -71,7 +70,7 @@ const isMobile = ref(false);
 
 const unsubStats = ref(null);
 
-const isLoading= computed(() => store.loading)
+const isLoading = computed(() => store.loading)
 
 onMounted(() => {
   if (store.users.length == 0) {

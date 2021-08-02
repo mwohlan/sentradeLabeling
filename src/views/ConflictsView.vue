@@ -1,7 +1,6 @@
 
-<template>
-
-  <base-layout @scrollReload="scrollReload()" :comments="comments" />
+<template lang="pug">
+base-layout(@scrollReload="scrollReload()" :comments="comments")
 </template>
 
 <script>
