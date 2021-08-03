@@ -1,77 +1,77 @@
 <template>
-  <Disclosure :defaultOpen="activeDiscussion" as="li">
+  <Disclosure class="bg-white shadow-md sm:shadow-lg  px-3 py-3  md:px-7   rounded-lg mb-5 lg:mb-8 mx-2" :defaultOpen="activeDiscussion" as="li">
     <div>
-      <h2 class="text-xs font-semibold text-gray-800">{{ comment.submissionTitle }}</h2>
+      <h2 class="text-xs font-medium text-gray-500">{{ comment.submissionTitle }}</h2>
     </div>
-    <div class="mt-3 text-sm text-gray-800">{{ comment.body }}</div>
-    <div class="mt-3 gap-y-4 flex flex-wrap gap-x-2 justify-between">
-      <div class="flex flex-wrap gap-x-2">
+    <div class="mt-4 lg:mt-6 text-gray-600 text-sm font-medium  leading-relaxed text-justify">{{ comment.body }}</div>
+    <div class="mt-4 gap-y-4 lg:mt-6 flex flex-wrap gap-x-2 justify-between">
+      <div class="flex flex-wrap items-center lg:gap-x-6 gap-x-4">
         <div
-          class="items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+          class=" px-2 py-0.5  rounded-full text-xs  bg-gray-200/60 text-gray-700"
         >{{ comment.subredditName }}</div>
         <div
-          class="items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+          class=" px-2 py-0.5  rounded-full text-xs "
           :class="{
             'bg-red-100': comment.score < -1,
             'bg-green-100': comment.score > 1,
             'bg-yellow-100': comment.score >= -1 && comment.score <= 1,
-            'text-red-800': comment.score < -1,
-            'text-green-800': comment.score > 1,
-            'text-yellow-800': comment.score >= -1 && comment.score <= 1,
+            'text-red-700': comment.score < -1,
+            'text-green-700': comment.score > 1,
+            'text-yellow-700': comment.score >= -1 && comment.score <= 1,
           }"
         >{{ comment.score }}</div>
       </div>
 
-      <div class="flex flex-wrap gap-x-2">
+      <div class="flex items-center flex-wrap lg:gap-x-6 gap-x-4">
         <template v-for="[key, value] of userMap" :key="key">
-          <div
-            class="items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+          <div v-if="comment[key] != -2"
+            class=" px-2 py-0.5 rounded-full text-xs "
             :class="{
               'bg-red-100': comment[key] == -1,
               'bg-green-100': comment[key] == 1,
-              'bg-gray-100': comment[key] == -2,
+              'bg-gray-200/60': comment[key] == -2,
               'bg-yellow-100': comment[key] == 0,
-              'text-red-800': comment[key] == -1,
-              'text-green-800': comment[key] == 1,
-              'text-yellow-800': comment[key] == 0,
-              'text-gray-800': comment[key] == -2,
+              'text-red-700': comment[key] == -1,
+              'text-green-700': comment[key] == 1,
+              'text-yellow-700': comment[key] == 0,
+              'text-gray-700': comment[key] == -2,
             }"
           >{{ key }}</div>
         </template>
       </div>
     </div>
-    <div class="mt-6 flex justify-between md:justify-start sm:space-x-20">
-      <div class="flex sm:space-x-10 space-x-7 items-center text-gray-400">
+    <div class="mt-6 flex justify-between  sm:space-x-20">
+      <div class="flex sm:space-x-12 space-x-8 items-center text-gray-500/75">
         <button @click="addSentiment(comment, 1)" >
-          <ThumbUpIcon :class="[userSentiment == 1 ? 'text-green-400 hover:text-green-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
+          <ThumbUpIcon :class="[userSentiment == 1 ? 'text-green-400/80 hover:text-green-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
         </button>
 
         <button @click="addSentiment(comment, 0)" >
-          <SwitchVerticalIcon :class="[userSentiment == 0 ? 'text-yellow-400 hover:text-yellow-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
+          <SwitchVerticalIcon :class="[userSentiment == 0 ? 'text-yellow-400/80 hover:text-yellow-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
         </button>
 
         <button >
-          <ThumbDownIcon @click="addSentiment(comment, -1)" :class="[userSentiment == -1 ? 'text-red-400 hover:text-red-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
+          <ThumbDownIcon @click="addSentiment(comment, -1)" :class="[userSentiment == -1 ? 'text-red-400/80 hover:text-red-500':'hover:text-gray-500']" class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
-      <div class="text-sm flex space-x-7">
+      <div class="text-sm flex space-x-8 sm:space-x-12">
         <DisclosureButton
           :class="[
             comment.discussionResolved ? 'text-green-500 hover:text-green-600' :
               comment.discussions && comment.discussions.length > 0
                 ? 'text-yellow-500 hover:text-yellow-600'
-                : 'text-gray-400 hover:text-gray-500',
+                : 'text-gray-500/75 hover:text-gray-600',
           ]"
         >
           <ChatIcon class="h-6 w-6" aria-hidden="true" />
         </DisclosureButton>
 
-        <button class="text-gray-400 hover:text-gray-500">
+        <button class="text-gray-500/75 hover:text-gray-600">
           <TrashIcon @click="removeComment(comment)" class="h-6 w-6" aria-hidden="true" />
         </button>
         <Menu as="div" class="relative">
           <MenuButton class="w-full h-full">
-            <DotsVerticalIcon class="text-gray-400 hover:text-gray-500 h-6 w-6" aria-hidden="true" />
+            <DotsVerticalIcon class="text-gray-500/75 hover:text-gray-600 h-6 w-6" aria-hidden="true" />
           </MenuButton>
 
           <transition
@@ -89,7 +89,7 @@
                 <MenuItem v-slot="{ active }">
                   <a
                     :class="[
-                      active ? ' text-gray-800 bg-gray-100' : 'text-gray-600',
+                      active ? ' text-gray-700 bg-gray-100' : 'text-gray-500',
                       'group flex  items-center w-full px-2 py-2 font-medium',
                     ]"
                     :href="comment.permalink"
@@ -101,7 +101,7 @@
                 <MenuItem v-if="isMobile" v-slot="{ active }">
                   <button
                     :class="[
-                      active ? ' text-gray-800 bg-gray-100' : 'text-gray-600',
+                      active ? ' text-gray-700 bg-gray-100' : 'text-gray-500',
                       'group flex  items-center w-full px-2 py-2 font-medium',
                     ]"
                     @click="openWhatsApp()"
@@ -112,7 +112,7 @@
                 <MenuItem v-else v-slot="{ active }">
                   <button
                     :class="[
-                      active ? ' text-gray-800 bg-gray-100' : 'text-gray-600',
+                      active ? ' text-gray-700 bg-gray-100' : 'text-gray-500',
                       'group flex  items-center w-full px-2 py-2 font-medium',
                     ]"
                     @click="copy(copyLink)"
@@ -127,14 +127,14 @@
       </div>
     </div>
     <transition
-      enter-active-class="transition duration-300 ease-out"
+      enter-active-class="transition-all duration-300 ease-out"
       enter-from-class="transform scale-90 opacity-0"
       enter-to-class="transform scale-100 opacity-100"
-      leave-active-class="transition duration-200 ease-out"
+      leave-active-class="transition-all duration-200 ease-out"
       leave-from-class="transform scale-100 opacity-100"
       leave-to-class="transform scale-90 opacity-0"
     >
-      <DisclosurePanel #default="{ close }">
+      <DisclosurePanel  #default="{ close }">
         <div class="bg-gray-100 flex flex-col mt-3 shadow rounded sm:rounded-lg overflow-hidden">
           <div
             @click="changeDiscussionStatus"

@@ -1,6 +1,6 @@
 
 <template>
-  <div class="h-screen flex bg-gray-100">
+  <div class="h-screen flex bg-gray-200/60">
     <MobileSidebar
       @closeSidebar="sidebarOpen = false"
       :sidebarOpen="sidebarOpen"
@@ -13,7 +13,6 @@
       @scroll.passive="handleScroll"
     >
       <SearchHeader
-        class="mx-1 md:mx-0"
         @openSidebar="sidebarOpen = true"
         :currentRouteName="currentRouteName"
       ></SearchHeader>
@@ -24,7 +23,7 @@
         appear
       >
         <LabelCard
-          class="bg-white shadow-md sm:shadow-lg rounded p-3 sm:rounded-lg mb-5 mx-2"
+          
           v-for="[key, comment] of comments"
           :key="key"
           v-if="!isLoading"

@@ -30,7 +30,7 @@
         <div class="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
           <div class="absolute top-0 right-0 -mr-12 pt-2"></div>
 
-          <div class="flex-shrink-0 flex items-center gap-x-2 px-4">
+          <div class="flex-shrink-0 flex items-center gap-x-2 px-4 filter drop-shadow-xl">
             <img
               class="h-8 w-auto"
               src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg"
@@ -39,7 +39,7 @@
             <div class="text-2xl text-gray-500 font-bold">Sentrade</div>
           </div>
           <nav
-            class="mt-5 flex-shrink-0 h-full divide-y divide-cyan-800 overflow-y-auto"
+            class="mt-5 flex-shrink-0 h-full  overflow-y-auto"
             aria-label="Sidebar"
           >
             <div class="px-2 space-y-1">
@@ -47,7 +47,8 @@
               v-for="item in navigation"
               :key="item.name"
               :to="item.to"
-              :class="[item.current ? 'bg-gray-100 border-gray-500 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+              class="outline-none"
+              :class="[item.current ? 'bg-gray-100 border-indigo-400 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group flex items-center px-3 py-2 text-sm font-medium border-l-4']"
               :aria-current="item.current ? 'page' : undefined"
             >
               <component
