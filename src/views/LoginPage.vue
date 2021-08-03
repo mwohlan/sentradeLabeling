@@ -29,7 +29,7 @@
         <h2 class="text-center text-2xl font-bold text-gray-900 mb-3">
           Choose User for Labeling
         </h2>
-        <form @submit.preventDefault="forwardToMainPage" class="space-y-6">
+        <form @submit.prevent="forwardToMainPage" class="space-y-6">
           <select-menu @selected="changeUser" :people="people" />
 
           <div>

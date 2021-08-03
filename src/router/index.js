@@ -74,6 +74,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
  
   const isAuthenticated = localStorage.getItem('current_user') !== null;
+  console.log(isAuthenticated);
   if (!isAuthenticated && to.name !== 'Login') {
     next({ name: 'Login' })
   } else {
