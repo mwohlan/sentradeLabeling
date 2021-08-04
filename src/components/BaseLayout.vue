@@ -1,6 +1,6 @@
 
 <template>
-  <div class="h-screen flex bg-gray-200/60">
+  <div class="h-screen flex bg-gray-200">
     <MobileSidebar
       @closeSidebar="sidebarOpen = false"
       :sidebarOpen="sidebarOpen"
@@ -17,7 +17,7 @@
         :currentRouteName="currentRouteName"
       ></SearchHeader>
       <transition-group
-        class="pb-32 sm:pb-16 relative mt-8 max-w-6xl mx-auto"
+        class="pb-32 sm:pb-16 relative mt-8 max-w-6xl mx-auto space-y-6 lg:space-y-9"
         name="list"
         tag="ul"
         appear

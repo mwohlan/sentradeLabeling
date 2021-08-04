@@ -1,20 +1,20 @@
 <template>
-  <Disclosure class="bg-white shadow-md sm:shadow-lg  px-3 py-3  md:px-7   rounded-lg mb-5 lg:mb-8 mx-2" :defaultOpen="activeDiscussion" as="li">
+  <Disclosure class="bg-white shadow-md sm:shadow-lg  px-3 py-3   md:px-7 rounded-lg  mx-2" :defaultOpen="activeDiscussion" as="li">
     <div>
-      <h2 class="text-xs font-medium text-gray-500">{{ comment.submissionTitle }}</h2>
+      <h2 class="text-xs font-medium text-gray-600">{{ comment.submissionTitle }}</h2>
     </div>
-    <div class="mt-4 lg:mt-6 text-gray-600 text-sm font-medium  leading-relaxed text-justify">{{ comment.body }}</div>
+    <div class="mt-4 lg:mt-6 text-gray-800/90 text-sm font-medium  leading-relaxed text-justify">{{ comment.body }}</div>
     <div class="mt-4 gap-y-4 lg:mt-6 flex flex-wrap gap-x-2 justify-between">
       <div class="flex flex-wrap items-center lg:gap-x-6 gap-x-4">
         <div
-          class=" px-2 py-0.5  rounded-full text-xs  bg-gray-200/60 text-gray-700"
+          class=" px-2 py-0.5  rounded-full text-xs  bg-gray-200/70 text-gray-700"
         >{{ comment.subredditName }}</div>
         <div
           class=" px-2 py-0.5  rounded-full text-xs "
           :class="{
-            'bg-red-100': comment.score < -1,
-            'bg-green-100': comment.score > 1,
-            'bg-yellow-100': comment.score >= -1 && comment.score <= 1,
+            'bg-red-200/70': comment.score < -1,
+            'bg-green-200/70': comment.score > 1,
+            'bg-yellow-200/70': comment.score >= -1 && comment.score <= 1,
             'text-red-700': comment.score < -1,
             'text-green-700': comment.score > 1,
             'text-yellow-700': comment.score >= -1 && comment.score <= 1,
@@ -27,10 +27,10 @@
           <div v-if="comment[key] != -2"
             class=" px-2 py-0.5 rounded-full text-xs "
             :class="{
-              'bg-red-100': comment[key] == -1,
-              'bg-green-100': comment[key] == 1,
+              'bg-red-200/70': comment[key] == -1,
+              'bg-green-200/70': comment[key] == 1,
               'bg-gray-200/60': comment[key] == -2,
-              'bg-yellow-100': comment[key] == 0,
+              'bg-yellow-200/70': comment[key] == 0,
               'text-red-700': comment[key] == -1,
               'text-green-700': comment[key] == 1,
               'text-yellow-700': comment[key] == 0,
@@ -134,22 +134,22 @@
       leave-from-class="transform scale-100 opacity-100"
       leave-to-class="transform scale-90 opacity-0"
     >
-      <DisclosurePanel  #default="{ close }">
-        <div class="bg-gray-100 flex flex-col mt-3 shadow rounded sm:rounded-lg overflow-hidden">
+      <DisclosurePanel   #default="{ close }">
+        <div class="bg-gray-100 flex flex-col mt-3 shadow  rounded sm:rounded-lg overflow-hidden">
           <div
             @click="changeDiscussionStatus"
             v-if="resolvedDiscussion"
-            class="cursor-pointer justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-green-200 text-green-800"
+            class="cursor-pointer justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-green-200/70 text-green-700"
           >Resolved</div>
           <div
-            class="cursor-pointer justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-yellow-200 text-yellow-800"
+            class="cursor-pointer justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-yellow-200/70 text-yellow-700"
             @click="changeDiscussionStatus(); close();"
             v-else-if="activeDiscussion"
           >Active</div>
 
           <ul
             v-if="comment.discussions && comment.discussions.length > 0"
-            class="space-y-3 px-4 sm:px-6"
+            class="space-y-3 px-4 sm:px-6 "
           >
             <li v-for="discussion in comment.discussions" :key="discussion.created" class="flex">
               <div class="flex-1 space-x-3">
@@ -205,18 +205,18 @@
             >
 
 
-              <ChevronDownIcon class="h-8 w-8  transition ease-out duration-300 transform " :class="[openCommentSection ? 'rotate-180 text-red-400 hover:text-red-600':'rotate-0 text-green-400 hover:text-green-600']"/>
+              <ArrowCircleDownIcon class="h-6 w-6 ease duration-500  " :class="[openCommentSection ? 'rotate-180 text-red-500 hover:text-red-600':'rotate-0 text-green-500 hover:text-green-600']"/>
  
             </button>
           </div>
 
           <transition
-            enter-active-class="transition duration-300 ease-out"
-            enter-from-class="transform scale-90 opacity-0"
-            enter-to-class="transform scale-100 opacity-100"
-            leave-active-class="transition duration-200 ease-out"
-            leave-from-class="transform scale-100 opacity-100"
-            leave-to-class="transform scale-90 opacity-0"
+            enter-active-class=" duration-300 ease-out"
+            enter-from-class=" scale-90 opacity-0"
+            enter-to-class=" scale-100 opacity-100"
+            leave-active-class=" duration-200 ease-out"
+            leave-from-class=" scale-100 opacity-100"
+            leave-to-class=" scale-90 opacity-0"
           >
             <div
               v-if="
@@ -284,7 +284,7 @@ import {
   ShareIcon,
   LinkIcon,
   TrashIcon,
-  ChevronDownIcon,
+  ArrowCircleDownIcon,
   ThumbUpIcon, ThumbDownIcon
 } from "@heroicons/vue/outline";
 import { ChatIcon } from "@heroicons/vue/outline";
