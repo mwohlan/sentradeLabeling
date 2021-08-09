@@ -132,10 +132,21 @@ export const useMainStore = defineStore({
         this.stats.lastDiscussionView = snap.docs[0].data().lastDiscussionView;
       });
 
+      const unreadPostsAvailable = onSnapshot(query(collection(projectFirestore, "users"), where("name", "!=", this.current_user.name)), (snap) => {
+        this.stats.unreadPostsAvailable = false
+        snap.docs.forEach(doc => {
+          
+          if (doc.data().latestDiscussionPost > this.stats.lastDiscussionView) {
+            this.stats.unreadPostsAvailable = true;
+          }
+        });
+      })
+        
 
 
 
-      return () => { setSentimentCount(); unlabeledComments(); lastDiscussionView(); }
+
+      return () => { setSentimentCount(); unlabeledComments(); lastDiscussionView(); unreadPostsAvailable()}
 
     },
     async addSentiment(comment, sentiment) {
@@ -202,6 +213,11 @@ export const useMainStore = defineStore({
         updated: timestamp(),
         latestDiscussion: userComment.created,
         discussionResolved: false
+      })
+
+      updateDoc(doc(projectFirestore, "users", this.current_user.id), {
+        latestDiscussionPost: userComment.created,
+    
       })
 
 

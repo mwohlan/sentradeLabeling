@@ -38,26 +38,31 @@
             />
             <div class="text-2xl text-gray-500 font-bold">Sentrade</div>
           </div>
-          <nav
-            class="mt-5 flex-shrink-0 h-full  overflow-y-auto"
-            aria-label="Sidebar"
-          >
+          <nav class="mt-5 flex-shrink-0 h-full overflow-y-auto" aria-label="Sidebar">
             <div class="px-2 space-y-1">
               <router-link
-              v-for="item in navigation"
-              :key="item.name"
-              :to="item.to"
-              class="outline-none"
-              :class="[item.current ? 'bg-gray-100 border-indigo-400 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group flex items-center px-3 py-2 text-sm font-medium border-l-4']"
-              :aria-current="item.current ? 'page' : undefined"
-            >
-              <component
-                :is="item.icon"
-                :class="[item.current ? 'text-gray-700' : 'text-gray-500 group-hover:text-gray-700', 'mr-3 flex-shrink-0 h-6 w-6']"
-                aria-hidden="true"
-              />
-              {{ item.name }}
-            </router-link>
+                v-for="item in navigation"
+                :key="item.name"
+                :to="item.to"
+                class="outline-none"
+                :class="[item.current ? 'bg-gray-100 border-indigo-400 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+                :aria-current="item.current ? 'page' : undefined"
+              >
+                <component
+                  :is="item.icon"
+                  :class="[item.current ? 'text-gray-700' : 'text-gray-500 group-hover:text-gray-700', 'mr-3 flex-shrink-0 h-6 w-6']"
+                  aria-hidden="true"
+                />
+                <div class="flex flex-1 justify-between">
+                  <div>{{ item.name }}</div>
+                  <div
+                    v-if="item.name === 'Discussions' && unreadPostsAvailable"
+                    class="text-[0.725rem] flex items-center justify-center"
+                  >
+                    <MailIcon class="h-5 w-5 text-indigo-500" />
+                  </div>
+                </div>
+              </router-link>
             </div>
           </nav>
         </div>
@@ -70,6 +75,13 @@
 </template>
 
 <script>
+import { computed } from "@vue/runtime-core";
+import { useMainStore } from "../store";
+import {
+
+  MailIcon,
+
+} from "@heroicons/vue/solid";
 import {
   Dialog,
   DialogOverlay,
@@ -82,10 +94,18 @@ export default {
     DialogOverlay,
     TransitionChild,
     TransitionRoot,
+    MailIcon,
   },
   props: { sidebarOpen: Boolean, navigation: Array },
   emits: ["closeSidebar"],
-  setup() { },
+  setup() {
+    const store = useMainStore();
+
+
+    return {
+      unreadPostsAvailable: computed(() => store.stats.unreadPostsAvailable)
+    }
+  },
 };
 </script>
 

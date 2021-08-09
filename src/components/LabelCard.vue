@@ -162,7 +162,7 @@
                         discussion.created > lastDiscussionView &&
                         discussion.user != current_user
                       "
-                      class="bg-green-600 text-white px-2 py-0.5 rounded-2xl"
+                      class=" text-[0.725rem] py-[0.05rem] flex items-center font-semibold  px-2 justify-center text-indigo-800 bg-indigo-200 rounded-lg"
                     >New</div>
                   </div>
                   <div class="mt-1 text-sm text-gray-700 flex flex-wrap">

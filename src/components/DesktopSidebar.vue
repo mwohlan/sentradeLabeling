@@ -1,15 +1,15 @@
 <template>
-  <div class="hidden  lg:flex lg:flex-shrink-0 border-r-2  shadow-lg">
-    <div class="flex  flex-col w-56 ">
+  <div class="hidden lg:flex lg:flex-shrink-0 border-r-2 shadow-lg">
+    <div class="flex flex-col w-64">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex flex-col flex-grow bg-white pt-5 pb-4 overflow-y-auto">
         <div class="flex items-center gap-x-2 flex-shrink-0 px-4 filter drop-shadow-xl">
           <img
-            class="h-8 w-auto "
+            class="h-8 w-auto"
             src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg"
             alt="Sentrade Logo"
           />
-          <div class="text-2xl  text-gray-500 font-bold">Sentrade</div>
+          <div class="text-2xl text-gray-500 font-bold">Sentrade</div>
         </div>
 
         <nav
@@ -29,7 +29,17 @@
                 :class="[item.current ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-700', 'mr-3 flex-shrink-0 h-6 w-6']"
                 aria-hidden="true"
               />
-              {{ item.name }}
+              <div class="flex flex-1 justify-between">
+                <div>{{ item.name }}</div>
+                <div
+                  v-if="item.name === 'Discussions' && unreadPostsAvailable"
+                  class="text-[0.725rem] flex items-center justify-center"
+                >
+                  <MailIcon
+                    class=" h-5 w-5 text-indigo-500"
+                  />
+                </div>
+              </div>
             </router-link>
           </div>
         </nav>
@@ -39,11 +49,30 @@
 </template>
 
 <script>
+import { computed } from "@vue/runtime-core";
+import { useMainStore } from "../store";
+import {
+   
+    MailIcon,
+    
+} from "@heroicons/vue/solid";
 export default {
+
+  components: {
+MailIcon
+  },
+
   props: {
     navigation: Array
   },
-  setup() { },
+  setup() {
+    const store = useMainStore();
+
+
+    return {
+      unreadPostsAvailable: computed(() => store.stats.unreadPostsAvailable)
+    }
+  },
 };
 </script>
 
