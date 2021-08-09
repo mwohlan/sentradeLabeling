@@ -1,6 +1,7 @@
-import firebase from "firebase";
 
-import 'firebase/firebase-firestore'
+import { initializeApp } from "firebase/app"
+import { getFirestore,serverTimestamp,increment,documentId } from "firebase/firestore";
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyCb3uoTn3503PLaEB7avgnvq1HeTkqQEaY",
@@ -13,19 +14,16 @@ const firebaseConfig = {
 
 //init firebase
 
-firebase.initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+const projectFirestore = getFirestore()
 
 
-//init firestore service
-
-const projectFirestore = firebase.firestore();
 
 // projectFirestore.enablePersistence();
 
 
-const timestamp = firebase.firestore.FieldValue.serverTimestamp
-const increment = firebase.firestore.FieldValue.increment
-const documentId = firebase.firestore.FieldPath.documentId
+const timestamp = serverTimestamp
+
 
 
 export { projectFirestore,timestamp,increment,documentId}

@@ -179,7 +179,7 @@
                     </div>
 
                     <div class="text-sm">
-                      <button class="text-gray-400 hover:text-gray-500">
+                      <button class="text-gray-500 hover:text-gray-600">
                         <TrashIcon
                           @click="
                           removeUserDiscussion(comment, discussion.created)

@@ -29,6 +29,7 @@ export default {
 
     const scrollReload = async () => {
       unsub()
+      store.loading = true;
       unsub = store.setCommentsWithConflicts(5).unsub;
     };
 

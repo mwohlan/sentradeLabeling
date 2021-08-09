@@ -1,36 +1,69 @@
 
 <template>
-  <div class="h-screen flex bg-gray-200">
-    <MobileSidebar
-      @closeSidebar="sidebarOpen = false"
-      :sidebarOpen="sidebarOpen"
-      :navigation="navigation"
-    ></MobileSidebar>
-    <DesktopSidebar :navigation="navigation"></DesktopSidebar>
-    <div
-      class="flex-1 overflow-auto focus:outline-none"
-      ref="scrollComponent"
-      @scroll.passive="handleScroll"
-    >
-      <SearchHeader
-        @openSidebar="sidebarOpen = true"
-        :currentRouteName="currentRouteName"
-      ></SearchHeader>
-      <transition-group
-        class="pb-32 sm:pb-16 relative mt-8 max-w-6xl mx-auto space-y-6 lg:space-y-9"
-        name="list"
-        tag="ul"
-        appear
+  <div>
+    <div class="h-screen flex bg-gray-200">
+      <MobileSidebar
+        @closeSidebar="sidebarOpen = false"
+        :sidebarOpen="sidebarOpen"
+        :navigation="navigation"
+      ></MobileSidebar>
+      <DesktopSidebar :navigation="navigation"></DesktopSidebar>
+
+      <div
+        class="flex-1 overflow-auto focus:outline-none relative"
+        ref="scrollComponent"
+        @scroll.passive="handleScroll"
       >
-        <LabelCard
-          
-          v-for="[key, comment] of comments"
-          :key="key"
-          v-if="!isLoading"
-          :comment="comment"
-          :isMobile="isMobile"
-        ></LabelCard>
-      </transition-group>
+        <SearchHeader @openSidebar="sidebarOpen = true" :currentRouteName="currentRouteName"></SearchHeader>
+        <transition-group
+          class="relative mt-8 max-w-6xl mx-auto space-y-6 lg:space-y-9"
+          name="list"
+          tag="ul"
+          appear
+        >
+          <template v-for="[key, comment] of comments" :key="key">
+            <LabelCard :comment="comment" :isMobile="isMobile" />
+          </template>
+        </transition-group>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="hidden w-56 lg:flex lg:flex-shrink-0"></div>
+      <div class="flex-1">
+        <transition
+          appear
+          enter-from-class="opacity-0"
+          leave-to-class="opacity-0"
+          enter-active-class="transition-all ease duration-[300ms]"
+          leave-active-class="transition-all ease duration-[300ms]"
+        >
+          <div
+            v-if="isLoading"
+            class="-mt-96 max-w-6xl mx-auto bg-gray-200/0 flex justify-center items-center"
+          >
+            <svg
+              class="animate-spin h-10 w-10"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          </div>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -55,21 +88,25 @@ const store = useMainStore();
 const route = useRoute();
 const currentRouteName = ref("");
 const scrollComponent = ref(null);
-
+const isLoading = computed(() => store.loading)
 const handleScroll = ({
   target: { scrollTop, clientHeight, scrollHeight },
 }) => {
-  if (scrollTop + clientHeight >= scrollHeight) {
-    console.log(scrollTop, clientHeight, scrollHeight);
+  if (Math.ceil(scrollTop) + clientHeight >= scrollHeight && isLoading.value === false) {
+    console.log("Reload")
     emit("scrollReload");
   }
 };
 
 const isMobile = ref(false);
 
+
+
 const unsubStats = ref(null);
 
-const isLoading = computed(() => store.loading)
+
+
+
 
 onMounted(() => {
   if (store.users.length == 0) {
@@ -118,6 +155,7 @@ watchEffect((onInvalidate) => {
 
 .list-leave-active {
   position: absolute;
+  width: 100%;
   transition: all 0.3s linear;
 }
 </style>

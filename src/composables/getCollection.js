@@ -1,4 +1,5 @@
 import { useMainStore } from '../store'
+import {onSnapshot} from '@firebase/firestore'
 
 
 const getCollection = (watchQuery, storeReference) => {
@@ -72,34 +73,46 @@ const getCollection = (watchQuery, storeReference) => {
 
     function snapShotHandler(snap) {
 
-        
-       
-     
+
+        let t0 = performance.now();
+
         if (!snap.metadata.hasPendingWrites) {
-            
-          
+
+        
             snap.docChanges().forEach((change) => {
                 let { newIndex, oldIndex, doc, type } = change;
                 if (type === "added") {
-                    
-                    storeReference.set(doc.id,{ ...doc.data(), id: doc.id });
+
+                    storeReference.set(doc.id, { ...doc.data(), id: doc.id });
 
                 }
                 else if (type === "modified") {
                     storeReference.set(doc.id, { ...doc.data(), id: doc.id });
                 }
                 else if (type === "removed") {
-                     storeReference.delete(doc.id);
+                    storeReference.delete(doc.id);
                 }
+
+               
 
 
             });
 
-            store.loading = false;
-          
-        
+
+            
+
+
+
 
         }
+
+        let loadtime = performance.now() - t0;
+
+        setTimeout(() => {
+            store.loading = false;
+            console.log(loadtime);
+
+        }, loadtime > 200 ? 0: 200-loadtime);
     }
 
 
@@ -108,7 +121,7 @@ const getCollection = (watchQuery, storeReference) => {
     }
 
 
-    const unsub = watchQuery.onSnapshot(snapShotHandler, errorHandler);
+    const unsub = onSnapshot(watchQuery,snapShotHandler, errorHandler);
 
 
     const executeScrollQuery = (scrollQuery) => {

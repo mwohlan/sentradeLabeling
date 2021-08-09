@@ -17,8 +17,9 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-    let unsub;
 
+    let unsub;
+   
      onBeforeMount(() => {
       store.loading = true;
     })
@@ -30,6 +31,7 @@ export default {
 
     const scrollReload = async () => {
       unsub();
+      store.loading = true;
       unsub = store.setAllComments(5).unsub;
     };
 

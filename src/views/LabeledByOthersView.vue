@@ -35,6 +35,7 @@ export default {
 
     const scrollReload = () => {
       unsub()
+      store.loading = true;
        unsub = store.setCommentsWithSentiment(5).unsub
     }
 

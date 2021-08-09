@@ -34,6 +34,7 @@ export default {
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
+        
         updateLastDiscussionView();
       });
     });

@@ -1,8 +1,8 @@
 <template>
   <div class="sticky top-0  lg:mx-4 shadow-md z-10 flex-1">
     <div class=" flex bg-white ">
-      <div class="flex items-center text-gray-400 lg:hidden" @click="$emit('openSidebar')">
-        <MenuIcon class="filter  drop-shadow-2xl h-12 w-12" aria-hidden="true" />
+      <div class="flex items-center text-gray-500 lg:hidden" @click="$emit('openSidebar')">
+        <MenuIcon class="h-[3.25rem] w-[3.25rem]" aria-hidden="true" />
       </div>
 
       <!-- Search bar -->
