@@ -20,9 +20,6 @@ export default {
     
     let unsub, updateLastDiscussionView;
 
-     onBeforeMount(() => {
-      store.loading = true;
-    })
 
 
     onMounted(()=>{
@@ -34,7 +31,7 @@ export default {
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
-        
+         store.loading = true;
         updateLastDiscussionView();
       });
     });

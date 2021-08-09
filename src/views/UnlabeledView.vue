@@ -18,23 +18,19 @@ export default {
     const store = useMainStore();
     let unsub;
 
-    onBeforeMount(() => {
-      store.loading = true;
-    });
-
     onMounted(() => {
       ({ unsub } = store.setCommentsWithoutSentiment(0));
     });
 
     const scrollReload = async () => {
       unsub();
-      store.loading = true;
       unsub = store.setCommentsWithoutSentiment(5).unsub;
     };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
+         store.loading = true;
       });
     });
 

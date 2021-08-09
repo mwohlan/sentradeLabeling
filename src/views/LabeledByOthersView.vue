@@ -29,13 +29,14 @@ export default {
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
+        store.loading = true;
         unsub();
       });
     });
 
     const scrollReload = () => {
       unsub()
-      store.loading = true;
+       
        unsub = store.setCommentsWithSentiment(5).unsub
     }
 

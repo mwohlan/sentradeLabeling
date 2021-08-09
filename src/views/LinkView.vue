@@ -21,9 +21,7 @@ export default {
 
     const unsub = ref(null);
 
-     onBeforeMount(() => {
-      store.loading = true;
-    })
+
 
     onMounted(() => {
       unsub.value = store.setLinkComment(props.id);
@@ -32,6 +30,7 @@ export default {
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub.value();
+         store.loading = true;
       });
     });
 

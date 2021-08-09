@@ -10,7 +10,7 @@
       <DesktopSidebar :navigation="navigation"></DesktopSidebar>
 
       <div
-        class="flex-1 overflow-auto focus:outline-none relative"
+        class="flex-1 overflow-auto focus:outline-none relative pb-20 lg:pb-32 "
         ref="scrollComponent"
         @scroll.passive="handleScroll"
       >

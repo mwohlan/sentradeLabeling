@@ -77,6 +77,9 @@ const getCollection = (watchQuery, storeReference) => {
         let t0 = performance.now();
 
         if (!snap.metadata.hasPendingWrites) {
+            if (snap.docs.length > storeReference.size) {
+                store.loading = true;
+            }
 
         
             snap.docChanges().forEach((change) => {
@@ -110,7 +113,7 @@ const getCollection = (watchQuery, storeReference) => {
 
         setTimeout(() => {
             store.loading = false;
-            console.log(loadtime);
+           
 
         }, loadtime > 200 ? 0: 200-loadtime);
     }

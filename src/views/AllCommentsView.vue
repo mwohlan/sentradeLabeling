@@ -20,10 +20,7 @@ export default {
 
     let unsub;
    
-     onBeforeMount(() => {
-      store.loading = true;
-    })
-
+  
     onMounted(() => {
 
      ({ unsub} = store.setAllComments(0));
@@ -31,12 +28,12 @@ export default {
 
     const scrollReload = async () => {
       unsub();
-      store.loading = true;
       unsub = store.setAllComments(5).unsub;
     };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
+        store.loading = true;
         unsub();
       });
     });
