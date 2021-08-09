@@ -115,7 +115,7 @@ const getCollection = (watchQuery, storeReference) => {
             store.loading = false;
            
 
-        }, loadtime > 200 ? 0: 200-loadtime);
+        }, loadtime > 300 ? 0: 300-loadtime);
     }
 
 
