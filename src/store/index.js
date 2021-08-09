@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { projectFirestore, timestamp, increment, documentId } from "../firebase/config";
-import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc,collection } from '@firebase/firestore';
+import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc, collection } from '@firebase/firestore';
 import getCollection from '../composables/getCollection'
 import { getDocs } from 'firebase/firestore';
 
@@ -57,7 +57,7 @@ export const useMainStore = defineStore({
     },
     setAllComments(reloadAmount) {
 
-     
+
 
 
 
@@ -293,16 +293,17 @@ export const useMainStore = defineStore({
 
 
       try {
-        const querySnapshot = await getDocs(query(collection(projectFirestore, "users")))
+        const querySnapshot = await getDocs(collection(projectFirestore, "users"))
+        console.log(querySnapshot)
 
-        querySnapshot.forEach(snap => {
-          snap.docs.forEach((doc) => {
-            this.users.push({ ...doc.data(), id: doc.id })
-          })
+        querySnapshot.forEach(doc => {
+
+          this.users.push({ ...doc.data(), id: doc.id })
+
         })
 
       } catch (error) {
-
+        console.log(error.message)
       }
 
 
