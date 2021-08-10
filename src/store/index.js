@@ -22,7 +22,7 @@ export const useMainStore = defineStore({
 
     sortedCommentsWithDiscussions() {
       let sortedArrayWithDiscussions = [...this.commentsWithDiscussions.values()].sort((a, b) => b.latestDiscussion - a.latestDiscussion
-      ).map(obj => [obj.id, obj]);
+      ).map(comment => [comment.id, comment]);
       return new Map(sortedArrayWithDiscussions);
     }
 

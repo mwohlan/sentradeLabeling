@@ -81,7 +81,7 @@ import { onMounted, ref, watchEffect, computed } from "vue";
 const props = defineProps({
   comments: Map,
 })
-const emit = defineEmit(["scrollReload"])
+const emit = defineEmits(["scrollReload"])
 
 const sidebarOpen = ref(false);
 const store = useMainStore();
@@ -93,7 +93,6 @@ const handleScroll = ({
   target: { scrollTop, clientHeight, scrollHeight },
 }) => {
   if (Math.ceil(scrollTop) + clientHeight >= scrollHeight && isLoading.value === false) {
-    console.log("Reload")
     emit("scrollReload");
   }
 };
