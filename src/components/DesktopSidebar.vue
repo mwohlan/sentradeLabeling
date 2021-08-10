@@ -36,7 +36,7 @@
                   class="text-[0.725rem] flex items-center justify-center"
                 >
                   <MailIcon
-                    class=" h-5 w-5 text-indigo-500"
+                    class="animate-ping-slow h-5 w-5 text-indigo-500"
                   />
                 </div>
               </div>

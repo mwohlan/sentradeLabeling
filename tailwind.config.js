@@ -14,12 +14,12 @@ module.exports = {
         cyan: colors.cyan,
       },
       animation: {
-        'ping-slow': 'lightPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'ping-slow': 'lightPulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         lightPulse: {
-          '0%, 100%': { opacity: '1', },
-          '50%': { opacity: '0.7' },
+          '0%, 100%': { opacity: '1', transform: 'scale(1.1)' },
+          '50%': { opacity: '0.7', transform: 'scale(1)' },
         }
       },
     },

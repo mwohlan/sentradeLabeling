@@ -310,7 +310,6 @@ export const useMainStore = defineStore({
 
       try {
         const querySnapshot = await getDocs(collection(projectFirestore, "users"))
-        console.log(querySnapshot)
 
         querySnapshot.forEach(doc => {
 

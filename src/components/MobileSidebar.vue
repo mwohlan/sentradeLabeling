@@ -59,7 +59,7 @@
                     v-if="item.name === 'Discussions' && unreadPostsAvailable"
                     class="text-[0.725rem] flex items-center justify-center"
                   >
-                    <MailIcon class="h-5 w-5 text-indigo-500" />
+                    <MailIcon class="animate-ping-slow h-5 w-5 text-indigo-500" />
                   </div>
                 </div>
               </router-link>

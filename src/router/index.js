@@ -74,9 +74,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
  
   const isAuthenticated = localStorage.getItem('current_user') !== null;
-  console.log(isAuthenticated);
   if (!isAuthenticated && to.name !== 'Login') {
-    next({ name: 'Login' })
+    next({ name: 'Login' ,query:{redirect: to.fullPath}})
   } else {
     const store = useMainStore()
     store.current_user = store.current_user === null ? JSON.parse(localStorage.getItem('current_user')) : store.current_user
