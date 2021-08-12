@@ -1,6 +1,5 @@
 
 <template>
-
   <base-layout @scrollReload="scrollReload()" :comments="comments" />
 </template>
 
@@ -21,10 +20,14 @@ export default {
     let unsub;
 
     onMounted(() => {
-      ({ unsub} = store.setCommentsWithSentiment(0));
+      if (store.commentsWithSentiment.size) {
+        store.commentsWithSentiment.clear()
+      }
+
+      ({ unsub } = store.setCommentsWithSentiment(0));
     });
-    
-    
+
+
 
 
     watchEffect((onInvalidate) => {
@@ -36,13 +39,13 @@ export default {
 
     const scrollReload = () => {
       unsub()
-       
-       unsub = store.setCommentsWithSentiment(5).unsub
+
+      unsub = store.setCommentsWithSentiment(5).unsub
     }
 
     return {
       sidebarOpen,
-      comments: computed(() =>store.commentsWithSentiment),
+      comments: computed(() => store.commentsWithSentiment),
       scrollReload,
     };
   },

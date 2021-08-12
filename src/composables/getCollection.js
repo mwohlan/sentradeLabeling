@@ -85,7 +85,6 @@ const getCollection = (watchQuery, storeReference) => {
             snap.docChanges().forEach((change) => {
                 let { newIndex, oldIndex, doc, type } = change;
                 if (type === "added") {
-
                     storeReference.set(doc.id, { ...doc.data(), id: doc.id });
 
                 }
@@ -115,7 +114,7 @@ const getCollection = (watchQuery, storeReference) => {
             store.loading = false;
            
 
-        }, loadtime > 300 ? 0: 300-loadtime);
+        }, loadtime > 800 ? 0: 800-loadtime);
     }
 
 

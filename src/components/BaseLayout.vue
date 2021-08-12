@@ -8,9 +8,8 @@
         :navigation="navigation"
       ></MobileSidebar>
       <DesktopSidebar :navigation="navigation"></DesktopSidebar>
-
       <div
-        class="flex-1 overflow-auto focus:outline-none relative pb-20 lg:pb-32 "
+        class="flex-1 overflow-auto focus:outline-none relative pb-20 lg:pb-32"
         ref="scrollComponent"
         @scroll.passive="handleScroll"
       >
@@ -21,48 +20,13 @@
           tag="ul"
           appear
         >
-          <template v-for="[key, comment] of comments" :key="key">
-            <LabelCard :comment="comment" :isMobile="isMobile" />
-          </template>
+          <LabelCard
+            v-for="[key, comment, index] of comments"
+            :key="key"
+            :comment="comment"
+            :isMobile="isMobile"
+          ></LabelCard>
         </transition-group>
-      </div>
-    </div>
-    <div class="flex">
-      <div class="hidden w-56 lg:flex lg:flex-shrink-0"></div>
-      <div class="flex-1">
-        <transition
-          appear
-          enter-from-class="opacity-0"
-          leave-to-class="opacity-0"
-          enter-active-class="transition-all ease duration-[300ms]"
-          leave-active-class="transition-all ease duration-[300ms]"
-        >
-          <div
-            v-if="isLoading"
-            class="-mt-96 max-w-6xl mx-auto bg-gray-200/0 flex justify-center items-center"
-          >
-            <svg
-              class="animate-spin h-10 w-10"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              />
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
-          </div>
-        </transition>
       </div>
     </div>
   </div>

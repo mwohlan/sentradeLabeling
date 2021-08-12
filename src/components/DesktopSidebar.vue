@@ -21,7 +21,7 @@
               v-for="item in navigation"
               :key="item.name"
               :to="item.to"
-              :class="[item.current ? 'bg-gray-100 border-indigo-400 text-gray-800' : 'border-transparent text-gray-700 hover:bg-gray-100 hover:text-gray-900', 'group flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+              :class="[item.current ? 'bg-gray-100 border-indigo-400 text-gray-800' : 'border-transparent  text-gray-700 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
               :aria-current="item.current ? 'page' : undefined"
             >
               <component

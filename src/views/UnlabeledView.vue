@@ -19,6 +19,10 @@ export default {
     let unsub;
 
     onMounted(() => {
+      if (store.commentsWithoutSentiment.size) {
+        store.commentsWithoutSentiment.clear()
+      }
+
       ({ unsub } = store.setCommentsWithoutSentiment(0));
     });
 
@@ -30,7 +34,7 @@ export default {
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
-         store.loading = true;
+        store.loading = true;
       });
     });
 

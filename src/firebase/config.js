@@ -22,8 +22,6 @@ const projectFirestore = getFirestore()
 // projectFirestore.enablePersistence();
 
 
-const timestamp = serverTimestamp
 
 
-
-export { projectFirestore,timestamp,increment,documentId}
+export { projectFirestore, serverTimestamp as timestamp ,increment,documentId}

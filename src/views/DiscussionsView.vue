@@ -23,6 +23,9 @@ export default {
 
 
     onMounted(()=>{
+       if (store.commentsWithDiscussions.size) {
+        store.commentsWithSentiment.clear()
+      }
       ({ unsub,updateLastDiscussionView} = store.setCommentsWithDiscussions(0));
     })
 

@@ -22,6 +22,9 @@ export default {
 
 
     onMounted(() => {
+      if (store.commentsWithConflicts.size) {
+        store.commentsWithConflicts.clear()
+      }
       ({ unsub} = store.setCommentsWithConflicts(0));
     });
 

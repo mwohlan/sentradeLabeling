@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { projectFirestore, timestamp, increment, documentId } from "../firebase/config";
-import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc, collection } from '@firebase/firestore';
+import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc, collection,deleteDoc } from '@firebase/firestore';
 import getCollection from '../composables/getCollection'
 import { getDocs } from 'firebase/firestore';
 
@@ -285,7 +285,7 @@ export const useMainStore = defineStore({
 
     async removeComment(comment) {
       try {
-        await projectFirestore.collection("comments").doc(comment.id).delete()
+        await deleteDoc(doc(projectFirestore,"comments",comment.id)) 
         for (const user of this.users) {
           if (comment[user.name] != -2) {
             updateDoc(doc(projectFirestore, "users", user.id), {
