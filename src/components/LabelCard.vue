@@ -257,7 +257,7 @@ const resolvedDiscussion = computed(() => props.sentence.discussion && props.sen
 
 const current_user = computed(() => store.current_user.name);
 
-const userSentiment = computed(() => props.sentence[current_user.value]);
+const userSentiment = computed(() => props.sentence.sentiments[current_user.value].value);
 
 
 
