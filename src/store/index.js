@@ -1,28 +1,30 @@
 import { defineStore } from 'pinia'
 import { projectFirestore, timestamp, increment, documentId } from "../firebase/config";
-import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc, collection,deleteDoc } from '@firebase/firestore';
+import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc, collection, deleteDoc, getDocs, deleteField } from '@firebase/firestore';
 import getCollection from '../composables/getCollection'
-import { getDocs } from 'firebase/firestore';
+
 
 export const useMainStore = defineStore({
   id: 'main',
   state: () => ({
-    commentsWithoutSentiment: new Map(),
-    commentsWithSentiment: new Map(),
-    allComments: new Map(),
-    commentsWithDiscussions: new Map(),
-    commentsWithConflicts: new Map(),
+    sentencesWithoutSentiment: new Map(),
+    sentencesWithSentiment: new Map(),
+    sentences: new Map(),
+    recentlyLabeledSentences: new Map(),
+    sentencesWithDiscussions: new Map(),
+    sentencesWithConflicts: new Map(),
     current_user: null,
     stats: {},
     users: [],
-    linkComment: new Map(),
+    linkSentence: new Map(),
     loading: false,
+
   }),
   getters: {
 
-    sortedCommentsWithDiscussions() {
-      let sortedArrayWithDiscussions = [...this.commentsWithDiscussions.values()].sort((a, b) => b.latestDiscussion - a.latestDiscussion
-      ).map(comment => [comment.id, comment]);
+    sortedSentencesWithDiscussions() {
+      let sortedArrayWithDiscussions = [...this.sentencesWithDiscussions.values()].sort((a, b) => b.discussion.latestDiscussionComment - a.dicussion.latestDiscussionComment
+      ).map(sentence => [sentence.id, sentence]);
       return new Map(sortedArrayWithDiscussions);
     }
 
@@ -36,54 +38,61 @@ export const useMainStore = defineStore({
       this.setStats()
 
     },
-    setCommentsWithoutSentiment(reloadAmount) {
+    setSentencesWithoutSentiment(reloadAmount) {
 
 
-      const watchQuery = query(collection(projectFirestore, "comments"), where("labeled", "==", false), orderBy("created"), limit(Math.max(8, this.commentsWithoutSentiment.size + reloadAmount)))
-      const { unsub } = getCollection(watchQuery, this.commentsWithoutSentiment)
+      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.labeled", "==", false), orderBy("created"), limit(Math.max(8, this.sentencesWithoutSentiment.size + reloadAmount)))
+      const { unsub } = getCollection(watchQuery, this.sentencesWithoutSentiment)
+
+      return { unsub }
+
+    },
+    setRecentlyLabeledSentences(reloadAmount) {
+
+
+      const watchQuery = query(collection(projectFirestore, "sentences"), orderBy(`sentiments.${this.current_user.name}.updated`,'desc'), limit(Math.max(8, this.recentlyLabeledSentences.size + reloadAmount)))
+      const { unsub } = getCollection(watchQuery, this.recentlyLabeledSentences)
 
       return { unsub }
 
     },
 
-    setCommentsWithSentiment(reloadAmount) {
-
-
-      const watchQuery = query(collection(projectFirestore, "comments"), where(this.current_user.name, "==", -2), where("labeled", "==", true), orderBy("created"), limit(Math.max(8, this.commentsWithSentiment.size + reloadAmount)));
-      const { unsub } = getCollection(watchQuery, this.commentsWithSentiment)
-
-      return { unsub }
-
-    },
-    setAllComments(reloadAmount) {
+     setSentencesWithSentiment(reloadAmount) {
 
 
 
 
-
-      const watchQuery = query(collection(projectFirestore, "comments"), orderBy("created"), limit(Math.max(8, this.allComments.size + reloadAmount)));
-
-
-      const { unsub } = getCollection(watchQuery, this.allComments)
+      const watchQuery = query(collection(projectFirestore, "sentences"), where(`sentiments.${this.current_user.name}.value`, "==", -2), where("sentiments.labeled", "==", true), orderBy("created"), limit(Math.max(8, this.sentencesWithSentiment.size + reloadAmount)));
+      const { unsub } = getCollection(watchQuery, this.sentencesWithSentiment)
 
       return { unsub }
 
     },
-    setCommentsWithConflicts(reloadAmount) {
-      const watchQuery = query(collection(projectFirestore, "comments"), where("conflict", "==", true), orderBy("created"), limit(Math.max(8, this.commentsWithConflicts.size + reloadAmount)));
-      const { unsub } = getCollection(watchQuery, this.commentsWithConflicts)
+    setAllSentences(reloadAmount) {
+
+      const watchQuery = query(collection(projectFirestore, "sentences"), orderBy("created"), limit(Math.max(8, this.sentences.size + reloadAmount)));
+
+
+      const { unsub } = getCollection(watchQuery, this.sentences)
+
+      return { unsub }
+
+    },
+    setSentencesWithConflicts(reloadAmount) {
+      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.conflict", "==", true), orderBy("created"), limit(Math.max(8, this.sentencesWithConflicts.size + reloadAmount)));
+      const { unsub } = getCollection(watchQuery, this.sentencesWithConflicts)
 
       return { unsub }
 
 
     },
 
-    setCommentsWithDiscussions() {
+    setSentencesWithDiscussions() {
 
 
-      const watchQuery = query(collection(projectFirestore, "comments"), where("discussionResolved", "==", false), where("latestDiscussion", ">", 0));
+      const watchQuery = query(collection(projectFirestore, "sentences"), where("discussion.discussionResolved", "==", false), where("discussion.latestDiscussionComment", ">", 0));
 
-      const { unsub } = getCollection(watchQuery, this.commentsWithDiscussions)
+      const { unsub } = getCollection(watchQuery, this.sentencesWithDiscussions)
 
       const updateLastDiscussionView = () => {
         updateDoc(doc(projectFirestore, "users", this.current_user.id), {
@@ -98,13 +107,13 @@ export const useMainStore = defineStore({
 
 
     },
-    setLinkComment(id) {
+    setLinkSentence(id) {
 
 
-      const watchQuery = query(collection(projectFirestore, "comments"), where(documentId(), "==", id));
+      const watchQuery = query(collection(projectFirestore, "sentences"), where(documentId(), "==", id));
 
 
-      const { unsub } = getCollection(watchQuery, this.linkComment)
+      const { unsub } = getCollection(watchQuery, this.linkSentence)
 
 
       return unsub
@@ -124,9 +133,14 @@ export const useMainStore = defineStore({
 
 
 
-      const unlabeledComments = onSnapshot(doc(projectFirestore, "stats", "stats"), (snap) => {
-        this.stats.unlabeledComments = snap.data().unlabeledComments;
+      const unlabeledSentences = onSnapshot(doc(projectFirestore, "stats", "stats"), (snap) => {
+        this.stats.unlabeledSentences = snap.data().unlabeledSentences;
       });
+
+      const labeledSentences = onSnapshot(doc(projectFirestore, "stats", "stats"), (snap) => {
+        this.stats.labeledSentences = snap.data().labeledSentences;
+      });
+
 
       const lastDiscussionView = onSnapshot(query(collection(projectFirestore, "users"), where("name", "==", this.current_user.name)), (snap) => {
         this.stats.lastDiscussionView = snap.docs[0].data().lastDiscussionView;
@@ -135,48 +149,72 @@ export const useMainStore = defineStore({
       const unreadPostsAvailable = onSnapshot(query(collection(projectFirestore, "users"), where("name", "!=", this.current_user.name)), (snap) => {
         this.stats.unreadPostsAvailable = false
         snap.docs.forEach(doc => {
-          
-          if (doc.data().latestDiscussionPost > this.stats.lastDiscussionView) {
+
+          if (doc.data().latestDiscussionComment > this.stats.lastDiscussionView) {
             this.stats.unreadPostsAvailable = true;
           }
         });
       })
-        
 
 
 
 
-      return () => { setSentimentCount(); unlabeledComments(); lastDiscussionView(); unreadPostsAvailable()}
+
+      return () => { setSentimentCount(); unlabeledSentences(); lastDiscussionView(); unreadPostsAvailable(); labeledSentences(); }
 
     },
-    async addSentiment(comment, sentiment) {
+  
+  
+    async addSentiment(sentence, sentiment) {
       let conflict = false;
 
+
       for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
-        if (comment[user.name] != -2 && comment[user.name] != sentiment) {
+        if (sentence.sentiments[user.name].value != -2 && sentence.sentiments[user.name].value != sentiment) {
           conflict = true;
         }
       }
 
       try {
 
-        await updateDoc(doc(projectFirestore, "comments", comment.id), {
-          [this.current_user.name]: sentiment
-          ,
-          labeled: true,
-          conflict: conflict,
+        await updateDoc(doc(projectFirestore, "sentences", sentence.id), {
+          sentiments: {
+            ...sentence.sentiments,
+            [this.current_user.name]: { value: sentiment, updated: timestamp() },
+            labeled: true,
+            conflict: conflict
+          },
           updated: timestamp()
         })
 
-        if (comment[this.current_user.name] == -2) {
+        if (sentence.sentiments[this.current_user.name].value == -2) {
           updateDoc(doc(projectFirestore, "users", this.current_user.id), {
             sentimentCount: increment(1)
           })
         }
-        if (!comment.labeled) {
+        if (!sentence.sentiments.labeled) {
           updateDoc(doc(projectFirestore, "stats", "stats"), {
-            unlabeledComments: increment(-1)
+            unlabeledSentences: increment(-1)
           })
+
+          updateDoc(doc(projectFirestore, "stats", "stats"), {
+            labeledSentences: increment(1)
+          })
+        }
+
+
+        if (sentiment === -3) {
+          let deleteSentence = true
+          for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
+            if (sentence.sentiments[user.name].value != -3) {
+              deleteSentence = false;
+            }
+          }
+        
+          if (deleteSentence) {
+            console.log(deleteSentence)
+            this.removeSentence(sentence)
+          }
         }
 
       } catch (error) {
@@ -189,10 +227,25 @@ export const useMainStore = defineStore({
 
 
     },
+    async removeSentence(sentence) {
+      try {
+        await deleteDoc(doc(projectFirestore, "sentences", sentence.id))
 
-    addUserDiscussion(comment, body) {
+        updateDoc(doc(projectFirestore, "stats", "stats"), {
+          labeledSentences: increment(-1)
+        })
+
+      } catch (error) {
+        console.error(error.message)
+      }
+
+    },
+
+    addUserDiscussion(sentence, body) {
 
       const now = Date.now();
+
+
 
       const userComment = {
         user: this.current_user.name,
@@ -200,24 +253,29 @@ export const useMainStore = defineStore({
         created: now
       }
 
-      if (comment.discussions) {
-        comment.discussions.push(userComment)
+      if (sentence.discussion) {
+        sentence.discussion.comments.push(userComment)
       } else {
-        comment.discussions = [userComment]
+        sentence.discussion = {}
+        sentence.discussion.comments = [userComment]
       }
 
 
 
-      updateDoc(doc(projectFirestore, "comments", comment.id), {
-        discussions: comment.discussions,
+      updateDoc(doc(projectFirestore, "sentences", sentence.id), {
+        discussion: {
+          discussionResolved: false,
+          comments: sentence.discussion.comments,
+          latestDiscussionComment: now
+        },
+
         updated: timestamp(),
-        latestDiscussion: userComment.created,
-        discussionResolved: false
+
       })
 
       updateDoc(doc(projectFirestore, "users", this.current_user.id), {
-        latestDiscussionPost: userComment.created,
-    
+        latestDiscussionComment: now,
+
       })
 
 
@@ -226,21 +284,28 @@ export const useMainStore = defineStore({
 
     },
 
-    removeUserDiscussion(comment, discussionTimestamp) {
-      comment.discussions = comment.discussions.filter((discussion) => discussion.created != discussionTimestamp);
+    removeUserDiscussion(sentence, discussionTimestamp) {
+      sentence.discussion.comments = sentence.discussion.comments.filter((discussion) => discussion.created != discussionTimestamp);
 
-      updateDoc(doc(projectFirestore, "comments", comment.id), {
-        discussions: comment.discussions,
+      updateDoc(doc(projectFirestore, "sentences", sentence.id), {
+        discussion: {
+          ...sentence.discussion,
+          comments: sentence.discussion.comments,
+          latestDiscussionComment: sentence.discussion.comments.length > 0 ? sentence.discussion.comments[sentence.discussion.comments.length - 1].created : 0
+        },
         updated: timestamp(),
-        latestDiscussion: comment.discussions.length > 0 ? comment.discussions[comment.discussions.length - 1].created : 0
+
       })
 
     },
-    changeDiscussionStatus(comment) {
-      let newDiscussionStatus = comment.discussionResolved ? false : true;
+    changeDiscussionStatus(sentence) {
+      let newDiscussionStatus = sentence.discussion.discussionResolved ? false : true;
 
-      updateDoc(doc(projectFirestore, "comments", comment.id), {
-        discussionResolved: newDiscussionStatus,
+      updateDoc(doc(projectFirestore, "sentences", sentence.id), {
+        discussion: {
+          ...sentence.discussion,
+          discussionResolved: newDiscussionStatus
+        },
         updated: timestamp(),
       })
 
@@ -264,7 +329,7 @@ export const useMainStore = defineStore({
 
 
 
-      addDoc(collection(projectFirestore, "comments"), {
+      addDoc(collection(projectFirestore, "sentences"), {
         submissionTitle: randomTitle,
         body: randomComment,
         labeled: false,
@@ -283,28 +348,7 @@ export const useMainStore = defineStore({
 
     },
 
-    async removeComment(comment) {
-      try {
-        await deleteDoc(doc(projectFirestore,"comments",comment.id)) 
-        for (const user of this.users) {
-          if (comment[user.name] != -2) {
-            updateDoc(doc(projectFirestore, "users", user.id), {
-              sentimentCount: increment(-1)
-            })
-          }
-        }
-        if (comment.labeled === false) {
-          updateDoc(doc(projectFirestore, "stats", "stats"), {
-            unlabeledComments: increment(-1)
-          })
 
-        }
-
-      } catch (error) {
-        console.error(error.message)
-      }
-
-    },
     async setUsers() {
 
 

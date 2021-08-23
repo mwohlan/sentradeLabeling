@@ -7,7 +7,7 @@
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
-import { onMounted, ref, onBeforeMount, computed, watchEffect } from "vue";
+import { onMounted, onBeforeMount, ref, computed, watchEffect } from "vue";
 
 export default {
   components: {
@@ -16,20 +16,21 @@ export default {
   setup() {
     const sidebarOpen = ref(false);
     const store = useMainStore();
-
     let unsub;
 
     onMounted(() => {
-      let queryParam = store.sentencesWithSentiment.size ? store.sentencesWithSentiment.size : 0;
-      if (store.sentencesWithSentiment.size) {
-        store.sentencesWithSentiment.clear()
+      let queryParam = store.recentlyLabeledSentences.size ? store.recentlyLabeledSentences.size : 0;
+      if (store.recentlyLabeledSentences.size) {
+        store.recentlyLabeledSentences.clear()
       }
 
-      ({ unsub } = store.setSentencesWithSentiment(queryParam));
+      ({ unsub } = store.setRecentlyLabeledSentences(queryParam));
     });
 
-
-
+    const scrollReload = async () => {
+      unsub();
+      unsub = store.setRecentlyLabeledSentences(5).unsub;
+    };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
@@ -37,17 +38,15 @@ export default {
       });
     });
 
-    const scrollReload = () => {
-      unsub()
-
-      unsub = store.setSentencesWithSentiment(5).unsub
-    }
-
     return {
       sidebarOpen,
-      sentences: computed(() => store.sentencesWithSentiment),
+      sentences: computed(() => store.recentlyLabeledSentences),
       scrollReload,
     };
   },
 };
 </script>
+
+
+
+

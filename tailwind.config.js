@@ -22,6 +22,9 @@ module.exports = {
           '50%': { opacity: '0.7', transform: 'scale(1)' },
         }
       },
+      transitionTimingFunction: {
+        'out-expo': 'cubic-bezier(0,.84,.1,1.01)',
+      }
     },
   },
   plugins: [

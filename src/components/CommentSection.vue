@@ -1,5 +1,5 @@
 <template>
-    <div v-show="openPanel">
+    <div v-if="openPanel">
         <DisclosurePanel v-slot="{ close }" static>
             <div
                 class="bg-gray-100 flex flex-col mt-3 shadow rounded sm:rounded-lg overflow-hidden"
@@ -7,21 +7,20 @@
                 <div
                     @click="changeDiscussionStatus"
                     v-if="resolvedDiscussion"
-                    class="cursor-pointer justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-green-200/70 text-green-700"
+                    :class="{ 'cursor-pointer': !isMobile }"
+                    class="justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-green-200/70 text-green-700"
                 >Resolved</div>
                 <div
-                    class="cursor-pointer justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-yellow-200/70 text-yellow-700"
+                    :class="{ 'cursor-pointer': !isMobile }"
+                    class="justify-self-start self-center flex items-center mt-1 px-2 rounded-full text-xs font-medium bg-yellow-200/70 text-yellow-700"
                     @click="changeDiscussionStatus(); close();"
                     v-else-if="activeDiscussion"
                 >Active</div>
 
-                <ul
-                    v-if="comment.discussions && comment.discussions.length > 0"
-                    class="space-y-3 px-4 sm:px-6"
-                >
+                <ul v-if="discussionExists" class="space-y-3 px-4 sm:px-6">
                     <li
-                        v-for="discussion in comment.discussions"
-                        :key="discussion.created"
+                        v-for="userComment in sentence.discussion.comments"
+                        :key="userComment.created"
                         class="flex"
                     >
                         <div class="flex-1 space-x-3">
@@ -29,40 +28,39 @@
                                 <div class="text-xs flex justify-between">
                                     <div
                                         class="font-medium text-gray-900 capitalize"
-                                    >{{ discussion.user }}</div>
+                                    >{{ userComment.user }}</div>
 
                                     <div
-                                        v-if="
-                                            discussion.created > lastDiscussionView &&
-                                            discussion.user != current_user
-                                        "
+                                        v-if="isUnseenPost(userComment)"
                                         class="text-[0.725rem] py-[0.05rem] flex items-center font-semibold px-2 justify-center text-indigo-800 bg-indigo-200 rounded-lg"
                                     >New</div>
                                 </div>
                                 <div class="mt-1 text-sm text-gray-700 flex flex-wrap">
-                                    <p
-                                        class="whitespace-pre-line"
-                                    >{{ discussion.body }} {{ discussion.newPost }}</p>
+                                    <p class="whitespace-pre-line">{{ userComment.body }}</p>
                                 </div>
                                 <div class="flex flex-wrap justify-between">
                                     <div class="mt-2 text-xs space-x-2">
                                         <span class="text-gray-500">
                                             <UseTimeAgo
                                                 v-slot="{ timeAgo }"
-                                                :time="new Date(discussion.created)"
+                                                :time="new Date(userComment.created)"
                                             >{{ timeAgo }}</UseTimeAgo>
                                         </span>
                                     </div>
 
                                     <div class="text-sm">
-                                        <button class="text-gray-500 hover:text-gray-600">
+                                        <button
+                                            @click="
+                                            removeUserDiscussion(sentence, userComment.created)
+                                            "
+                                            class="text-gray-500 hover:text-gray-600"
+                                             :class="{ 'cursor-default': isMobile }"
+                                            
+                                        >
                                             <TrashIcon
-                                                @click="
-                                                removeUserDiscussion(comment, discussion.created)
-                                                "
                                                 class="h-4 w-4"
                                                 :class="{
-                                                    hidden: discussion.user !== current_user,
+                                                    hidden: userComment.user !== current_user,
                                                 }"
                                                 aria-hidden="true"
                                             />
@@ -76,8 +74,9 @@
                 <div class="flex items-center justify-center">
                     <button
                         class="pb-1"
-                        v-if="comment.discussions && comment.discussions.length > 0"
+                        v-if="discussionExists"
                         @click="openTextAreaWithButton = !openTextAreaWithButton"
+                        :class="{ 'cursor-default': isMobile }"
                     >
                         <ArrowCircleDownIcon
                             class="h-6 w-6 ease duration-500"
@@ -96,7 +95,7 @@
                 >
                     <div
                         v-if="
-                           openTextAreaSection
+                            openTextAreaSection
                         "
                         class="bg-gray-100 px-4 py-2 sm:px-6"
                     >
@@ -108,17 +107,17 @@
                                 >
                                     <div class="sm:flex-1">
                                         <textarea
-                                            id="comment"
+                                            id="sentence"
                                             v-model="userDiscussion"
                                             ref="textInput"
-                                            name="comment"
+                                            name="sentence"
                                             rows="2"
-                                            class="shadow-sm block w-full focus:ring-gray-400 focus:border-gray-400 sm:text-sm border border-gray-300 rounded-md"
+                                            class="shadow-inner block w-full focus:ring-gray-400 focus:border-gray-400 sm:text-sm border border-gray-300 rounded-md"
                                             placeholder="Add to discussion"
                                         />
                                     </div>
                                     <div class="mt-3 flex items-center justify-end">
-                                        <button type="submit">
+                                        <button type="submit"  :class="{ 'cursor-default': isMobile }">
                                             <ReplyIcon
                                                 class="h-6 w-6 text-gray-400 hover:text-gray-500"
                                                 aria-hidden="true"
@@ -153,7 +152,8 @@ import { useMainStore } from "../store";
 
 const props = defineProps({
     openPanel: Boolean,
-    comment: Object
+    sentence: Object,
+    isMobile: Boolean,
 })
 
 const store = useMainStore();
@@ -162,10 +162,10 @@ const store = useMainStore();
 
 const openTextAreaWithButton = ref(false);
 
-const openTextAreaSection = computed(()=>
-     openTextAreaWithButton.value ||
-    !props.comment.discussions ||
-    props.comment.discussions.length == 0
+const openTextAreaSection = computed(() =>
+    openTextAreaWithButton.value ||
+    !props.sentence.discussion ||
+    props.sentence.discussion.comments.length == 0
 )
 
 
@@ -173,16 +173,16 @@ const openTextAreaSection = computed(()=>
 const userDiscussion = ref("");
 
 const addUserDiscussion = () => {
-    store.addUserDiscussion(props.comment, userDiscussion.value);
+    store.addUserDiscussion(props.sentence, userDiscussion.value);
     openTextAreaWithButton.value = false;
     userDiscussion.value = "";
 };
 const changeDiscussionStatus = () => {
-    store.changeDiscussionStatus(props.comment);
+    store.changeDiscussionStatus(props.sentence);
 }
 
-const removeUserDiscussion = (comment, timestamp) => {
-    store.removeUserDiscussion(comment, timestamp);
+const removeUserDiscussion = (sentence, timestamp) => {
+    store.removeUserDiscussion(sentence, timestamp);
 };
 
 
@@ -191,8 +191,10 @@ const textInput = ref(null);
 
 const lastDiscussionView = computed(() => store.stats.lastDiscussionView)
 watchEffect(() => {
+
     if (textInput.value) {
-        setTimeout(() => (textInput.value ? textInput.value.focus() : null), 50);
+
+        setTimeout(() => (textInput.value.focus()), 50);
     }
 });
 
@@ -201,9 +203,14 @@ watchEffect(() => {
 
 const current_user = computed(() => store.current_user.name);
 
-const activeDiscussion = computed(() => !props.comment.discussionResolved && props.comment.discussions && props.comment.discussions.length > 0)
+const isUnseenPost = (userComment) => (userComment.created > lastDiscussionView && userComment.user != current_user)
 
-const resolvedDiscussion = computed(() => props.comment.discussionResolved && props.comment.discussions && props.comment.discussions.length > 0)
+
+const discussionExists = computed(() => props.sentence.discussion && props.sentence.discussion.comments.length > 0)
+
+const activeDiscussion = computed(() => props.sentence.discussion && !props.sentence.discussion.discussionResolved && props.sentence.discussion.comments.length > 0)
+
+const resolvedDiscussion = computed(() => props.sentence.discussion && props.sentence.discussion.discussionResolved && props.sentence.discussion.comments.length > 0)
 
 
 

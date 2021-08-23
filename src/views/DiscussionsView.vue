@@ -1,7 +1,7 @@
 
 <template>
 
-  <base-layout :comments="comments" />
+  <base-layout :sentences="sentences" />
 </template>
 
 <script>
@@ -23,10 +23,10 @@ export default {
 
 
     onMounted(()=>{
-       if (store.commentsWithDiscussions.size) {
-        store.commentsWithSentiment.clear()
+       if (store.sentencesWithDiscussions.size) {
+        store.sentencesWithDiscussions.clear()
       }
-      ({ unsub,updateLastDiscussionView} = store.setCommentsWithDiscussions(0));
+      ({ unsub,updateLastDiscussionView} = store.setSentencesWithDiscussions(0));
     })
 
     
@@ -34,7 +34,6 @@ export default {
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
-         store.loading = true;
         updateLastDiscussionView();
       });
     });
@@ -43,7 +42,7 @@ export default {
 
     return {
       sidebarOpen,
-      comments: computed (() => store.sortedCommentsWithDiscussions),
+      sentences: computed (() => store.sortedSentencesWithDiscussions),
       
     };
   },

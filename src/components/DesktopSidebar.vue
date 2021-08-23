@@ -1,9 +1,9 @@
 <template>
-  <div class="hidden lg:flex lg:flex-shrink-0 border-r-2 shadow-lg">
-    <div class="flex flex-col w-64">
+  <div class="hidden lg:flex lg:flex-shrink-0 drop-shadow-xl shadow-lg">
+    <div class="flex flex-col w-72">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex flex-col flex-grow bg-white pt-5 pb-4 overflow-y-auto">
-        <div class="flex items-center gap-x-2 flex-shrink-0 px-4 filter drop-shadow-xl">
+        <div class="flex items-center gap-x-2 flex-shrink-0 px-4  drop-shadow-xl">
           <img
             class="h-8 w-auto"
             src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg"
@@ -21,7 +21,7 @@
               v-for="item in navigation"
               :key="item.name"
               :to="item.to"
-              :class="[item.current ? 'bg-gray-100 border-indigo-400 text-gray-800' : 'border-transparent  text-gray-700 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+              :class="[,item.current ? 'bg-gray-100 border-indigo-400 text-gray-800' : 'border-transparent  text-gray-700 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
               :aria-current="item.current ? 'page' : undefined"
             >
               <component

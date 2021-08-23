@@ -46,6 +46,15 @@ const routes = [
     // component: () => import('./views/About.vue'), meta: { title: 'Home' }
   },
   {
+    path: '/recentlyLabeled',
+    component: () => import('../views/RecentlyLabeledView.vue'),
+    name: 'recently labeled' //
+    // example of route level code-splitting
+    // this generates a separate chunk (About.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
+  },
+  {
     path: '/link/:id',
     component: () => import('../views/LinkView.vue'),
     name: 'link',

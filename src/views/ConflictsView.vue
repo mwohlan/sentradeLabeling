@@ -1,6 +1,6 @@
 
 <template>
-<base-layout @scrollReload="scrollReload()" :comments="comments"></base-layout></template>
+<base-layout @scrollReload="scrollReload()" :sentences="sentences"></base-layout></template>
 
 <script>
 import BaseLayout from "../components/BaseLayout.vue";
@@ -22,28 +22,28 @@ export default {
 
 
     onMounted(() => {
-      if (store.commentsWithConflicts.size) {
-        store.commentsWithConflicts.clear()
+      let queryParam = store.sentencesWithConflicts.size ? store.sentencesWithConflicts.size : 0;
+      if (store.sentencesWithConflicts.size) {
+        store.sentencesWithConflicts.clear()
       }
-      ({ unsub} = store.setCommentsWithConflicts(0));
+      ({ unsub} = store.setSentencesWithConflicts(queryParam));
     });
 
     const scrollReload = async () => {
       unsub()
      
-      unsub = store.setCommentsWithConflicts(5).unsub;
+      unsub = store.setSentencesWithConflicts(5).unsub;
     };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
-         store.loading = true;
       });
     });
 
     return {
       sidebarOpen,
-      comments: computed(() =>store.commentsWithConflicts),
+      sentences: computed(() =>store.sentencesWithConflicts),
       scrollReload,
     };
   },

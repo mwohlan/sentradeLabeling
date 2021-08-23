@@ -4,6 +4,7 @@ import {
     UserGroupIcon,
     ChatIcon,
     SwitchVerticalIcon,
+    ClockIcon
 } from "@heroicons/vue/outline";
 
 export default [
@@ -11,6 +12,12 @@ export default [
         name: "Unlabeled",
         to: { name: "unlabeled" },
         icon: MailIcon,
+        current: false,
+    },
+    {
+        name: "Recently labeled",
+        to: { name: "recently labeled" },
+        icon: ClockIcon,
         current: false,
     },
     {

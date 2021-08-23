@@ -1,13 +1,13 @@
 
 <template>
-  <base-layout @scrollReload="scrollReload()" :comments="comments" />
+  <base-layout @scrollReload="scrollReload()" :sentences="sentences" />
 </template>
 
 <script>
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
-import { onMounted,onBeforeMount, ref, computed, watchEffect } from "vue";
+import { onMounted, ref, computed, watchEffect } from "vue";
 
 export default {
   components: {
@@ -22,24 +22,27 @@ export default {
    
   
     onMounted(() => {
+      let queryParam = store.sentences.size ? store.sentences.size : 0;
+      if (store.sentences.size) {
+        store.sentences.clear()
+      }
 
-     ({ unsub} = store.setAllComments(0));
+     ({ unsub} = store.setAllSentences(queryParam));
     });
 
     const scrollReload = async () => {
       unsub();
-      unsub = store.setAllComments(5).unsub;
+      unsub = store.setAllSentences(5).unsub;
     };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
-        store.loading = true;
         unsub();
       });
     });
     return {
       sidebarOpen,
-      comments: computed(() => store.allComments),
+      sentences: computed(() => store.sentences),
       scrollReload,
     };
   },

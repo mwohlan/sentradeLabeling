@@ -1,5 +1,5 @@
 <template>
-  <base-layout :comments="comments" />
+  <base-layout :sentences="sentences" />
 </template>
 
 <script>
@@ -24,19 +24,18 @@ export default {
 
 
     onMounted(() => {
-      unsub.value = store.setLinkComment(props.id);
+      unsub.value = store.setLinkSentence(props.id);
     });
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub.value();
-         store.loading = true;
       });
     });
 
     return {
       sidebarOpen,
-      comments: computed(() => store.linkComment),
+      sentences: computed(() => store.linkSentence),
     };
   },
 };

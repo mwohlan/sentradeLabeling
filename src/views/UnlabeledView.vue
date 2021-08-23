@@ -1,6 +1,6 @@
 
 <template>
-  <base-layout @scrollReload="scrollReload()" :comments="comments" />
+  <base-layout @scrollReload="scrollReload()" :sentences="sentences" />
 </template>
 
 <script>
@@ -19,28 +19,28 @@ export default {
     let unsub;
 
     onMounted(() => {
-      if (store.commentsWithoutSentiment.size) {
-        store.commentsWithoutSentiment.clear()
+      let queryParam = store.sentencesWithoutSentiment.size ? store.sentencesWithoutSentiment.size : 0;
+      if (store.sentencesWithoutSentiment.size) {
+        store.sentencesWithoutSentiment.clear()
       }
 
-      ({ unsub } = store.setCommentsWithoutSentiment(0));
+      ({ unsub } = store.setSentencesWithoutSentiment(queryParam));
     });
 
     const scrollReload = async () => {
       unsub();
-      unsub = store.setCommentsWithoutSentiment(5).unsub;
+      unsub = store.setSentencesWithoutSentiment(5).unsub;
     };
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
-        store.loading = true;
       });
     });
 
     return {
       sidebarOpen,
-      comments: computed(() => store.commentsWithoutSentiment),
+      sentences: computed(() => store.sentencesWithoutSentiment),
       scrollReload,
     };
   },

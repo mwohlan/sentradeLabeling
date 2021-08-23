@@ -1,29 +1,32 @@
 
 <template>
-  <div>
-    <div class="h-screen flex bg-gray-200">
+  <div class="h-full">
+    <div class="h-screen flex bg-gray-100">
       <MobileSidebar
         @closeSidebar="sidebarOpen = false"
         :sidebarOpen="sidebarOpen"
         :navigation="navigation"
+        :isMobile = "isMobile"
       ></MobileSidebar>
       <DesktopSidebar :navigation="navigation"></DesktopSidebar>
       <div
-        class="flex-1 overflow-auto focus:outline-none relative pb-20 lg:pb-32"
+        class="flex-1 overflow-x-hidden overflow-y-auto focus:outline-none relative pb-20 lg:pb-32"
         ref="scrollComponent"
         @scroll.passive="handleScroll"
       >
         <SearchHeader @openSidebar="sidebarOpen = true" :currentRouteName="currentRouteName"></SearchHeader>
         <transition-group
-          class="relative mt-8 max-w-6xl mx-auto space-y-6 lg:space-y-9"
+          class="relative mt-8 max-w-4xl mx-auto space-y-6 lg:space-y-9"
           name="list"
           tag="ul"
           appear
         >
+
+
           <LabelCard
-            v-for="[key, comment, index] of comments"
+            v-for="[key, sentence] of sentences"
             :key="key"
-            :comment="comment"
+            :sentence="sentence"
             :isMobile="isMobile"
           ></LabelCard>
         </transition-group>
@@ -41,11 +44,12 @@ import navigation from "../composables/navigationItems";
 import { useMainStore } from "../store";
 import { useRoute } from "vue-router";
 import { onMounted, ref, watchEffect, computed } from "vue";
+import Table from "./Table.vue";
 
 const props = defineProps({
-  comments: Map,
-})
-const emit = defineEmits(["scrollReload"])
+  sentences: Map,
+});
+const emit = defineEmits(["scrollReload"]);
 
 const sidebarOpen = ref(false);
 const store = useMainStore();
@@ -97,30 +101,29 @@ watchEffect((onInvalidate) => {
     unsubStats.value();
   });
 });
-
-
-
 </script>
 
 <style scoped>
 .list-move {
-  transition: all 0.3s linear;
+  transition: all 0.4s linear;
 }
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateX(15%);
+  transform: translateX(35%);
 }
 
 .list-enter-active {
-  transition: all 0.3s linear;
+  transition: all 0.4s linear;
 }
 
 .list-leave-active {
   position: absolute;
   width: 100%;
-  transition: all 0.3s linear;
+  transition: all 0.4s linear;
 }
+
+
 </style>
 
 

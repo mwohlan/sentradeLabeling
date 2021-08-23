@@ -5,19 +5,23 @@
         <div class="flex-1 min-w-0">
           <!-- Profile -->
           <div class="flex items-center pb-1 px-4 sm:px-0">
-            <div class="mt-2 sm:mt-4 flex flex-wrap justify-between md:justify-around flex-1">
-              <div class="mb-1 flex items-center text-sm text-gray-500 font-medium">
-                <ClipboardCheckIcon class="mr-1.5 h-5 w-5 text-green-400" aria-hidden="true" />
-                {{ stats.sentimentCount }}
+            <div class="mt-2  sm:mt-4 flex flex-wrap justify-between md:justify-around flex-1">
+              <div class=" flex items-center text-sm text-gray-500 font-medium">
+                <UserIcon class="sm:mr-2 mr-0.5 h-5 w-5 text-green-400" aria-hidden="true" />
+                {{ stats['sentimentCount'] }}
+              </div>
+              <div class=" flex items-center text-sm text-gray-500 font-medium">
+                <UserGroupIcon class="sm:mr-2 mr-0.5 h-5 w-5 text-green-400" aria-hidden="true" />
+                {{ stats['labeledSentences'] }}
               </div>
               <div class="flex items-center text-sm text-gray-500 font-medium">
-                <DocumentDuplicateIcon class="mr-1.5 h-5 w-5 text-red-400" aria-hidden="true" />
-                {{ stats.unlabeledComments }}
+                <DocumentDuplicateIcon class="sm:mr-2 mr-0.5 h-5 w-5 text-red-400" aria-hidden="true" />
+                {{ stats['unlabeledSentences'] }}
               </div>
 
-              <div class="flex items-center text-sm text-gray-500 font-medium sm:mr-6">
+              <div class="flex items-center text-sm text-gray-500 font-semibold sm:mr-6">
                 <router-link class="flex capitalize" :to="{ name: 'Login' } " >
-                  <UserIcon class="mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <LoginIcon class="sm:mr-2 mr-0.5 h-5 w-5 " aria-hidden="true" />
                   {{ current_user.name }}
                 </router-link>
               </div>
@@ -47,7 +51,8 @@ import {
   ClipboardCheckIcon,
   DocumentDuplicateIcon,
 } from "@heroicons/vue/outline";
-import { PlusIcon, UserIcon } from "@heroicons/vue/solid";
+import { PlusIcon,  } from "@heroicons/vue/solid";
+import { UserIcon,LoginIcon,UserGroupIcon} from "@heroicons/vue/outline";
 import { ref, computed } from '@vue/reactivity';
 import { useMainStore } from "../store";
 export default {
@@ -55,7 +60,10 @@ export default {
     ClipboardCheckIcon,
     DocumentDuplicateIcon,
     PlusIcon,
+    LoginIcon,
     UserIcon,
+    UserGroupIcon
+
   },
   setup() {
     const store = useMainStore();

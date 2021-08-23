@@ -1,5 +1,5 @@
 <template>
-  <div class="sticky top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 overflow-x-hidden sm:rounded-lg">
+  <div class="sticky drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 overflow-x-hidden sm:rounded-lg">
     <div class="flex">
       <div class="flex items-center text-gray-500 lg:hidden" @click="$emit('openSidebar')">
         <MenuIcon class="h-[3.25rem] w-[3.25rem]" aria-hidden="true" />
@@ -20,7 +20,6 @@
               <input
                 id="search-field"
                 name="search-field"
-                value="abc"
                 class="block w-full h-full pl-9 pr-2 border-transparent text-gray-900 bg-gray-200/60 shadow md:shadow-md placeholder-gray-500 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
                 :placeholder="'Search ' + currentRouteName"
                 type="search"
