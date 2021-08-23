@@ -23,7 +23,7 @@ export const useMainStore = defineStore({
   getters: {
 
     sortedSentencesWithDiscussions() {
-      let sortedArrayWithDiscussions = [...this.sentencesWithDiscussions.values()].sort((a, b) => b.discussion.latestDiscussionComment - a.dicussion.latestDiscussionComment
+      let sortedArrayWithDiscussions = [...this.sentencesWithDiscussions.values()].sort((a, b) => b.discussion.latestDiscussionComment - a.discussion.latestDiscussionComment
       ).map(sentence => [sentence.id, sentence]);
       return new Map(sortedArrayWithDiscussions);
     }
