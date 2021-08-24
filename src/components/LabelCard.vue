@@ -11,7 +11,7 @@
     <div
       @click.prevent="sentence.commentBody.length > 1 ? fullComment = !fullComment : fullComment"
       :class="{ 'cursor-pointer': !isMobile }"
-      class="mt-4 lg:mt-6 text-gray-800/90 text-[0.95rem] font-semibold leading-relaxed text-justify"
+      class="mt-4 lg:mt-6 text-gray-800/90 text-[0.95rem] font-medium leading-relaxed text-justify"
     >
       <transition
         enter-from-class="opacity-25"

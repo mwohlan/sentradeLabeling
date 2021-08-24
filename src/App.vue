@@ -1,6 +1,6 @@
 <template>
   <div>
-    <main class="fixed inset-0 h-full ">
+    <main class="fixed inset-0 h-full">
       <router-view v-slot="{ Component }">
         <component :is="Component" />
       </router-view>
