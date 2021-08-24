@@ -90,6 +90,12 @@
             aria-hidden="true"
           />
         </button>
+
+            <button @click="addSentiment(sentence, -3)" :class="{ 'cursor-default': isMobile }">
+          <BanIcon 
+           :class="[userSentiment == -3 ? 'text-gray-800 hover:text-gray-900' : 'hover:text-gray-500']"
+          class="h-6 w-6" aria-hidden="true" />
+        </button>
       </div>
       <div class="text-sm flex space-x-8 sm:space-x-12">
         <DisclosureButton
@@ -102,9 +108,7 @@
           <ChatIcon class="h-6 w-6" aria-hidden="true" />
         </DisclosureButton>
 
-        <button @click="addSentiment(sentence, -3)" :class="{ 'cursor-default': isMobile }">
-          <TrashIcon class="h-6 w-6 text-gray-500/75 hover:text-gray-600" aria-hidden="true" />
-        </button>
+    
         <Menu as="div" class="relative">
           <MenuButton class="w-full h-full" :class="{ 'cursor-default': isMobile }">
             <DotsVerticalIcon
@@ -191,14 +195,14 @@ import {
   MenuItems,
   MenuButton,
 } from "@headlessui/vue";
-import { } from "@heroicons/vue/solid";
+
 import {
   SwitchVerticalIcon,
   DotsVerticalIcon,
   ShareIcon,
   LinkIcon,
   TrashIcon,
-  ThumbUpIcon, ThumbDownIcon, BookOpenIcon
+  ThumbUpIcon, ThumbDownIcon,BanIcon
 } from "@heroicons/vue/outline";
 import { ChatIcon } from "@heroicons/vue/outline";
 import { ref } from "@vue/reactivity";
