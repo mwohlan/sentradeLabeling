@@ -203,19 +203,19 @@ export const useMainStore = defineStore({
         }
 
 
-        if (sentiment === -3) {
-          let deleteSentence = true
-          for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
-            if (sentence.sentiments[user.name].value != -3) {
-              deleteSentence = false;
-            }
-          }
+        // if (sentiment === -3) {
+        //   let deleteSentence = true
+        //   for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
+        //     if (sentence.sentiments[user.name].value != -3) {
+        //       deleteSentence = false;
+        //     }
+        //   }
         
-          if (deleteSentence) {
-            console.log(deleteSentence)
-            this.removeSentence(sentence)
-          }
-        }
+        //   if (deleteSentence) {
+        //     console.log(deleteSentence)
+        //     this.removeSentence(sentence)
+        //   }
+        // }
 
       } catch (error) {
         console.log(error.message);
