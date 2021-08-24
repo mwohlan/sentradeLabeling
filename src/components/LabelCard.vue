@@ -1,6 +1,6 @@
 <template>
   <Disclosure
-    class="sm:hover:scale-[1.01] duration-200 bg-white shadow-md sm:shadow-lg px-3 py-3 md:px-7 rounded-lg mx-3 lg:mx-0"
+    class=" bg-white shadow-md sm:shadow-lg px-3 py-3 md:px-7 rounded-lg mx-3 lg:mx-0"
     :defaultOpen="activeDiscussion"
     #="{ open: openPanel }"
     as="li"
