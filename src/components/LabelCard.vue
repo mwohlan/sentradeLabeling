@@ -1,6 +1,6 @@
 <template>
   <Disclosure
-    class=" bg-white shadow-md sm:shadow-lg px-3 py-3 md:px-7 rounded-lg mx-3 lg:mx-0"
+    class="bg-white shadow-md sm:shadow-lg px-3 py-3 md:px-7 rounded-lg mx-3 lg:mx-0"
     :defaultOpen="activeDiscussion"
     #="{ open: openPanel }"
     as="li"
@@ -28,11 +28,11 @@
         </div>
       </transition>
     </div>
-    <div class="mt-4 gap-y-4 lg:mt-6 flex flex-wrap gap-x-2 justify-between">
+    <div class="mt-4 space-y-3 lg:mt-6">
       <div class="flex flex-wrap items-center lg:gap-x-6 gap-x-4">
         <div
           class="px-2 py-0.5 rounded-full text-xs bg-gray-200/70 text-gray-700"
-        >{{ sentence.subredditName }}</div>
+        >{{ `${sentence.subredditName}` + `${sentence.flair ? ' / ' + `${sentence.flair}` : ''}` }}</div>
         <div
           class="px-2 py-0.5 rounded-full text-xs"
           :class="{
@@ -45,25 +45,26 @@
           }"
         >{{ sentence.score }}</div>
       </div>
-
-      <div v-if="!hideSentiments" class="flex items-center flex-wrap lg:gap-x-6 gap-x-4">
-        <template v-for="[user, value] of userMap" :key="user">
-          <div
-            v-if="sentence.sentiments[user].value != -2"
-            class="px-2 py-0.5 rounded-full text-xs"
-            :class="{
-              'bg-red-200/70': sentence.sentiments[user].value == -1,
-              'bg-green-200/70': sentence.sentiments[user].value == 1,
-              'bg-gray-300': sentence.sentiments[user].value == -3,
-              'bg-yellow-200/70': sentence.sentiments[user].value == 0,
-              'text-red-700': sentence.sentiments[user].value == -1,
-              'text-green-700': sentence.sentiments[user].value == 1,
-              'text-yellow-700': sentence.sentiments[user].value == 0,
-              'text-gray-900': sentence.sentiments[user].value == -3,
-            }"
-          >{{ user }}</div>
-        </template>
-      </div>
+      
+        <div v-if="!hideSentiments" class="flex justify-end items-center flex-wrap lg:gap-x-6 gap-x-4">
+          <template v-for="[user, value] of userMap" :key="user">
+            <div
+              v-if="sentence.sentiments[user].value != -2"
+              class="px-2 py-0.5 rounded-full text-xs"
+              :class="{
+                'bg-red-200/70': sentence.sentiments[user].value == -1,
+                'bg-green-200/70': sentence.sentiments[user].value == 1,
+                'bg-gray-300': sentence.sentiments[user].value == -3,
+                'bg-yellow-200/70': sentence.sentiments[user].value == 0,
+                'text-red-700': sentence.sentiments[user].value == -1,
+                'text-green-700': sentence.sentiments[user].value == 1,
+                'text-yellow-700': sentence.sentiments[user].value == 0,
+                'text-gray-900': sentence.sentiments[user].value == -3,
+              }"
+            >{{ user }}</div>
+          </template>
+        </div>
+     
     </div>
     <div class="mt-6 flex justify-between sm:space-x-20">
       <div class="flex sm:space-x-12 space-x-8 items-center text-gray-500/75">
@@ -91,10 +92,12 @@
           />
         </button>
 
-            <button @click="addSentiment(sentence, -3)" :class="{ 'cursor-default': isMobile }">
-          <HandIcon 
-           :class="['text-gray-400 hover:text-gray-500']"
-          class="h-6 w-6" aria-hidden="true" />
+        <button @click="addSentiment(sentence, -3)" :class="{ 'cursor-default': isMobile }">
+          <HandIcon
+            :class="['text-gray-400 hover:text-gray-500']"
+            class="h-6 w-6"
+            aria-hidden="true"
+          />
         </button>
       </div>
       <div class="text-sm flex space-x-8 sm:space-x-12">
@@ -108,7 +111,6 @@
           <ChatIcon class="h-6 w-6" aria-hidden="true" />
         </DisclosureButton>
 
-    
         <Menu as="div" class="relative">
           <MenuButton class="w-full h-full" :class="{ 'cursor-default': isMobile }">
             <DotsVerticalIcon
@@ -201,7 +203,7 @@ import {
   DotsVerticalIcon,
   ShareIcon,
   LinkIcon,
-  ThumbUpIcon, ThumbDownIcon,HandIcon
+  ThumbUpIcon, ThumbDownIcon, HandIcon
 } from "@heroicons/vue/outline";
 import { ChatIcon } from "@heroicons/vue/outline";
 import { ref } from "@vue/reactivity";
@@ -213,7 +215,7 @@ const props = defineProps({
   sentence: Object,
   isMobile: Boolean,
   hideSentiments: Boolean,
- 
+
 });
 
 
