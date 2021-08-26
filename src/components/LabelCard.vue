@@ -46,7 +46,7 @@
         >{{ sentence.score }}</div>
       </div>
 
-      <div class="flex items-center flex-wrap lg:gap-x-6 gap-x-4">
+      <div v-if="!hideSentiments" class="flex items-center flex-wrap lg:gap-x-6 gap-x-4">
         <template v-for="[user, value] of userMap" :key="user">
           <div
             v-if="sentence.sentiments[user].value != -2"
@@ -69,7 +69,7 @@
       <div class="flex sm:space-x-12 space-x-8 items-center text-gray-500/75">
         <button @click="addSentiment(sentence, 1)" :class="{ 'cursor-default': isMobile }">
           <ThumbUpIcon
-            :class="[userSentiment == 1 ? 'text-green-400/80 hover:text-green-500' : 'hover:text-gray-500']"
+            :class="['text-green-400/80 hover:text-green-500']"
             class="h-6 w-6"
             aria-hidden="true"
           />
@@ -77,7 +77,7 @@
 
         <button @click="addSentiment(sentence, 0)" :class="{ 'cursor-default': isMobile }">
           <SwitchVerticalIcon
-            :class="[userSentiment == 0 ? 'text-yellow-400/80 hover:text-yellow-500' : 'hover:text-gray-500']"
+            :class="['text-yellow-400/80 hover:text-yellow-500']"
             class="h-6 w-6"
             aria-hidden="true"
           />
@@ -85,15 +85,15 @@
 
         <button @click="addSentiment(sentence, -1)" :class="{ 'cursor-default': isMobile }">
           <ThumbDownIcon
-            :class="[userSentiment == -1 ? 'text-red-400/80 hover:text-red-500' : 'hover:text-gray-500']"
+            :class="['text-red-400/80 hover:text-red-500']"
             class="h-6 w-6"
             aria-hidden="true"
           />
         </button>
 
             <button @click="addSentiment(sentence, -3)" :class="{ 'cursor-default': isMobile }">
-          <BanIcon 
-           :class="[userSentiment == -3 ? 'text-gray-800 hover:text-gray-900' : 'hover:text-gray-500']"
+          <HandIcon 
+           :class="['text-gray-400 hover:text-gray-500']"
           class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
@@ -201,17 +201,19 @@ import {
   DotsVerticalIcon,
   ShareIcon,
   LinkIcon,
-  TrashIcon,
-  ThumbUpIcon, ThumbDownIcon,BanIcon
+  ThumbUpIcon, ThumbDownIcon,HandIcon
 } from "@heroicons/vue/outline";
 import { ChatIcon } from "@heroicons/vue/outline";
 import { ref } from "@vue/reactivity";
 import { computed } from "@vue/runtime-core";
+
 import CommentSection from "./CommentSection.vue";
 
 const props = defineProps({
   sentence: Object,
   isMobile: Boolean,
+  hideSentiments: Boolean,
+ 
 });
 
 
@@ -220,6 +222,8 @@ const store = useMainStore();
 let copyLink = $ref("https://peaceful-murdock-181b26.netlify.app/link/" + props.sentence.id);
 
 const { copy } = useClipboard();
+
+
 
 const userMap = computed(
   () =>
@@ -230,6 +234,8 @@ const userMap = computed(
         .map((userName) => [userName, userName])
     )
 );
+
+
 
 
 const fullComment = ref(false)

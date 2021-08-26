@@ -6,30 +6,31 @@
         @closeSidebar="sidebarOpen = false"
         :sidebarOpen="sidebarOpen"
         :navigation="navigation"
-        :isMobile = "isMobile"
-      ></MobileSidebar>
-      <DesktopSidebar :navigation="navigation"></DesktopSidebar>
+        :isMobile="isMobile"
+      />
+      <DesktopSidebar :navigation="navigation" />
+     
       <div
         class="flex-1 overflow-x-hidden overflow-y-auto focus:outline-none relative pb-20 lg:pb-32"
-        ref="scrollComponent"
-        @scroll.passive="handleScroll"
+     
       >
-        <SearchHeader @openSidebar="sidebarOpen = true" :currentRouteName="currentRouteName"></SearchHeader>
+        <SearchHeader @openSidebar="sidebarOpen = true" :currentRouteName="currentRouteName" />
+
         <transition-group
           class="relative mt-8 max-w-4xl mx-auto space-y-6 lg:space-y-9"
           name="list"
           tag="ul"
           appear
         >
-
-
           <LabelCard
             v-for="[key, sentence] of sentences"
             :key="key"
             :sentence="sentence"
             :isMobile="isMobile"
+            :hideSentiments="hideSentiments"
           ></LabelCard>
         </transition-group>
+        <div id="intersect"></div>
       </div>
     </div>
   </div>
@@ -44,8 +45,6 @@ import navigation from "../composables/navigationItems";
 import { useMainStore } from "../store";
 import { useRoute } from "vue-router";
 import { onMounted, ref, watchEffect, computed } from "vue";
-import Table from "./Table.vue";
-
 const props = defineProps({
   sentences: Map,
 });
@@ -55,15 +54,15 @@ const sidebarOpen = ref(false);
 const store = useMainStore();
 const route = useRoute();
 const currentRouteName = ref("");
-const scrollComponent = ref(null);
+// const scrollComponent = ref(null);
 const isLoading = computed(() => store.loading)
-const handleScroll = ({
-  target: { scrollTop, clientHeight, scrollHeight },
-}) => {
-  if (Math.ceil(scrollTop) + clientHeight >= scrollHeight && isLoading.value === false) {
-    emit("scrollReload");
-  }
-};
+// const handleScroll = ({
+//   target: { scrollTop, clientHeight, scrollHeight },
+// }) => {
+//   if (Math.ceil(scrollTop) + clientHeight >= scrollHeight && isLoading.value === false) {
+//     //  emit("scrollReload");
+//   }
+// };
 
 const isMobile = ref(false);
 
@@ -72,10 +71,25 @@ const isMobile = ref(false);
 const unsubStats = ref(null);
 
 
+const hideSentiments = computed(() => {
 
+return route.meta.hideSentiments 
+}
 
+)
+
+let observer
 
 onMounted(() => {
+   observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        emit('scrollReload')
+      }
+    })
+  });
+  let target = document.querySelector('#intersect');
+  observer.observe(target);
   if (store.users.length == 0) {
     store.setUsers();
   }
@@ -99,6 +113,7 @@ watchEffect((onInvalidate) => {
   });
   onInvalidate(() => {
     unsubStats.value();
+    observer.disconnect()
   });
 });
 </script>
@@ -122,8 +137,6 @@ watchEffect((onInvalidate) => {
   width: 100%;
   transition: all 0.4s linear;
 }
-
-
 </style>
 
 

@@ -5,7 +5,7 @@
         <component :is="Component" />
       </router-view>
       <div class="lg:flex relative">
-        <div class="hidden lg:block lg:w-64 "></div>
+        <div class="hidden lg:block lg:w-72 "></div>
         <div class="sticky flex justify-center flex-1  bottom-0 bg-white">
           <transition name="fade">
             <div
