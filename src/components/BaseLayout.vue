@@ -9,22 +9,26 @@
         :isMobile="isMobile"
       />
       <DesktopSidebar :navigation="navigation" />
-     
+
       <div
+        id="scrollArea"
         class="flex-1 overflow-x-hidden overflow-y-auto focus:outline-none relative pb-20 lg:pb-32"
-     
       >
-        <SearchHeader @openSidebar="sidebarOpen = true" :currentRouteName="currentRouteName" />
+        <SearchHeader
+          v-model:filterTerm="filterTerm"
+          @openSidebar="sidebarOpen = true"
+          :currentRouteName="currentRouteName"
+        />
 
         <transition-group
           class="relative mt-8 max-w-4xl mx-auto space-y-6 lg:space-y-9"
-          name="list"
+          :name="'list'"
           tag="ul"
           appear
         >
           <LabelCard
-            v-for="[key, sentence] of sentences"
-            :key="key"
+            v-for="sentence in sentences"
+            :key="sentence.id"
             :sentence="sentence"
             :isMobile="isMobile"
             :hideSentiments="hideSentiments"
@@ -44,7 +48,7 @@ import SearchHeader from "./SearchHeader.vue";
 import navigation from "../composables/navigationItems";
 import { useMainStore } from "../store";
 import { useRoute } from "vue-router";
-import { onMounted, ref, watchEffect, computed } from "vue";
+import { onMounted, ref, watchEffect, computed, watch } from "vue";
 const props = defineProps({
   sentences: Map,
 });
@@ -54,17 +58,31 @@ const sidebarOpen = ref(false);
 const store = useMainStore();
 const route = useRoute();
 const currentRouteName = ref("");
-// const scrollComponent = ref(null);
+
+const filterTerm = ref("")
+
+const disableListAnimation = ref(false);
+
+
+
+
+
+
 const isLoading = computed(() => store.loading)
-// const handleScroll = ({
-//   target: { scrollTop, clientHeight, scrollHeight },
-// }) => {
-//   if (Math.ceil(scrollTop) + clientHeight >= scrollHeight && isLoading.value === false) {
-//     //  emit("scrollReload");
-//   }
-// };
+
 
 const isMobile = ref(false);
+
+
+const sentences = computed(() => [...props.sentences.values()]
+  .filter(sentence => filterTerm.value === ""
+    ||  sentence.body.toLowerCase().includes(filterTerm.value.toLowerCase())
+    ||  sentence.submissionTitle.toLowerCase().includes(filterTerm.value.toLowerCase())
+    ||  sentence.subredditName.toLowerCase().includes(filterTerm.value.toLowerCase())
+    ||  sentence.flair && sentence.flair.toLowerCase().includes(filterTerm.value.toLowerCase())
+    ))
+
+
 
 
 
@@ -73,7 +91,7 @@ const unsubStats = ref(null);
 
 const hideSentiments = computed(() => {
 
-return route.meta.hideSentiments 
+  return route.meta.hideSentiments
 }
 
 )
@@ -81,13 +99,15 @@ return route.meta.hideSentiments
 let observer
 
 onMounted(() => {
-   observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        emit('scrollReload')
-      }
-    })
-  });
+  observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && filterTerm.value === "") {
+      emit('scrollReload')
+    }
+  }, {
+    root: document.querySelector('#scrollArea'),
+    rootMargin: '400px'
+  })
+
   let target = document.querySelector('#intersect');
   observer.observe(target);
   if (store.users.length == 0) {

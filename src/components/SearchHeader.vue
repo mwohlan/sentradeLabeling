@@ -1,5 +1,7 @@
 <template>
-  <div class="sticky drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 overflow-x-hidden sm:rounded-lg">
+  <div
+    class="sticky drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 overflow-x-hidden sm:rounded-lg"
+  >
     <div class="flex">
       <div class="flex items-center text-gray-500 lg:hidden" @click="$emit('openSidebar')">
         <MenuIcon class="h-[3.25rem] w-[3.25rem]" aria-hidden="true" />
@@ -8,7 +10,7 @@
       <!-- Search bar -->
       <div class="flex-1 px-2 py-1 flex justify-between lg:max-w-5xl lg:mx-auto">
         <div class="flex-1 flex">
-          <form class="w-full flex md:ml-0" action="#" method="GET">
+          <form @submit.prevent class="w-full flex md:ml-0">
             <label for="search-field" class="sr-only">Search</label>
             <div class="relative mt-1 w-full text-gray-400 focus-within:text-gray-600">
               <div
@@ -20,9 +22,12 @@
               <input
                 id="search-field"
                 name="search-field"
-                class="block w-full h-full pl-9 pr-2 border-transparent text-gray-900 bg-gray-200/60 shadow md:shadow-md placeholder-gray-500 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
+                :class="[filterTerm !== '' ? 'focus:border-red-400 border-red-400 border-2' : 'border-transparent']"
+                class="block w-full h-full pl-9 pr-2 text-gray-900 bg-gray-200/60 shadow md:shadow-md placeholder-gray-500 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
                 :placeholder="'Search ' + currentRouteName"
                 type="search"
+                :value="filterTerm"
+                @input="$emit('update:filterTerm', $event.target.value)"
               />
             </div>
           </form>
@@ -33,7 +38,10 @@
     <HeaderStats />
     <div class="relative mt-0.5 bg-white">
       <transition name="fade">
-        <div v-if="isLoading" class="absolute w-full z-40 bottom-0 h-[0.2rem] bg-green-200 rounded-lg">
+        <div
+          v-if="isLoading"
+          class="absolute w-full z-40 bottom-0 h-[0.2rem] bg-green-200 rounded-lg"
+        >
           <div class="animation h-full w-1/3 bg-green-400"></div>
         </div>
       </transition>
@@ -41,7 +49,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {
 
   MenuIcon,
@@ -54,21 +62,20 @@ import {
 import HeaderStats from './HeaderStats.vue';
 import { useMainStore } from '../store'
 import { computed } from 'vue'
-export default {
-  components: { HeaderStats, SearchIcon, MenuIcon, },
-  props: {
-    currentRouteName: String
 
-  },
-  setup() {
+defineProps({
+  currentRouteName: String,
+  filterTerm: String
 
-    const store = useMainStore();
+});
 
-    return {
-      isLoading: computed(() => store.loading)
-    }
-  },
-};
+defineEmits(['update:filterTerm'])
+
+
+
+const isLoading = computed(() => store.isLoading)
+
+const store = useMainStore();
 </script>
 <style scoped>
 @keyframes changewidth {
@@ -81,11 +88,11 @@ export default {
   }
 }
 
-.fade-leave-to{
+.fade-leave-to {
   opacity: 0;
 }
 
-.fade-leave-active{
+.fade-leave-active {
   transition: opacity 0.2s linear;
 }
 

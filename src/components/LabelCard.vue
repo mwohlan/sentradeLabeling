@@ -43,7 +43,7 @@
             'text-green-700': sentence.score > 1,
             'text-yellow-700': sentence.score >= -1 && sentence.score <= 1,
           }"
-        >{{ sentence.score }}</div>
+        >{{ sentence.score }} </div>
       </div>
       
         <div v-if="!hideSentiments" class="flex justify-end items-center flex-wrap lg:gap-x-6 gap-x-4">
@@ -100,7 +100,7 @@
           />
         </button>
       </div>
-      <div class="text-sm flex space-x-8 sm:space-x-12">
+      <div class="text-sm flex space-x-5 sm:space-x-12">
         <DisclosureButton
           :class="[
             resolvedDiscussion ? 'text-green-500 hover:text-green-600' :
@@ -182,6 +182,7 @@
       <CommentSection :sentence="sentence" :isMobile="isMobile" :openPanel="openPanel" />
     </transition>
   </Disclosure>
+
 </template>
 
 <script setup>
@@ -255,10 +256,6 @@ const openWhatsApp = () => {
 const addSentiment = (sentence, sentiment) => {
   store.addSentiment(sentence, sentiment);
 };
-const removeComment = (sentence) => {
-  store.removeComment(sentence);
-};
-
 
 
 const activeDiscussion = computed(() => props.sentence.discussion && !props.sentence.discussion.discussionResolved && props.sentence.discussion.comments.length > 0)
@@ -269,7 +266,7 @@ const resolvedDiscussion = computed(() => props.sentence.discussion && props.sen
 
 const current_user = computed(() => store.current_user.name);
 
-const userSentiment = computed(() => props.sentence.sentiments[current_user.value].value);
+
 
 
 
