@@ -9,13 +9,13 @@
                         @click.prevent="changeDiscussionStatus"
                         v-if="resolvedDiscussion"
                         :class="{ 'cursor-pointer': !isMobile }"
-                        class="flex items-center py-0.5 px-2 rounded-full text-xs font-semibold bg-green-200/70 text-green-700"
+                        class="flex items-center py-[0.06125rem]  px-2 rounded-full text-xs shadow font-semibold bg-green-200/70 text-green-700"
                     >
                         <RefreshIcon class="h-4 w-4 mr-1" aria-hidden="true" />Resolved
                 </button>
                     <button
                         :class="{ 'cursor-pointer':!isMobile }"
-                        class="flex  px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-200/70 text-yellow-700"
+                        class="flex  px-2 py-[0.06125rem] rounded-full text-xs font-semibold shadow bg-yellow-200/70 text-yellow-700"
                         @click.prevent="changeDiscussionStatus(); close(); "
                         v-else-if="activeDiscussion"
                     >
