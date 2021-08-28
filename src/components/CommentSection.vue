@@ -38,8 +38,8 @@
 
                                     <div
                                         v-if="isUnseenPost(userComment)"
-                                        class="text-[0.725rem] py-[0.05rem] flex items-center font-semibold px-2 justify-center text-indigo-800 bg-indigo-200 rounded-lg"
-                                    >New</div>
+                                        class="bg-yellow-300 text-red-600 p-[0.1rem] rounded-full"
+                                    > <FireIcon class="h-4 w-4" aria-hidden="true" /></div>
                                 </div>
                                 <div class="mt-1 text-sm text-gray-700 flex flex-wrap">
                                     <p class="whitespace-pre-line">{{ userComment.body }}</p>
@@ -151,8 +151,11 @@ import {
     ReplyIcon,
     TrashIcon,
     ArrowCircleDownIcon,
-    RefreshIcon
+    RefreshIcon,
+    
 } from "@heroicons/vue/outline";
+
+import{ FireIcon } from "@heroicons/vue/solid"
 import { ref, computed } from "@vue/reactivity";
 import { watchEffect } from "@vue/runtime-core"
 
@@ -212,7 +215,7 @@ watchEffect(() => {
 
 const current_user = computed(() => store.current_user.name);
 
-const isUnseenPost = (userComment) => (userComment.created > lastDiscussionView && userComment.user != current_user)
+const isUnseenPost = (userComment) => (userComment.created > lastDiscussionView.value && userComment.user != current_user.value)
 
 
 const discussionExists = computed(() => props.sentence.discussion && props.sentence.discussion.comments.length > 0)
