@@ -22,7 +22,7 @@
 
         <transition-group
           class="relative mt-8 max-w-4xl mx-auto space-y-6 lg:space-y-9"
-          :name="'list'"
+          :name="disableListAnimation ? 'search' : 'list'"
           tag="ul"
           appear
         >
@@ -64,33 +64,27 @@ const filterTerm = ref("")
 const disableListAnimation = ref(false);
 
 
-
-
-
-
-const isLoading = computed(() => store.loading)
-
+watch(filterTerm, () => {
+  disableListAnimation.value = true;
+  setTimeout(() => {
+    disableListAnimation.value = false
+  }, 2000)
+})
 
 const isMobile = ref(false);
 
-
 const sentences = computed(() => [...props.sentences.values()]
   .filter(sentence => filterTerm.value === ""
-    ||  sentence.body.toLowerCase().includes(filterTerm.value.toLowerCase())
-    ||  sentence.submissionTitle.toLowerCase().includes(filterTerm.value.toLowerCase())
-    ||  sentence.subredditName.toLowerCase().includes(filterTerm.value.toLowerCase())
-    ||  sentence.flair && sentence.flair.toLowerCase().includes(filterTerm.value.toLowerCase())
-    ))
-
-
-
+    || sentence.body.toLowerCase().includes(filterTerm.value.toLowerCase())
+    || sentence.submissionTitle.toLowerCase().includes(filterTerm.value.toLowerCase())
+    || sentence.subredditName.toLowerCase().includes(filterTerm.value.toLowerCase())
+    || sentence.flair && sentence.flair.toLowerCase().includes(filterTerm.value.toLowerCase())
+  ))
 
 
 const unsubStats = ref(null);
 
-
 const hideSentiments = computed(() => {
-
   return route.meta.hideSentiments
 }
 
@@ -139,23 +133,42 @@ watchEffect((onInvalidate) => {
 </script>
 
 <style scoped>
+.search-move {
+  transition: all 0.6s ease-in-out;
+}
+
+.search-leave-active {
+  transition: all 0.6s ease-in-out;
+  position: absolute;
+  width: 100%;
+}
+
+.search-enter-active {
+  transition: all 0.6s ease-in-out;
+}
+
+.search-enter-from,
+.search-leave-to {
+  opacity: 0;
+}
+
 .list-move {
-  transition: all 0.4s linear;
+  transition: all 0.6s ease-in-out;
 }
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateX(35%);
+  transform: translateX(15%);
 }
 
 .list-enter-active {
-  transition: all 0.4s linear;
+  transition: all 0.6s ease-in-out;
 }
 
 .list-leave-active {
   position: absolute;
   width: 100%;
-  transition: all 0.4s linear;
+  transition: all 0.6s ease-in-out;
 }
 </style>
 

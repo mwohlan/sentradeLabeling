@@ -27,7 +27,7 @@
                 :placeholder="'Search ' + currentRouteName"
                 type="search"
                 :value="filterTerm"
-                @input="$emit('update:filterTerm', $event.target.value)"
+                @input="handleInput($event.target.value)"
               />
             </div>
           </form>
@@ -50,16 +50,10 @@
 </template>
 
 <script setup>
-import {
-
-  MenuIcon,
-
-} from "@heroicons/vue/outline";
-import {
-
-  SearchIcon
-} from "@heroicons/vue/solid";
+import {MenuIcon} from "@heroicons/vue/outline";
+import {SearchIcon} from "@heroicons/vue/solid";
 import HeaderStats from './HeaderStats.vue';
+
 import { useMainStore } from '../store'
 import { computed } from 'vue'
 
@@ -69,8 +63,22 @@ defineProps({
 
 });
 
-defineEmits(['update:filterTerm'])
+const emit = defineEmits(['update:filterTerm'])
 
+
+const debounce = (fn, ms = 600) => {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout( () => fn.apply(this, args), ms);
+  };
+};
+
+const handleInput = debounce(inputValue =>{
+  
+   emit('update:filterTerm', inputValue)
+  
+},600)
 
 
 const isLoading = computed(() => store.isLoading)
