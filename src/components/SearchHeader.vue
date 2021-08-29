@@ -22,7 +22,7 @@
               <input
                 id="search-field"
                 name="search-field"
-                :class="[filterTerm !== '' ? 'focus:border-red-400 border-red-400 border-2' : 'border-transparent']"
+                :class="[filterTerm !== '' ? 'focus:!border-red-400 border-red-400 border-2' : 'border-transparent']"
                 class="block w-full h-full pl-9 pr-2 text-gray-900 bg-gray-200/60 shadow md:shadow-md placeholder-gray-500 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
                 :placeholder="'Search ' + currentRouteName"
                 type="search"
