@@ -38,7 +38,7 @@
 
                                     <div
                                         v-if="isUnseenPost(userComment)"
-                                        class="bg-yellow-300 text-red-600 p-[0.1rem] rounded-full"
+                                        class="bg-indigo-200 text-indigo-500 p-[0.1rem] rounded-full"
                                     > <FireIcon class="h-4 w-4" aria-hidden="true" /></div>
                                 </div>
                                 <div class="mt-1 text-sm text-gray-700 flex flex-wrap">

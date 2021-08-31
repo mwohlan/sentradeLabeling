@@ -59,10 +59,10 @@
                     class="text-[0.725rem] flex items-center justify-center"
                   >
                     <div
-                      class="flex items-center animate-ping-slow bg-indigo-400 rounded-full gap-x-2 px-1.5"
+                      class="flex items-center animate-ping-slow bg-indigo-200 rounded-full gap-x-2 px-1.5"
                     >
-                      <MailIcon class="h-4 w-4 text-white" />
-                      <div class="text-white font-bold">{{ unreadPostsCount }}</div>
+                      <MailIcon class="h-4 w-4 text-indigo-500" />
+                      <div class="text-indigo-500 font-bold">{{ unreadPostsCount }}</div>
                     </div>
                   </div>
                 </div>
