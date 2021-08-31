@@ -18,8 +18,8 @@ module.exports = {
       },
       keyframes: {
         lightPulse: {
-          '0%, 100%': { opacity: '1', transform: 'scale(1.1)' },
-          '50%': { opacity: '0.7', transform: 'scale(1)' },
+          '0%, 100%': { opacity: '1'},
+          '50%': { opacity: '0.7' },
         }
       },
       transitionTimingFunction: {

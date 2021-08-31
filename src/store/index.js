@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { projectFirestore, timestamp, increment, documentId } from "../firebase/config";
-import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc, collection, deleteDoc, getDocs, deleteField } from '@firebase/firestore';
+import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc, collection, deleteDoc, getDocs, deleteField, getDoc } from '@firebase/firestore';
 import getCollection from '../composables/getCollection'
 
 
@@ -26,7 +26,23 @@ export const useMainStore = defineStore({
       let sortedArrayWithDiscussions = [...this.sentencesWithDiscussions.values()].sort((a, b) => b.discussion.latestDiscussionComment - a.discussion.latestDiscussionComment
       ).map(sentence => [sentence.id, sentence]);
       return new Map(sortedArrayWithDiscussions);
+    },
+
+    unreadPostsCount() {
+      let unreadPostsCount = 0
+
+      if (!this.stats.unreadPosts) {
+        return unreadPostsCount;
+      }
+
+      Object.values(this.stats.unreadPosts).forEach(value => unreadPostsCount += value.length);
+
+      return unreadPostsCount;
+
+    
+      
     }
+
 
 
   }
@@ -50,14 +66,14 @@ export const useMainStore = defineStore({
     setRecentlyLabeledSentences(reloadAmount) {
 
 
-      const watchQuery = query(collection(projectFirestore, "sentences"), orderBy(`sentiments.${this.current_user.name}.updated`,'desc'), limit(Math.max(8, this.recentlyLabeledSentences.size + reloadAmount)))
+      const watchQuery = query(collection(projectFirestore, "sentences"), orderBy(`sentiments.${this.current_user.name}.updated`, 'desc'), limit(Math.max(8, this.recentlyLabeledSentences.size + reloadAmount)))
       const { unsub } = getCollection(watchQuery, this.recentlyLabeledSentences)
 
       return { unsub }
 
     },
 
-     setSentencesWithSentiment(reloadAmount) {
+    setSentencesWithSentiment(reloadAmount) {
 
 
 
@@ -94,15 +110,15 @@ export const useMainStore = defineStore({
 
       const { unsub } = getCollection(watchQuery, this.sentencesWithDiscussions)
 
-      const updateLastDiscussionView = () => {
+      const updateUnreadPosts = () => {
         updateDoc(doc(projectFirestore, "users", this.current_user.id), {
-          lastDiscussionView: Date.now()
+          unreadPosts: {}
         })
       }
 
 
 
-      return { unsub, updateLastDiscussionView }
+      return { unsub, updateUnreadPosts }
 
 
 
@@ -127,6 +143,9 @@ export const useMainStore = defineStore({
 
 
     setStats() {
+      const unreadPosts = onSnapshot(query(collection(projectFirestore, "users"), where("name", "==", this.current_user.name)), (snap) => {
+        this.stats.unreadPosts = snap.docs[0].data().unreadPosts;
+      });
       const setSentimentCount = onSnapshot(query(collection(projectFirestore, "users"), where("name", "==", this.current_user.name)), (snap) => {
         this.stats.sentimentCount = snap.docs[0].data().sentimentCount
       });
@@ -142,29 +161,19 @@ export const useMainStore = defineStore({
       });
 
 
-      const lastDiscussionView = onSnapshot(query(collection(projectFirestore, "users"), where("name", "==", this.current_user.name)), (snap) => {
-        this.stats.lastDiscussionView = snap.docs[0].data().lastDiscussionView;
-      });
 
-      const unreadPostsAvailable = onSnapshot(query(collection(projectFirestore, "users"), where("name", "!=", this.current_user.name)), (snap) => {
-        this.stats.unreadPostsAvailable = false
-        snap.docs.forEach(doc => {
-
-          if (doc.data().latestDiscussionComment > this.stats.lastDiscussionView) {
-            this.stats.unreadPostsAvailable = true;
-          }
-        });
-      })
+    
 
 
 
 
 
-      return () => { setSentimentCount(); unlabeledSentences(); lastDiscussionView(); unreadPostsAvailable(); labeledSentences(); }
+
+      return () => { setSentimentCount(); unlabeledSentences(); unreadPosts();  labeledSentences(); }
 
     },
-  
-  
+
+
     async addSentiment(sentence, sentiment) {
       let conflict = false;
 
@@ -210,7 +219,7 @@ export const useMainStore = defineStore({
         //       deleteSentence = false;
         //     }
         //   }
-        
+
         //   if (deleteSentence) {
         //     console.log(deleteSentence)
         //     this.removeSentence(sentence)
@@ -241,7 +250,7 @@ export const useMainStore = defineStore({
 
     },
 
-    addUserDiscussion(sentence, body) {
+    async addUserDiscussion(sentence, body) {
 
       const now = Date.now();
 
@@ -279,12 +288,33 @@ export const useMainStore = defineStore({
       })
 
 
+      for  (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
+        let docRef = doc(projectFirestore, "users", user.id)
+        let userObject = await getDoc(docRef)
+        let unreadPosts = userObject.data().unreadPosts
+        if (unreadPosts[sentence.id]) {
+          let unreadPostsArray = [...unreadPosts[sentence.id], now]
+          unreadPosts[sentence.id] = unreadPostsArray
+
+        } else {
+          unreadPosts[sentence.id] = [now]
+        }
+        updateDoc(docRef, {
+          unreadPosts: unreadPosts
+        })
+
+
+      }
+
+
+
+
 
 
 
     },
 
-    removeUserDiscussion(sentence, discussionTimestamp) {
+    async removeUserDiscussion(sentence, discussionTimestamp) {
       sentence.discussion.comments = sentence.discussion.comments.filter((discussion) => discussion.created != discussionTimestamp);
 
       updateDoc(doc(projectFirestore, "sentences", sentence.id), {
@@ -296,6 +326,27 @@ export const useMainStore = defineStore({
         updated: timestamp(),
 
       })
+
+
+      for  (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
+        let docRef = doc(projectFirestore, "users", user.id)
+        let userObject = await getDoc(docRef)
+        let unreadPosts = userObject.data().unreadPosts
+        if (unreadPosts[sentence.id]) {
+          let unreadPostsArray = unreadPosts[sentence.id].filter(entry => entry != discussionTimestamp)
+          unreadPosts[sentence.id] = unreadPostsArray
+          if (unreadPostsArray.length === 0) {
+            delete unreadPosts[sentence.id]
+          }
+          
+          updateDoc(docRef, {
+            unreadPosts: unreadPosts
+          })
+        }
+
+
+
+      }
 
     },
     changeDiscussionStatus(sentence) {

@@ -21,7 +21,7 @@
         />
 
         <transition-group
-          class="relative mt-8 max-w-4xl mx-auto space-y-6 lg:space-y-9"
+          class="relative mt-8 max-w-4xl sm:mx-auto space-y-6 mx-3 lg:space-y-9"
           :name="disableListAnimation ? 'search' : 'list'"
           tag="ul"
           appear
@@ -134,17 +134,17 @@ watchEffect((onInvalidate) => {
 
 <style scoped>
 .search-move {
-  transition: all 0.6s ease-in-out;
+  transition: transform 0.6s ease-in-out;
 }
 
 .search-leave-active {
-  transition: all 0.6s ease-in-out;
+  transition: transform 0.5s linear, opacity 0.5s ease-in-out;
   position: absolute;
   width: 100%;
 }
 
 .search-enter-active {
-  transition: all 0.6s ease-in-out;
+  transition: transform 0.5s linear, opacity 0.5s ease-in-out;
 }
 
 .search-enter-from,
@@ -153,7 +153,7 @@ watchEffect((onInvalidate) => {
 }
 
 .list-move {
-  transition: all 0.6s ease-in-out;
+  transition: transform 0.6s ease-out;
 }
 .list-enter-from,
 .list-leave-to {
@@ -162,13 +162,13 @@ watchEffect((onInvalidate) => {
 }
 
 .list-enter-active {
-  transition: all 0.6s ease-in-out;
+  transition: transform 0.8s, opacity 0.8s ;
 }
 
 .list-leave-active {
   position: absolute;
   width: 100%;
-  transition: all 0.6s ease-in-out;
+  transition: transform 1s , opacity 1s;
 }
 </style>
 

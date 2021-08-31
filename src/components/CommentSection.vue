@@ -215,7 +215,7 @@ watchEffect(() => {
 
 const current_user = computed(() => store.current_user.name);
 
-const isUnseenPost = (userComment) => (userComment.created > lastDiscussionView.value && userComment.user != current_user.value)
+
 
 
 const discussionExists = computed(() => props.sentence.discussion && props.sentence.discussion.comments.length > 0)
@@ -224,7 +224,9 @@ const activeDiscussion = computed(() => props.sentence.discussion && !props.sent
 
 const resolvedDiscussion = computed(() => props.sentence.discussion && props.sentence.discussion.discussionResolved && props.sentence.discussion.comments.length > 0)
 
+const unreadDiscussions = computed(() => store.stats.unreadPosts[props.sentence.id] ? store.stats.unreadPosts[props.sentence.id] : [])
 
+const isUnseenPost = (userComment) => (unreadDiscussions.value.includes(userComment.created)&& userComment.user != current_user.value)
 
 
 </script>

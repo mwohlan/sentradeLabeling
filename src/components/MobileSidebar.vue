@@ -44,8 +44,7 @@
                 v-for="item in navigation"
                 :key="item.name"
                 :to="item.to"
-      
-                :class="['outline-none',isMobile ?'cursor-default':'',item.current ? 'bg-gray-100 border-indigo-400 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+                :class="['outline-none', isMobile ? 'cursor-default' : '', item.current ? 'bg-gray-100 border-indigo-400 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
                 :aria-current="item.current ? 'page' : undefined"
               >
                 <component
@@ -59,7 +58,12 @@
                     v-if="item.name === 'Discussions' && unreadPostsAvailable"
                     class="text-[0.725rem] flex items-center justify-center"
                   >
-                    <MailIcon class="animate-ping-slow h-5 w-5 text-indigo-500" />
+                    <div
+                      class="flex items-center animate-ping-slow bg-indigo-400 rounded-full gap-x-2 px-1.5"
+                    >
+                      <MailIcon class="h-4 w-4 text-white" />
+                      <div class="text-white font-bold">{{ unreadPostsCount }}</div>
+                    </div>
                   </div>
                 </div>
               </router-link>
@@ -103,7 +107,8 @@ export default {
 
 
     return {
-      unreadPostsAvailable: computed(() => store.stats.unreadPostsAvailable)
+      unreadPostsAvailable: computed(() => store.unreadPostsCount > 0),
+      unreadPostsCount: computed(() => store.unreadPostsCount),
     }
   },
 };

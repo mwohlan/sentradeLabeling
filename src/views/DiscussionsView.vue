@@ -18,7 +18,7 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
     
-    let unsub, updateLastDiscussionView;
+    let unsub, updateUnreadPosts;
 
 
 
@@ -26,7 +26,7 @@ export default {
        if (store.sentencesWithDiscussions.size) {
         store.sentencesWithDiscussions.clear()
       }
-      ({ unsub,updateLastDiscussionView} = store.setSentencesWithDiscussions(0));
+      ({ unsub,updateUnreadPosts} = store.setSentencesWithDiscussions(0));
     })
 
     
@@ -34,7 +34,7 @@ export default {
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
-        updateLastDiscussionView();
+        updateUnreadPosts();
       });
     });
 
