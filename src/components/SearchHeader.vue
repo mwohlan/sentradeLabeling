@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sticky drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 overflow-x-hidden sm:rounded-lg"
+    class="sticky overflow-visible drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1  sm:rounded-lg"
   >
     <div class="flex">
       <div class="flex items-center text-gray-500 lg:hidden" @click="$emit('openSidebar')">

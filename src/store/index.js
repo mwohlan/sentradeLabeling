@@ -95,7 +95,7 @@ export const useMainStore = defineStore({
 
     },
     setSentencesWithConflicts(reloadAmount) {
-      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.conflict", "==", true), orderBy("created"), limit(Math.max(8, this.sentencesWithConflicts.size + reloadAmount)));
+      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.conflict", "==", true),  orderBy("created"), limit(Math.max(8, this.sentencesWithConflicts.size + reloadAmount)));
       const { unsub } = getCollection(watchQuery, this.sentencesWithConflicts)
 
       return { unsub }
@@ -421,6 +421,18 @@ export const useMainStore = defineStore({
 
 
     },
+
+
+    acceptConflict(sentence) {
+      updateDoc(doc(projectFirestore, "sentences", sentence.id), {
+        sentiments: {
+          ...sentence.sentiments,
+          conflict: false
+        },
+        updated: timestamp(),
+
+      })
+    }
 
 
   },

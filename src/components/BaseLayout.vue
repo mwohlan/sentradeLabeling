@@ -87,8 +87,8 @@ const unsubStats = ref(null);
 const hideSentiments = computed(() => {
   return route.meta.hideSentiments
 }
-
 )
+
 
 let observer
 

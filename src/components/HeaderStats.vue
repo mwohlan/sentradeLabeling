@@ -1,20 +1,23 @@
 <template>
-  <div class=" bg-white  rounded-b">
-    <div class="lg:max-w-7xl lg:mx-auto">
+  <div class=" bg-white  rounded-b ">
+    <div class="lg:max-w-7xl lg:mx-auto ">
       <div class>
         <div class="flex-1 min-w-0">
           <!-- Profile -->
-          <div class="flex items-center pb-1 px-4 sm:px-0">
-            <div class="mt-2  sm:mt-4 flex flex-wrap justify-between md:justify-around flex-1">
-              <div class=" flex items-center text-sm text-gray-500 font-medium">
+          <div class="flex items-center pb-1 px-4 sm:px-0 ">
+            <div class="mt-2 relative  sm:mt-4 flex flex-wrap justify-between md:justify-around flex-1 ">
+              <div class="  flex group items-center text-sm text-gray-500 font-medium">
+                <div class="-top-6 px-2 flex flex-nowrap rounded shadow-md opacity-0 bg-indigo-200 text-indigo-500 absolute group-hover:opacity-100 invisible group-hover:visible "> {{ stats['sentimentCount'] }} sentences labeled by  {{current_user.name}}</div>
                 <UserIcon class="sm:mr-2 mr-0.5 h-5 w-5 text-green-400" aria-hidden="true" />
                 {{ stats['sentimentCount'] }}
               </div>
-              <div class=" flex items-center text-sm text-gray-500 font-medium">
+              <div class=" group flex items-center text-sm text-gray-500 font-medium">
+                <div class="-top-6 px-2 flex flex-nowrap rounded shadow opacity-0 duration-500 transition-all bg-indigo-200 text-indigo-500 absolute group-hover:opacity-100 invisible group-hover:visible "> {{ stats['labeledSentences'] }} sentences labeled overall</div>
                 <UserGroupIcon class="sm:mr-2 mr-0.5 h-5 w-5 text-green-400" aria-hidden="true" />
                 {{ stats['labeledSentences'] }}
               </div>
-              <div class="flex items-center text-sm text-gray-500 font-medium">
+              <div class="flex group items-center text-sm text-gray-500 font-medium">
+                  <div class="-top-6 px-2 flex flex-nowrap rounded shadow opacity-0 duration-500 transition-all bg-indigo-200 text-indigo-500 absolute group-hover:opacity-100 invisible group-hover:visible "> {{ stats['unlabeledSentences'] }} unlabeled sentences remaining</div>
                 <DocumentDuplicateIcon class="sm:mr-2 mr-0.5 h-5 w-5 text-red-400" aria-hidden="true" />
                 {{ stats['unlabeledSentences'] }}
               </div>

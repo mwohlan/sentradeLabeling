@@ -47,10 +47,11 @@
       </div>
       
         <div v-if="!hideSentiments" class="flex justify-end items-center flex-wrap lg:gap-x-6 gap-x-4">
+        <button v-if="sentence.sentiments.conflict" @click="acceptConflict" class="px-2 py-0.5 border border-indigo-300 rounded-full text-xs font-medium shadow-md bg-indigo-200 text-indigo-700"> Accept Conflict</button>
           <template v-for="[user, value] of userMap" :key="user">
             <div
               v-if="sentence.sentiments[user].value != -2"
-              class="px-2 py-0.5 rounded-full text-xs"
+              class="px-2 py-0.5 rounded-full text-xs capitalize"
               :class="{
                 'bg-red-200/70': sentence.sentiments[user].value == -1,
                 'bg-green-200/70': sentence.sentiments[user].value == 1,
@@ -222,11 +223,13 @@ const props = defineProps({
 
 const store = useMainStore();
 
-let copyLink = $ref("https://peaceful-murdock-181b26.netlify.app/link/" + props.sentence.id);
+let copyLink = ref("https://peaceful-murdock-181b26.netlify.app/link/" + props.sentence.id);
 
 const { copy } = useClipboard();
 
-
+const acceptConflict = () => {
+  store.acceptConflict(props.sentence)
+}
 
 const userMap = computed(
   () =>
