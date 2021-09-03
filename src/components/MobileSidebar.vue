@@ -27,18 +27,18 @@
         leave-from="translate-x-0"
         leave-to="-translate-x-full"
       >
-        <div class="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
-          <div class="absolute top-0 right-0 -mr-12 pt-2"></div>
+        <div class="relative  flex flex-col w-9/12 pt-5 pb-4 bg-white">
 
-          <div class="flex-shrink-0 flex items-center gap-x-2 px-4 filter drop-shadow-xl">
+
+          <div class="flex gap-x-2 px-4 filter drop-shadow-xl">
             <img
               class="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg"
+              src="https://tailwindui.com/img/logos/workflow-mark-indigo-400.svg"
               alt="Easywire logo"
             />
             <div class="text-2xl text-gray-500 font-bold">Sentrade</div>
           </div>
-          <nav class="mt-5 flex-shrink-0 h-full overflow-y-auto" aria-label="Sidebar">
+          <nav class="mt-5 flex flex-col gap-y-6 flex-shrink-0 h-full overflow-y-auto" aria-label="Sidebar">
             <div class="px-2 space-y-1">
               <router-link
                 v-for="item in navigation"
@@ -49,7 +49,7 @@
               >
                 <component
                   :is="item.icon"
-                  :class="[item.current ? 'text-gray-700' : 'text-gray-500 group-hover:text-gray-700', 'mr-3 flex-shrink-0 h-6 w-6']"
+                  :class="[item.current ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-700', 'mr-3 flex-shrink-0 h-6 w-6']"
                   aria-hidden="true"
                 />
                 <div class="flex flex-1 justify-between">
@@ -61,19 +61,25 @@
                     <div
                       class="flex items-center animate-ping-slow bg-indigo-200 rounded-full gap-x-2 px-1.5"
                     >
-                      <MailIcon class="h-4 w-4 text-indigo-500" />
+                      <FireIcon class="h-4 w-4 text-indigo-500" />
                       <div class="text-indigo-500 font-bold">{{ unreadPostsCount }}</div>
                     </div>
                   </div>
                 </div>
               </router-link>
             </div>
+
+            <div class="mx-4 rounded-full bg-indigo-400 h-[0.1rem] shadow drop-shadow"></div>
+          <div class="flex  px-6 text-sm  text-gray-600 font-medium sm:mr-6">
+                <router-link class="flex gap-x-2 items-center capitalize" :to="{ name: 'Login' } " >
+                  <LoginIcon class="h-[1.625rem] w-[1.625rem] " aria-hidden="true" />
+                  {{username}}
+                </router-link>
+              </div>
           </nav>
         </div>
       </TransitionChild>
-      <div class="flex-shrink-0 w-32" aria-hidden="true">
-        <!-- Dummy element to force sidebar to shrink to fit close icon -->
-      </div>
+    
     </Dialog>
   </TransitionRoot>
 </template>
@@ -82,10 +88,14 @@
 import { computed } from "@vue/runtime-core";
 import { useMainStore } from "../store";
 import {
-
-  MailIcon,
+  FireIcon
 
 } from "@heroicons/vue/solid";
+import {
+  LoginIcon,
+ 
+
+} from "@heroicons/vue/outline";
 import {
   Dialog,
   DialogOverlay,
@@ -98,7 +108,8 @@ export default {
     DialogOverlay,
     TransitionChild,
     TransitionRoot,
-    MailIcon,
+    FireIcon,
+    LoginIcon
   },
   props: { sidebarOpen: Boolean, navigation: Array, isMobile: Boolean },
   emits: ["closeSidebar"],
@@ -109,6 +120,7 @@ export default {
     return {
       unreadPostsAvailable: computed(() => store.unreadPostsCount > 0),
       unreadPostsCount: computed(() => store.unreadPostsCount),
+      username: computed(() => store.current_user.name),
     }
   },
 };

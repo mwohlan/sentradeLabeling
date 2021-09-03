@@ -2,18 +2,18 @@
   <div class="hidden lg:flex lg:flex-shrink-0 drop-shadow-xl shadow-lg">
     <div class="flex flex-col w-72">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
-      <div class="flex flex-col flex-grow bg-white pt-5 pb-4 overflow-y-auto">
+      <div class="flex flex-col flex-1 bg-white pt-5 ">
         <div class="flex items-center gap-x-2 flex-shrink-0 px-4 drop-shadow-xl">
           <img
             class="h-8 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg"
+            src="https://tailwindui.com/img/logos/workflow-mark-indigo-400.svg"
             alt="Sentrade Logo"
           />
           <div class="text-2xl text-gray-500 font-bold">Sentrade</div>
         </div>
 
         <nav
-          class="mt-5 flex-1 flex flex-col divide-y divide-cyan-800 overflow-y-auto"
+          class="mt-5  flex-1 flex flex-col gap-y-6 "
           aria-label="Sidebar"
         >
           <div class="px-2 space-y-1">
@@ -45,6 +45,13 @@
               </div>
             </router-link>
           </div>
+          <div class="mx-4 rounded-full bg-indigo-400 h-[0.1rem] shadow drop-shadow"></div>
+          <div class="flex  px-6 text-sm  text-gray-600 font-medium sm:mr-6">
+                <router-link class="flex gap-x-2 items-center capitalize" :to="{ name: 'Login' } " >
+                  <LoginIcon class="h-[1.625rem] w-[1.625rem] " aria-hidden="true" />
+                  {{username}}
+                </router-link>
+              </div>
         </nav>
       </div>
     </div>
@@ -55,15 +62,18 @@
 import { computed } from "@vue/runtime-core";
 import { useMainStore } from "../store";
 import {
-
-  MailIcon,
   FireIcon
 
 } from "@heroicons/vue/solid";
+import {
+  LoginIcon,
+ 
+
+} from "@heroicons/vue/outline";
 export default {
 
   components: {
-    MailIcon,
+    LoginIcon,
     FireIcon
   },
 
@@ -77,6 +87,7 @@ export default {
     return {
       unreadPostsAvailable: computed(() => store.unreadPostsCount > 0),
       unreadPostsCount: computed(() => store.unreadPostsCount),
+      username: computed(() => store.current_user.name)
     }
   },
 };

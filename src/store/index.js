@@ -39,8 +39,8 @@ export const useMainStore = defineStore({
 
       return unreadPostsCount;
 
-    
-      
+
+
     }
 
 
@@ -95,7 +95,7 @@ export const useMainStore = defineStore({
 
     },
     setSentencesWithConflicts(reloadAmount) {
-      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.conflict", "==", true),  orderBy("created"), limit(Math.max(8, this.sentencesWithConflicts.size + reloadAmount)));
+      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.conflict", "==", true), orderBy("created"), limit(Math.max(8, this.sentencesWithConflicts.size + reloadAmount)));
       const { unsub } = getCollection(watchQuery, this.sentencesWithConflicts)
 
       return { unsub }
@@ -162,14 +162,14 @@ export const useMainStore = defineStore({
 
 
 
-    
 
 
 
 
 
 
-      return () => { setSentimentCount(); unlabeledSentences(); unreadPosts();  labeledSentences(); }
+
+      return () => { setSentimentCount(); unlabeledSentences(); unreadPosts(); labeledSentences(); }
 
     },
 
@@ -288,7 +288,7 @@ export const useMainStore = defineStore({
       })
 
 
-      for  (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
+      for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
         let docRef = doc(projectFirestore, "users", user.id)
         let userObject = await getDoc(docRef)
         let unreadPosts = userObject.data().unreadPosts
@@ -328,7 +328,7 @@ export const useMainStore = defineStore({
       })
 
 
-      for  (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
+      for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
         let docRef = doc(projectFirestore, "users", user.id)
         let userObject = await getDoc(docRef)
         let unreadPosts = userObject.data().unreadPosts
@@ -338,7 +338,7 @@ export const useMainStore = defineStore({
           if (unreadPostsArray.length === 0) {
             delete unreadPosts[sentence.id]
           }
-          
+
           updateDoc(docRef, {
             unreadPosts: unreadPosts
           })

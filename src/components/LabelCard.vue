@@ -1,6 +1,6 @@
 <template>
   <Disclosure
-    class="bg-white shadow-md sm:shadow-lg px-3 py-3 md:px-7 rounded-lg"
+    class="bg-white border border-gray-400/60 shadow-md sm:shadow-lg px-3 py-3 md:px-7 rounded-lg"
     :defaultOpen="activeDiscussion"
     #="{ open: openPanel }"
     as="li"
@@ -261,11 +261,11 @@ const addSentiment = (sentence, sentiment) => {
 };
 
 
-const activeDiscussion = computed(() => props.sentence.discussion && !props.sentence.discussion.discussionResolved && props.sentence.discussion.comments.length > 0)
+const activeDiscussion = computed(() => !props.sentence.discussion?.discussionResolved && props.sentence.discussion?.comments.length > 0)
 
-const discussionExists = computed(() => props.sentence.discussion && props.sentence.discussion.comments.length > 0)
+const discussionExists = computed(() =>  props.sentence.discussion?.comments.length > 0)
 
-const resolvedDiscussion = computed(() => props.sentence.discussion && props.sentence.discussion.discussionResolved && props.sentence.discussion.comments.length > 0)
+const resolvedDiscussion = computed(() =>  props.sentence.discussion?.discussionResolved && props.sentence.discussion.comments.length > 0)
 
 const current_user = computed(() => store.current_user.name);
 

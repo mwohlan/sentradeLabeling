@@ -9,6 +9,7 @@
         :isMobile="isMobile"
       />
       <DesktopSidebar :navigation="navigation" />
+  
 
       <div
         id="scrollArea"
@@ -21,7 +22,7 @@
         />
 
         <transition-group
-          class="relative mt-8 max-w-4xl sm:mx-auto space-y-6 mx-3 lg:space-y-9"
+          class="relative mt-8 max-w-2xl xl:max-w-4xl 2xl:max-w-5xl sm:mx-auto space-y-6 mx-3 lg:space-y-9"
           :name="disableListAnimation ? 'search' : 'list'"
           tag="ul"
           appear
@@ -162,13 +163,13 @@ watchEffect((onInvalidate) => {
 }
 
 .list-enter-active {
-  transition: transform 0.8s, opacity 0.8s ;
+  transition: transform 0.8s, opacity 0.8s;
 }
 
 .list-leave-active {
   position: absolute;
   width: 100%;
-  transition: transform 1s , opacity 1s;
+  transition: transform 1s, opacity 1s;
 }
 </style>
 

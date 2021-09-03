@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sticky overflow-visible drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1  sm:rounded-lg"
+    class="sticky overflow-visible drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 sm:rounded-lg"
   >
     <div class="flex">
       <div class="flex items-center text-gray-500 lg:hidden" @click="$emit('openSidebar')">
@@ -8,9 +8,11 @@
       </div>
 
       <!-- Search bar -->
-      <div class="flex-1 px-2 py-1 flex justify-between lg:max-w-5xl lg:mx-auto">
+      <div
+        class="flex-1 px-2 py-1 flex justify-between lg:max-w-5xl lg:mx-auto"
+      >
         <div class="flex-1 flex">
-          <form @submit.prevent class="w-full flex md:ml-0">
+          <form @submit.prevent class="w-full flex md:ml-0" autocomplete="off">
             <label for="search-field" class="sr-only">Search</label>
             <div class="relative mt-1 w-full text-gray-400 focus-within:text-gray-600">
               <div
@@ -46,16 +48,18 @@
         </div>
       </transition>
     </div>
+  
   </div>
 </template>
 
 <script setup>
-import {MenuIcon} from "@heroicons/vue/outline";
-import {SearchIcon} from "@heroicons/vue/solid";
+import { MenuIcon } from "@heroicons/vue/outline";
+import { SearchIcon } from "@heroicons/vue/solid";
 import HeaderStats from './HeaderStats.vue';
 
 import { useMainStore } from '../store'
 import { computed } from 'vue'
+
 
 defineProps({
   currentRouteName: String,
@@ -63,25 +67,25 @@ defineProps({
 
 });
 
-const emit = defineEmits(['update:filterTerm'])
+const emit = defineEmits(['update:filterTerm', 'openSidebar'])
 
 
 const debounce = (fn, ms = 600) => {
   let timeout;
-  return function(...args) {
+  return function (...args) {
     clearTimeout(timeout);
-    timeout = setTimeout( () => fn.apply(this, args), ms);
+    timeout = setTimeout(() => fn.apply(this, args), ms);
   };
 };
 
-const handleInput = debounce(inputValue =>{
-  
-   emit('update:filterTerm', inputValue)
-  
-},600)
+const handleInput = debounce(inputValue => {
+
+  emit('update:filterTerm', inputValue)
+
+}, 600)
 
 
-const isLoading = computed(() => store.isLoading)
+const isLoading = computed(() => store.loading)
 
 const store = useMainStore();
 </script>
