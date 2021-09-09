@@ -11,6 +11,6 @@ debug.log
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
-
+secret.js
 # Local History for Visual Studio Code
 .history/
