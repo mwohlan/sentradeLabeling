@@ -11,9 +11,10 @@ const getCollection = (watchQuery, storeReference) => {
 
         let t0 = performance.now();
 
+       
 
         if (!snap.metadata.hasPendingWrites) {
-            if (snap.docs.length > storeReference.size) {
+            if (snap.docs.length > storeReference.size +1) {
                 store.loading = true;
             }
 

@@ -7,6 +7,7 @@
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
+
 import { onMounted, ref, computed, watchEffect } from "vue";
 
 export default {
@@ -19,15 +20,15 @@ export default {
 
 
     let unsub;
-   
-  
+
+
     onMounted(() => {
       let queryParam = store.sentences.size ? store.sentences.size : 0;
       if (store.sentences.size) {
         store.sentences.clear()
       }
 
-     ({ unsub} = store.setAllSentences(queryParam));
+      ({ unsub } = store.setAllSentences(queryParam));
     });
 
     const scrollReload = async () => {

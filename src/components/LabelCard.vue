@@ -10,8 +10,8 @@
     </div>
     <div
       @click.prevent="sentence.commentBody.length > 1 ? fullComment = !fullComment : fullComment"
-      :class="{ 'cursor-pointer': !isMobile }"
-      class="mt-4 lg:mt-6 text-gray-800/90 text-[0.95rem] font-medium leading-relaxed text-justify"
+      :class="{ 'cursor-pointer': !isMobileDevice && sentence.commentBody.length > 1}"
+      class="mt-4 lg:mt-6 text-gray-800/90 text-[0.95rem] font-medium leading-relaxed text-justify font-"
     >
       <transition
         enter-from-class="opacity-25"
@@ -31,7 +31,7 @@
     <div class="mt-4 space-y-3 lg:mt-6">
       <div class="flex flex-wrap items-center lg:gap-x-6 gap-x-4">
         <div
-          class="px-2 py-0.5 rounded-full text-xs bg-gray-200/70 text-gray-700"
+          class="px-2 py-0.5 grid grid-cols-1 rounded-full text-xs bg-gray-200/70 text-gray-700"
         >{{ `${sentence.subredditName}` + `${sentence.flair ? ' / ' + `${sentence.flair}` : ''}` }}</div>
         <div
           class="px-2 py-0.5 rounded-full text-xs"
@@ -43,33 +43,40 @@
             'text-green-700': sentence.score > 1,
             'text-yellow-700': sentence.score >= -1 && sentence.score <= 1,
           }"
-        >{{ sentence.score }} </div>
+        >{{ sentence.score }}</div>
       </div>
-      
-        <div v-if="!hideSentiments" class="flex justify-end items-center flex-wrap lg:gap-x-6 gap-x-4">
-        <button v-if="sentence.sentiments.conflict" @click="acceptConflict" class="px-2 py-0.5 border border-indigo-300 rounded-full text-xs font-medium shadow-md bg-indigo-200 text-indigo-700"> Accept Conflict</button>
-          <template v-for="[user, value] of userMap" :key="user">
-            <div
-              v-if="sentence.sentiments[user].value != -2"
-              class="px-2 py-0.5 rounded-full text-xs capitalize"
-              :class="{
-                'bg-red-200/70': sentence.sentiments[user].value == -1,
-                'bg-green-200/70': sentence.sentiments[user].value == 1,
-                'bg-gray-300': sentence.sentiments[user].value == -3,
-                'bg-yellow-200/70': sentence.sentiments[user].value == 0,
-                'text-red-700': sentence.sentiments[user].value == -1,
-                'text-green-700': sentence.sentiments[user].value == 1,
-                'text-yellow-700': sentence.sentiments[user].value == 0,
-                'text-gray-900': sentence.sentiments[user].value == -3,
-              }"
-            >{{ user }}</div>
-          </template>
-        </div>
-     
+
+      <div
+        v-if="!hideSentiments"
+        class="flex justify-end items-center flex-wrap lg:gap-x-6 gap-x-4"
+      >
+        <button
+          v-if="sentence.sentiments.conflict"
+          @click="acceptConflict"
+          class="px-2 py-0.5 border border-indigo-300 rounded-full text-xs font-medium shadow-md bg-indigo-200 text-indigo-700"
+        >Accept Conflict</button>
+        <template v-for="[user, value] of userMap" :key="user">
+          <div
+            v-if="sentence.sentiments[user].value != -2"
+            class="px-2 py-0.5 rounded-full text-xs capitalize"
+            :class="{
+              'bg-red-200/70': sentence.sentiments[user].value == -1,
+              'bg-green-200/70': sentence.sentiments[user].value == 1,
+              'bg-gray-300': sentence.sentiments[user].value == -3,
+              'bg-yellow-200/70': sentence.sentiments[user].value == 0,
+              'text-red-700': sentence.sentiments[user].value == -1,
+              'text-green-700': sentence.sentiments[user].value == 1,
+              'text-yellow-700': sentence.sentiments[user].value == 0,
+              'text-gray-900': sentence.sentiments[user].value == -3,
+            }"
+          >{{ user }}</div>
+        </template>
+      </div>
     </div>
     <div class="mt-6 flex justify-between sm:space-x-20">
       <div class="flex sm:space-x-12 space-x-8 items-center text-gray-500/75">
-        <button @click="addSentiment(sentence, 1)" :class="{ 'cursor-default': isMobile }">
+        <button @click="addSentiment(sentence, 1)" :class="{ 'cursor-default': isMobileDevice
+     }">
           <ThumbUpIcon
             :class="['text-green-400/80 hover:text-green-500']"
             class="h-6 w-6"
@@ -77,7 +84,8 @@
           />
         </button>
 
-        <button @click="addSentiment(sentence, 0)" :class="{ 'cursor-default': isMobile }">
+        <button @click="addSentiment(sentence, 0)" :class="{ 'cursor-default': isMobileDevice
+     }">
           <SwitchVerticalIcon
             :class="['text-yellow-400/80 hover:text-yellow-500']"
             class="h-6 w-6"
@@ -85,7 +93,8 @@
           />
         </button>
 
-        <button @click="addSentiment(sentence, -1)" :class="{ 'cursor-default': isMobile }">
+        <button @click="addSentiment(sentence, -1)" :class="{ 'cursor-default': isMobileDevice
+     }">
           <ThumbDownIcon
             :class="['text-red-400/80 hover:text-red-500']"
             class="h-6 w-6"
@@ -93,7 +102,8 @@
           />
         </button>
 
-        <button @click="addSentiment(sentence, -3)" :class="{ 'cursor-default': isMobile }">
+        <button @click="addSentiment(sentence, -3)" :class="{ 'cursor-default': isMobileDevice
+     }">
           <HandIcon
             :class="['text-gray-400 hover:text-gray-500']"
             class="h-6 w-6"
@@ -106,14 +116,16 @@
           :class="[
             resolvedDiscussion ? 'text-green-500 hover:text-green-600' :
               discussionExists ? 'text-yellow-500 hover:text-yellow-600' : 'text-gray-500/75 hover:text-gray-600',
-            isMobile ? 'cursor-default' : ''
+            isMobileDevice
+         ? 'cursor-default' : ''
           ]"
         >
           <ChatIcon class="h-6 w-6" aria-hidden="true" />
         </DisclosureButton>
 
         <Menu as="div" class="relative">
-          <MenuButton class="w-full h-full" :class="{ 'cursor-default': isMobile }">
+          <MenuButton class="w-full h-full" :class="{ 'cursor-default': isMobileDevice
+       }">
             <DotsVerticalIcon
               class="text-gray-500/75 hover:text-gray-600 h-6 w-6"
               aria-hidden="true"
@@ -144,7 +156,8 @@
                     <LinkIcon class="h-6 w-6 mr-2" aria-hidden="true" />Permalink
                   </a>
                 </MenuItem>
-                <MenuItem v-if="isMobile" v-slot="{ active }">
+                <MenuItem v-if="isMobileDevice
+            " v-slot="{ active }">
                   <button
                     :class="[
                       active ? ' text-gray-700 bg-gray-100' : 'text-gray-500',
@@ -173,17 +186,18 @@
       </div>
     </div>
     <transition
-      enter-active-class="transition-all duration-300 ease-out"
-      enter-from-class="transform scale-90 opacity-0"
-      enter-to-class="transform scale-100 opacity-100"
-      leave-active-class="transition-all duration-200 ease-out"
-      leave-from-class="transform scale-100 opacity-100"
-      leave-to-class="transform scale-90 opacity-0"
+      enter-active-class="duration-300 ease-out"
+      enter-from-class="scale-90 opacity-0"
+      enter-to-class="scale-100 opacity-100"
+      leave-active-class="duration-200 ease-out"
+      leave-from-class=" scale-100 opacity-100"
+      leave-to-class="scale-90 opacity-0"
     >
-      <CommentSection :sentence="sentence" :isMobile="isMobile" :openPanel="openPanel" />
+      <CommentSection :sentence="sentence" :isMobileDevice
+  ="isMobileDevice
+  " :openPanel="openPanel" />
     </transition>
   </Disclosure>
-
 </template>
 
 <script setup>
@@ -215,9 +229,8 @@ import CommentSection from "./CommentSection.vue";
 
 const props = defineProps({
   sentence: Object,
-  isMobile: Boolean,
+  isMobileDevice: Boolean,
   hideSentiments: Boolean,
-
 });
 
 
@@ -263,9 +276,9 @@ const addSentiment = (sentence, sentiment) => {
 
 const activeDiscussion = computed(() => !props.sentence.discussion?.discussionResolved && props.sentence.discussion?.comments.length > 0)
 
-const discussionExists = computed(() =>  props.sentence.discussion?.comments.length > 0)
+const discussionExists = computed(() => props.sentence.discussion?.comments.length > 0)
 
-const resolvedDiscussion = computed(() =>  props.sentence.discussion?.discussionResolved && props.sentence.discussion.comments.length > 0)
+const resolvedDiscussion = computed(() => props.sentence.discussion?.discussionResolved && props.sentence.discussion.comments.length > 0)
 
 const current_user = computed(() => store.current_user.name);
 

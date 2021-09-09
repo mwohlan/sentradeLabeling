@@ -8,29 +8,40 @@
       </div>
 
       <!-- Search bar -->
-      <div
-        class="flex-1 px-2 py-1 flex justify-between lg:max-w-5xl lg:mx-auto"
-      >
+      <div class="flex-1 px-2 py-1 flex justify-between lg:max-w-5xl lg:mx-auto">
         <div class="flex-1 flex">
           <form @submit.prevent class="w-full flex md:ml-0" autocomplete="off">
             <label for="search-field" class="sr-only">Search</label>
             <div class="relative mt-1 w-full text-gray-400 focus-within:text-gray-600">
-              <div
-                class="absolute inset-y-0 left-2 flex items-center pointer-events-none"
-                aria-hidden="true"
-              >
-                <SearchIcon class="h-5 w-5" aria-hidden="true" />
-              </div>
               <input
                 id="search-field"
                 name="search-field"
                 :class="[filterTerm !== '' ? 'focus:!border-red-400 border-red-400 border-2' : 'border-transparent']"
                 class="block w-full h-full pl-9 pr-2 text-gray-900 bg-gray-200/60 shadow md:shadow-md placeholder-gray-500 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
                 :placeholder="'Search ' + currentRouteName"
-                type="search"
+                type="text"
                 :value="filterTerm"
                 @input="handleInput($event.target.value)"
               />
+              <div
+                class="absolute inset-y-0 left-2 flex items-center pointer-events-none"
+                aria-hidden="true"
+              >
+                <SearchIcon class="h-5 w-5" aria-hidden="true" />
+              </div>
+              <transition
+                enter-from-class="opacity-0"
+                leave-to-class="opacity-25"
+                class="duration-300"
+              >
+                <div
+                  v-if="searchLoading"
+                  class="absolute inset-y-0 right-2 flex items-center pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <RefreshIcon class="h-5 w-5 animate-spin" aria-hidden="true" />
+                </div>
+              </transition>
             </div>
           </form>
         </div>
@@ -48,17 +59,16 @@
         </div>
       </transition>
     </div>
-  
   </div>
 </template>
 
 <script setup>
-import { MenuIcon } from "@heroicons/vue/outline";
+import { MenuIcon, RefreshIcon } from "@heroicons/vue/outline";
 import { SearchIcon } from "@heroicons/vue/solid";
 import HeaderStats from './HeaderStats.vue';
 
 import { useMainStore } from '../store'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 
 defineProps({
@@ -69,12 +79,16 @@ defineProps({
 
 const emit = defineEmits(['update:filterTerm', 'openSidebar'])
 
-
+const searchLoading = ref(false)
 const debounce = (fn, ms = 600) => {
   let timeout;
   return function (...args) {
+    searchLoading.value = true
     clearTimeout(timeout);
-    timeout = setTimeout(() => fn.apply(this, args), ms);
+    timeout = setTimeout(() => {
+      fn.apply(this, args)
+      searchLoading.value = false
+    }, ms);
   };
 };
 

@@ -8,13 +8,13 @@
                     <button
                         @click.prevent="changeDiscussionStatus"
                         v-if="resolvedDiscussion"
-                        :class="{ 'cursor-pointer': !isMobile }"
+                        :class="{ 'cursor-pointer': !isMobileDevice }"
                         class="flex items-center py-[0.06125rem]  px-2 rounded-full text-xs shadow font-semibold border border-green-300 bg-green-200/70 text-green-700"
                     >
                         <RefreshIcon class="h-4 w-4 mr-1" aria-hidden="true" />Resolved
                 </button>
                     <button
-                        :class="{ 'cursor-pointer':!isMobile }"
+                        :class="{ 'cursor-pointer':!isMobileDevice }"
                         class="flex  px-2 py-[0.06125rem] rounded-full text-xs font-semibold shadow border border-yellow-300 bg-yellow-200/70 text-yellow-700"
                         @click.prevent="changeDiscussionStatus(); close(); "
                         v-else-if="activeDiscussion"
@@ -60,7 +60,7 @@
                                             removeUserDiscussion(sentence, userComment.created)
                                             "
                                             class="text-gray-500 hover:text-gray-600"
-                                            :class="{ 'cursor-default': isMobile }"
+                                            :class="{ 'cursor-default': isMobileDevice }"
                                         >
                                             <TrashIcon
                                                 class="h-4 w-4"
@@ -81,7 +81,7 @@
                         class="pb-1"
                         v-if="discussionExists"
                         @click="openTextAreaWithButton = !openTextAreaWithButton"
-                        :class="{ 'cursor-default': isMobile }"
+                        :class="{ 'cursor-default': isMobileDevice }"
                     >
                         <ArrowCircleDownIcon
                             class="h-6 w-6 ease duration-500"
@@ -124,7 +124,7 @@
                                     <div class="mt-3 flex items-center justify-end">
                                         <button
                                             type="submit"
-                                            :class="{ 'cursor-default': isMobile }"
+                                            :class="{ 'cursor-default': isMobileDevice }"
                                         >
                                             <ReplyIcon
                                                 class="h-6 w-6 text-gray-400 hover:text-gray-500"
@@ -165,7 +165,7 @@ import { useMainStore } from "../store";
 const props = defineProps({
     openPanel: Boolean,
     sentence: Object,
-    isMobile: Boolean,
+    isMobileDevice: Boolean,
 })
 
 const store = useMainStore();

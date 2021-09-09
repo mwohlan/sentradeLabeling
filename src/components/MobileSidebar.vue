@@ -44,7 +44,7 @@
                 v-for="item in navigation"
                 :key="item.name"
                 :to="item.to"
-                :class="['outline-none', isMobile ? 'cursor-default' : '', item.current ? 'bg-gray-100 border-indigo-400 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+                :class="['outline-none','cursor-default', item.current ? 'bg-gray-100 border-indigo-400 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
                 :aria-current="item.current ? 'page' : undefined"
               >
                 <component
@@ -111,7 +111,7 @@ export default {
     FireIcon,
     LoginIcon
   },
-  props: { sidebarOpen: Boolean, navigation: Array, isMobile: Boolean },
+  props: { sidebarOpen: Boolean, navigation: Array},
   emits: ["closeSidebar"],
   setup() {
     const store = useMainStore();
