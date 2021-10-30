@@ -91,14 +91,14 @@ const conflictRatios = computed(() => {
         for (const [day, events] of Object.entries(store.generalStats?.conflictHistory ?? {})) {
             if (day >= oneWeekAgoInMillis()) {
                 conflictRatios['week'].fullyLabeled += events.fullyLabeled
-                conflictRatios['week'].conflicts += events.conflicts
+                conflictRatios['week'].conflicts += events.conflicts ?? 0
             }
             if (day >= oneMonthAgoInMillis()) {
                 conflictRatios['month'].fullyLabeled += events.fullyLabeled
-                conflictRatios['month'].conflicts += events.conflicts
+                conflictRatios['month'].conflicts += events.conflicts ?? 0
             }
             conflictRatios.overall.fullyLabeled += events.fullyLabeled
-            conflictRatios.overall.conflicts += events.conflicts
+            conflictRatios.overall.conflicts += events.conflicts ?? 0
         }
     }
 
