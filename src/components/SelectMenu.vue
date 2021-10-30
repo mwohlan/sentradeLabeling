@@ -1,6 +1,6 @@
 <template>
   <Listbox as="div" v-model="selected">
-    <ListboxLabel class="block text-sm font-medium text-gray-700">
+    <ListboxLabel class="block text-sm font-medium text-slate-700">
     </ListboxLabel>
     <div class="mt-1 relative">
       <ListboxButton
@@ -9,7 +9,7 @@
           h-10
           relative
           w-full
-          border border-gray-300
+          border border-slate-300
           rounded-md
           shadow-sm
           pl-3
@@ -35,7 +35,7 @@
             pointer-events-none
           "
         >
-          <SelectorIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+          <SelectorIcon class="h-5 w-5 text-slate-400" aria-hidden="true" />
         </span>
       </ListboxButton>
 
@@ -72,7 +72,7 @@
           >
             <li
               :class="[
-                active ? 'text-white bg-indigo-400' : 'text-gray-800',
+                active ? 'text-white bg-indigo-400' : 'text-slate-800',
                 'cursor-default select-none relative py-2 pl-3 pr-9',
               ]"
             >

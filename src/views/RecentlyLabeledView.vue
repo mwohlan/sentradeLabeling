@@ -1,13 +1,15 @@
 
 <template>
-  <base-layout @scrollReload="scrollReload()" :sentences="sentences" />
+
+    <base-layout @scrollReload="scrollReload()" :sentences="sentences" />
+
 </template>
 
 <script>
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
-import { onMounted, onBeforeMount, ref, computed, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 export default {
   components: {
@@ -16,20 +18,18 @@ export default {
   setup() {
     const sidebarOpen = ref(false);
     const store = useMainStore();
-    let unsub;
 
-    onMounted(() => {
-      let queryParam = store.recentlyLabeledSentences.size ? store.recentlyLabeledSentences.size : 0;
-      if (store.recentlyLabeledSentences.size) {
-        store.recentlyLabeledSentences.clear()
-      }
 
-      ({ unsub } = store.setRecentlyLabeledSentences(queryParam));
-    });
+    let queryParam = store.recentlyLabeledSentences.size ? store.recentlyLabeledSentences.size : 0;
+    if (store.recentlyLabeledSentences.size) {
+      store.recentlyLabeledSentences.clear()
+    }
+
+    let unsub = store.setRecentlyLabeledSentences(queryParam);
 
     const scrollReload = async () => {
       unsub();
-      unsub = store.setRecentlyLabeledSentences(5).unsub;
+      unsub = store.setRecentlyLabeledSentences(store.recentlyLabeledSentences.size + 8);
     };
 
     watchEffect((onInvalidate) => {
@@ -40,7 +40,7 @@ export default {
 
     return {
       sidebarOpen,
-      sentences: computed(() => store.recentlyLabeledSentences),
+      sentences: store.recentlyLabeledSentences,
       scrollReload,
     };
   },

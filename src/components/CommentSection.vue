@@ -2,64 +2,54 @@
     <div v-if="openPanel">
         <DisclosurePanel v-slot="{ close }" static>
             <div
-                class="bg-gray-100 flex flex-col mt-3 shadow rounded sm:rounded-lg overflow-hidden"
+                class="bg-slate-100 flex flex-col mt-3 shadow rounded sm:rounded-lg overflow-hidden"
             >
                 <div class="flex justify-center mt-2">
                     <button
+                        :class="[{ 'cursor-pointer': !isMobileDevice },'flex  w-[5.5rem] duration-500 items-center py-[0.06125rem] px-2 rounded-full text-xs shadow font-semibold border', resolvedDiscussion  ? 'border-emerald-300 bg-emerald-200/70 text-emerald-700': ' gap-x-2 border-amber-300 bg-amber-200/70 text-amber-700']"
                         @click.prevent="changeDiscussionStatus"
-                        v-if="resolvedDiscussion"
-                        :class="{ 'cursor-pointer': !isMobileDevice }"
-                        class="flex items-center py-[0.06125rem]  px-2 rounded-full text-xs shadow font-semibold border border-green-300 bg-green-200/70 text-green-700"
+                        v-if="discussionExists"
+                      
+                      
                     >
-                        <RefreshIcon class="h-4 w-4 mr-1" aria-hidden="true" />Resolved
-                </button>
-                    <button
-                        :class="{ 'cursor-pointer':!isMobileDevice }"
-                        class="flex  px-2 py-[0.06125rem] rounded-full text-xs font-semibold shadow border border-yellow-300 bg-yellow-200/70 text-yellow-700"
-                        @click.prevent="changeDiscussionStatus(); close(); "
-                        v-else-if="activeDiscussion"
-                    >
-                        <RefreshIcon class="h-4 w-4 mr-1" aria-hidden="true" />Active
-            </button>
+                        <RefreshIcon class="h-4 w-4 mr-1 flex-shrink-0" :class="{'animate-spin': statusChange}" aria-hidden="true"></RefreshIcon>{{resolvedDiscussion ? 'Resolved' : 'Active'}}
+                    </button>
+               
                 </div>
-
-                <ul v-if="discussionExists" class="space-y-3 px-4 sm:px-6">
+                <ul class="space-y-3 px-4 sm:px-6" v-if="discussionExists">
                     <li
+                        class="flex"
                         v-for="userComment in sentence.discussion.comments"
                         :key="userComment.created"
-                        class="flex"
                     >
                         <div class="flex-1 space-x-3">
                             <div>
                                 <div class="text-xs flex justify-between">
                                     <div
-                                        class="font-medium text-gray-900 capitalize"
+                                        class="font-medium text-slate-900 capitalize"
                                     >{{ userComment.user }}</div>
-
                                     <div
-                                        v-if="isUnseenPost(userComment)"
                                         class="bg-indigo-200 text-indigo-500 p-[0.1rem] rounded-full"
-                                    > <FireIcon class="h-4 w-4" aria-hidden="true" /></div>
+                                        v-if="isUnseenPost(userComment)"
+                                    >
+                                        <FireIcon class="h-4 w-4" aria-hidden="true"></FireIcon>
+                                    </div>
                                 </div>
-                                <div class="mt-1 text-sm text-gray-700 flex flex-wrap">
+                                <div class="mt-1 text-sm text-slate-700 flex flex-wrap">
                                     <p class="whitespace-pre-line">{{ userComment.body }}</p>
                                 </div>
                                 <div class="flex flex-wrap justify-between">
                                     <div class="mt-2 text-xs space-x-2">
-                                        <span class="text-gray-500">
-                                            <UseTimeAgo
-                                                v-slot="{ timeAgo }"
-                                                :time="new Date(userComment.created)"
-                                            >{{ timeAgo }}</UseTimeAgo>
+                                        <span class="text-slate-500">
+                                           {{ getTimeAgo(userComment.created) }}
                                         </span>
                                     </div>
-
                                     <div class="text-sm">
                                         <button
+                                            class="text-slate-500 hover:text-slate-600"
                                             @click="
                                             removeUserDiscussion(sentence, userComment.created)
                                             "
-                                            class="text-gray-500 hover:text-gray-600"
                                             :class="{ 'cursor-default': isMobileDevice }"
                                         >
                                             <TrashIcon
@@ -68,7 +58,7 @@
                                                     hidden: userComment.user !== current_user,
                                                 }"
                                                 aria-hidden="true"
-                                            />
+                                            ></TrashIcon>
                                         </button>
                                     </div>
                                 </div>
@@ -85,11 +75,10 @@
                     >
                         <ArrowCircleDownIcon
                             class="h-6 w-6 ease duration-500"
-                            :class="[openTextAreaWithButton ? 'rotate-180 text-red-500 hover:text-red-600' : 'rotate-0 text-green-500 hover:text-green-600']"
-                        />
+                            :class="[openTextAreaWithButton ? 'rotate-180 text-red-500 hover:text-red-600' : 'rotate-0 text-emerald-500 hover:text-emerald-600']"
+                        ></ArrowCircleDownIcon>
                     </button>
                 </div>
-
                 <transition
                     enter-active-class=" duration-300 ease-out"
                     enter-from-class=" scale-90 opacity-0"
@@ -99,10 +88,10 @@
                     leave-to-class=" scale-90 opacity-0"
                 >
                     <div
+                        class="bg-slate-100 px-4 py-2 sm:px-6"
                         v-if="
                             openTextAreaSection
                         "
-                        class="bg-gray-100 px-4 py-2 sm:px-6"
                     >
                         <div class="flex space-x-3">
                             <div class="min-w-0 flex-1">
@@ -112,14 +101,14 @@
                                 >
                                     <div class="sm:flex-1">
                                         <textarea
+                                            class="shadow-inner block w-full focus:ring-slate-400 focus:border-slate-400 sm:text-sm border border-slate-300 rounded-md"
                                             id="sentence"
                                             v-model="userDiscussion"
                                             ref="textInput"
                                             name="sentence"
                                             rows="2"
-                                            class="shadow-inner block w-full focus:ring-gray-400 focus:border-gray-400 sm:text-sm border border-gray-300 rounded-md"
                                             placeholder="Add to discussion"
-                                        />
+                                        ></textarea>
                                     </div>
                                     <div class="mt-3 flex items-center justify-end">
                                         <button
@@ -127,9 +116,9 @@
                                             :class="{ 'cursor-default': isMobileDevice }"
                                         >
                                             <ReplyIcon
-                                                class="h-6 w-6 text-gray-400 hover:text-gray-500"
+                                                class="h-6 w-6 text-slate-400 hover:text-slate-500"
                                                 aria-hidden="true"
-                                            />
+                                            ></ReplyIcon>
                                         </button>
                                     </div>
                                 </form>
@@ -145,17 +134,17 @@
 <script setup>
 
 import { DisclosurePanel } from "@headlessui/vue";
-import { UseTimeAgo } from "@vueuse/components";
+import { useTimeAgo } from "@vueuse/core";
 import {
 
     ReplyIcon,
     TrashIcon,
     ArrowCircleDownIcon,
     RefreshIcon,
-    
+
 } from "@heroicons/vue/outline";
 
-import{ FireIcon } from "@heroicons/vue/solid"
+import { FireIcon } from "@heroicons/vue/solid"
 import { ref, computed } from "@vue/reactivity";
 import { watchEffect } from "@vue/runtime-core"
 
@@ -170,6 +159,7 @@ const props = defineProps({
 
 const store = useMainStore();
 
+const statusChange = ref(false)
 
 
 const openTextAreaWithButton = ref(false);
@@ -180,8 +170,9 @@ const openTextAreaSection = computed(() =>
     props.sentence.discussion.comments.length == 0
 )
 
-
-
+const getTimeAgo = (date) => {
+  return useTimeAgo(new Date(date)).value
+}
 const userDiscussion = ref("");
 
 const addUserDiscussion = () => {
@@ -190,6 +181,8 @@ const addUserDiscussion = () => {
     userDiscussion.value = "";
 };
 const changeDiscussionStatus = () => {
+    statusChange.value = true;
+    setTimeout(()=> statusChange.value = false,1000)
     store.changeDiscussionStatus(props.sentence);
 }
 
@@ -201,8 +194,9 @@ const removeUserDiscussion = (sentence, timestamp) => {
 
 const textInput = ref(null);
 
-const lastDiscussionView = computed(() => store.stats.lastDiscussionView)
+
 watchEffect(() => {
+
 
     if (textInput.value) {
 
@@ -213,20 +207,18 @@ watchEffect(() => {
 
 
 
-const current_user = computed(() => store.current_user.name);
+const current_user = computed(() =>store.current_user.name)
 
 
 
 
-const discussionExists = computed(() =>  props.sentence.discussion?.comments.length > 0)
-
-const activeDiscussion = computed(() => !props.sentence.discussion?.discussionResolved && props.sentence.discussion?.comments.length > 0)
+const discussionExists = computed(() => props.sentence.discussion?.comments.length > 0)
 
 const resolvedDiscussion = computed(() => props.sentence.discussion?.discussionResolved && props.sentence.discussion?.comments.length > 0)
 
-const unreadDiscussions = computed(() => store.stats.unreadPosts[props.sentence.id] ? store.stats.unreadPosts[props.sentence.id] : [])
+const unreadDiscussions = computed(() => store.userStats.get(current_user.value.id)?.unreadPosts ? store.userStats.get(current_user.value.id)?.unreadPosts[props.sentence.id] ?? [] : [])
 
-const isUnseenPost = (userComment) => (unreadDiscussions.value.includes(userComment.created)&& userComment.user != current_user.value)
+const isUnseenPost = (userComment) => (unreadDiscussions.value.includes(userComment.created) && userComment.user != current_user.value)
 
 
 </script>

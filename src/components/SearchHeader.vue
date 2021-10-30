@@ -1,9 +1,9 @@
 <template>
   <div
-    class="sticky overflow-visible drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 sm:rounded-lg"
+    class="sticky overflow-hidden  drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 sm:rounded-lg"
   >
     <div class="flex">
-      <div class="flex items-center text-gray-500 lg:hidden" @click="$emit('openSidebar')">
+      <div class="flex items-center text-slate-500 lg:hidden" @click="$emit('openSidebar')">
         <MenuIcon class="h-[3.25rem] w-[3.25rem]" aria-hidden="true" />
       </div>
 
@@ -12,12 +12,12 @@
         <div class="flex-1 flex">
           <form @submit.prevent class="w-full flex md:ml-0" autocomplete="off">
             <label for="search-field" class="sr-only">Search</label>
-            <div class="relative mt-1 w-full text-gray-400 focus-within:text-gray-600">
+            <div class="relative mt-1 w-full text-slate-400 focus-within:text-slate-600">
               <input
                 id="search-field"
                 name="search-field"
                 :class="[filterTerm !== '' ? 'focus:!border-red-400 border-red-400 border-2' : 'border-transparent']"
-                class="block w-full h-full pl-9 pr-2 text-gray-900 bg-gray-200/60 shadow md:shadow-md placeholder-gray-500 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
+                class="block w-full h-full pl-9 pr-2 text-slate-900 bg-slate-200/60 shadow md:shadow-md placeholder-slate-500 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
                 :placeholder="'Search ' + currentRouteName"
                 type="text"
                 :value="filterTerm"
@@ -53,9 +53,9 @@
       <transition name="fade">
         <div
           v-if="isLoading"
-          class="absolute w-full z-40 bottom-0 h-[0.2rem] bg-green-200 rounded-lg"
+          class="absolute w-full z-40 bottom-0 h-[0.2rem] bg-emerald-200 rounded-lg"
         >
-          <div class="animation h-full w-1/3 bg-green-400"></div>
+          <div class="animation h-full w-1/3 bg-emerald-400"></div>
         </div>
       </transition>
     </div>
@@ -86,7 +86,7 @@ const debounce = (fn, ms = 600) => {
     searchLoading.value = true
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      fn.apply(this, args)
+      fn(...args)
       searchLoading.value = false
     }, ms);
   };

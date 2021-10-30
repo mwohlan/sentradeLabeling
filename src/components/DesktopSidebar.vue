@@ -9,7 +9,7 @@
             src="https://tailwindui.com/img/logos/workflow-mark-indigo-400.svg"
             alt="Sentrade Logo"
           />
-          <div class="text-2xl text-gray-500 font-bold">Sentrade</div>
+          <div class="text-2xl text-slate-500 font-bold">Sentrade</div>
         </div>
 
         <nav class="mt-5 flex-1 flex flex-col gap-y-6" aria-label="Sidebar">
@@ -18,12 +18,12 @@
               v-for="item in navigation"
               :key="item.name"
               :to="item.to"
-              :class="[, item.current ? 'bg-gray-100 border-indigo-400 text-gray-800' : 'border-transparent  text-gray-700 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+              :class="[, item.current ? 'bg-slate-100 border-indigo-400 text-slate-800' : 'border-transparent  text-slate-700 hover:bg-slate-100 hover:text-slate-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
               :aria-current="item.current ? 'page' : undefined"
             >
               <component
                 :is="item.icon"
-                :class="[item.current ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-700', 'mr-3 flex-shrink-0 h-6 w-6']"
+                :class="[item.current ? 'text-slate-800' : 'text-slate-600 group-hover:text-slate-700', 'mr-3 flex-shrink-0 h-6 w-6']"
                 aria-hidden="true"
               />
               <div class="flex flex-1 justify-between">
@@ -43,7 +43,7 @@
             </router-link>
           </div>
           <div class="mx-4 rounded-full bg-indigo-400 h-[0.1rem] shadow drop-shadow"></div>
-          <div class="flex px-6 text-sm text-gray-600 font-medium sm:mr-6">
+          <div class="flex px-6 text-sm text-slate-600 font-medium sm:mr-6">
             <router-link class="flex gap-x-2 items-center capitalize" :to="{ name: 'Login' }">
               <LoginIcon class="h-[1.625rem] w-[1.625rem]" aria-hidden="true" />
               {{ username }}
@@ -79,16 +79,13 @@ export default {
   },
   setup() {
     const store = useMainStore();
-    const handledragstart = () => {
-      console.log("Dragstart");
-    }
-
+  
 
     return {
       unreadPostsAvailable: computed(() => store.unreadPostsCount > 0),
-      unreadPostsCount: computed(() => store.unreadPostsCount),
-      username: computed(() => store.current_user.name),
-      handledragstart
+      unreadPostsCount:  computed(()=>(store.unreadPostsCount)),
+      username: store.current_user.name,
+    
     }
   },
 };

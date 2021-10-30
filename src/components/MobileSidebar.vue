@@ -16,7 +16,7 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <DialogOverlay class="fixed inset-0 bg-gray-600 bg-opacity-75" />
+        <DialogOverlay class="fixed inset-0 bg-slate-600 bg-opacity-75" />
       </TransitionChild>
       <TransitionChild
         as="template"
@@ -36,7 +36,7 @@
               src="https://tailwindui.com/img/logos/workflow-mark-indigo-400.svg"
               alt="Easywire logo"
             />
-            <div class="text-2xl text-gray-500 font-bold">Sentrade</div>
+            <div class="text-2xl text-slate-500 font-bold">Sentrade</div>
           </div>
           <nav class="mt-5 flex flex-col gap-y-6 flex-shrink-0 h-full overflow-y-auto" aria-label="Sidebar">
             <div class="px-2 space-y-1">
@@ -44,12 +44,12 @@
                 v-for="item in navigation"
                 :key="item.name"
                 :to="item.to"
-                :class="['outline-none','cursor-default', item.current ? 'bg-gray-100 border-indigo-400 text-gray-700' : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+                :class="['outline-none','cursor-default', item.current ? 'bg-slate-100 border-indigo-400 text-slate-700' : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
                 :aria-current="item.current ? 'page' : undefined"
               >
                 <component
                   :is="item.icon"
-                  :class="[item.current ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-700', 'mr-3 flex-shrink-0 h-6 w-6']"
+                  :class="[item.current ? 'text-slate-800' : 'text-slate-600 group-hover:text-slate-700', 'mr-3 flex-shrink-0 h-6 w-6']"
                   aria-hidden="true"
                 />
                 <div class="flex flex-1 justify-between">
@@ -70,7 +70,7 @@
             </div>
 
             <div class="mx-4 rounded-full bg-indigo-400 h-[0.1rem] shadow drop-shadow"></div>
-          <div class="flex  px-6 text-sm  text-gray-600 font-medium sm:mr-6">
+          <div class="flex  px-6 text-sm  text-slate-600 font-medium sm:mr-6">
                 <router-link class="flex gap-x-2 items-center capitalize" :to="{ name: 'Login' } " >
                   <LoginIcon class="h-[1.625rem] w-[1.625rem] " aria-hidden="true" />
                   {{username}}

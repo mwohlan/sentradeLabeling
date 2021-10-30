@@ -16,46 +16,26 @@ const routes = [
     meta: {
       hideSentiments: true,
     }
-    // example of route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
   },
   {
     path: '/allComments',
     component: () => import('../views/AllCommentsView.vue'),
     name: 'all comments'
-    // example of route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
   },
   {
     path: '/discussions',
     component: () => import('../views/DiscussionsView.vue'),
     name: 'discussions'
-    // example of route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
   },
   {
     path: '/conflicts',
     component: () => import('../views/ConflictsView.vue'),
     name: 'conflicts'
-    // example of route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
   },
   {
     path: '/recentlyLabeled',
     component: () => import('../views/RecentlyLabeledView.vue'),
     name: 'recently labeled' //
-    // example of route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
   },
   {
     path: '/link/:id',
@@ -63,16 +43,23 @@ const routes = [
     name: 'link',
     props: true
 
-    // example of route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import('./views/About.vue'), meta: { title: 'Home' }
   },
   {
     path: '/login',
     component: () => import('../views/LoginPage.vue'),
     name: 'Login'
+  },
+  {
+    path: '/stats',
+    component: () => import('../views/Stats.vue'),
+    name: 'stats'
+  },
+  {
+    path: '/queryTest',
+    component: () => import('../views/TestQueries.vue'),
+    name: 'queryTest'
   }
+
 ]
 
 const router = createRouter({
@@ -83,15 +70,14 @@ const router = createRouter({
 
 
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
  
   const isAuthenticated = localStorage.getItem('current_user') !== null;
   if (!isAuthenticated && to.name !== 'Login') {
-    next({ name: 'Login' ,query:{redirect: to.fullPath}})
+    return { name: 'Login' ,query:{redirect: to.path}}
   } else {
     const store = useMainStore()
     store.current_user = store.current_user === null ? JSON.parse(localStorage.getItem('current_user')) : store.current_user
-    next()
   }
  
 })

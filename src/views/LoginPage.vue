@@ -9,13 +9,13 @@
           src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg"
           alt="Easywire logo"
         />
-        <div class="text-3xl text-gray-600 font-bold">Sentrade</div>
+        <div class="text-3xl text-slate-600 font-bold">Sentrade</div>
       </div>
     </div>
 
     <div class="self-start row-start-4 row-end-10 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="pb-8 pt-5 px-4 shadow-xl rounded-xl bg-gray-200 sm:px-10">
-        <h2 class="text-center text-2xl font-bold text-gray-900 mb-3">Choose User for Labeling</h2>
+      <div class="pb-8 pt-5 px-4 shadow-xl rounded-xl bg-slate-200 sm:px-10">
+        <h2 class="text-center text-2xl font-bold text-slate-900 mb-3">Choose User for Labeling</h2>
         <form @submit.prevent="forwardToMainPage" class="space-y-6">
           <select-menu @selected="changeUser" :people="people" />
 
@@ -31,11 +31,11 @@
     </div>
 
     <footer class="row-span-2 self-end bg-grey-800 border-blue-700 px-6">
-      <div class="border-t-2 border-gray-300">
+      <div class="border-t-2 border-slate-300">
         <div class="flex justify-between py-6">
-          <p class="text-sm text-gray-700 font-extrabold mb-2">© 2021 Sentrade</p>
+          <p class="text-sm text-slate-700 font-extrabold mb-2">© 2021 Sentrade</p>
           <a
-            class="text-sm text-gray-700 font-extrabold mb-2"
+            class="text-sm text-slate-700 font-extrabold mb-2"
             href
             target="_blank"
             rel="noopener noreferrer"

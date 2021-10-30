@@ -8,7 +8,7 @@ import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
 
-import { onMounted, ref, computed, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 export default {
   components: {
@@ -19,22 +19,22 @@ export default {
     const store = useMainStore();
 
 
-    let unsub;
+
+    let queryParam = store.sentences.size ? store.sentences.size : 0;
+
+    if (store.sentences.size) {
+      store.sentences.clear()
+    }
+
+    let unsub = store.setAllSentences(queryParam);
 
 
-    onMounted(() => {
-      let queryParam = store.sentences.size ? store.sentences.size : 0;
-      if (store.sentences.size) {
-        store.sentences.clear()
-      }
-
-      ({ unsub } = store.setAllSentences(queryParam));
-    });
 
     const scrollReload = async () => {
       unsub();
-      unsub = store.setAllSentences(5).unsub;
+      unsub = store.setAllSentences(store.sentences.size + 8);
     };
+
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
@@ -43,7 +43,7 @@ export default {
     });
     return {
       sidebarOpen,
-      sentences: computed(() => store.sentences),
+      sentences: store.sentences,
       scrollReload,
     };
   },

@@ -6,7 +6,7 @@
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
-import { onMounted, onBeforeMount, ref, computed, watchEffect } from "vue";
+import { ref,  watchEffect } from "vue";
 
 export default {
   components: {
@@ -19,23 +19,17 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-    const unsub = ref(null);
-
-
-
-    onMounted(() => {
-      unsub.value = store.setLinkSentence(props.id);
-    });
+    let unsub = store.setLinkSentence(props.id);
 
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
-        unsub.value();
+        unsub();
       });
     });
 
     return {
       sidebarOpen,
-      sentences: computed(() => store.linkSentence),
+      sentences: store.linkSentence,
     };
   },
 };

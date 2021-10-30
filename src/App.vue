@@ -2,7 +2,8 @@
   <div>
     <main class="fixed inset-0 h-full">
       <router-view v-slot="{ Component }">
-        <component :is="Component" />
+       <component :is="Component" />
+      
       </router-view>
       <div class="lg:flex relative">
         <div class="hidden lg:block lg:w-72 "></div>
@@ -10,9 +11,9 @@
           <transition name="fade">
             <div
               v-if="isLoading"
-              class=" w-full absolute bottom-0 overflow-x-hidden z-40 h-[0.40rem] bg-green-200 rounded-lg"
+              class=" w-full absolute bottom-0 overflow-x-hidden z-40 h-[0.40rem] bg-emerald-200 rounded-lg"
             >
-              <div class="animation h-full w-1/3 bg-green-400"></div>
+              <div class="animation h-full w-1/3 bg-emerald-400"></div>
             </div>
           </transition>
         </div>
@@ -64,3 +65,4 @@ const isLoading = computed(() => store.loading)
   animation: changewidth 0.8s linear 0s infinite;
 }
 </style>
+

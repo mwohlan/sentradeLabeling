@@ -4,7 +4,8 @@ import {
     UserGroupIcon,
     ChatIcon,
     SwitchVerticalIcon,
-    ClockIcon
+    ClockIcon,
+    ChartPieIcon
 } from "@heroicons/vue/outline";
 
 export default [
@@ -42,6 +43,12 @@ export default [
         name: "All Comments",
         to: { name: "all comments" },
         icon: DocumentReportIcon,
+        current: false,
+    },
+    {
+        name: "Stats",
+        to: { name: "stats" },
+        icon: ChartPieIcon,
         current: false,
     },
 ];

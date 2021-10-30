@@ -7,7 +7,7 @@
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
-import { onMounted, ref, onBeforeMount, computed, watchEffect } from "vue";
+import {  ref, watchEffect } from "vue";
 
 export default {
   components: {
@@ -17,18 +17,12 @@ export default {
     const sidebarOpen = ref(false);
     const store = useMainStore();
 
-    let unsub;
+    let queryParam = store.sentencesWithSentiment.size ? store.sentencesWithSentiment.size : 0;
+    if (store.sentencesWithSentiment.size) {
+      store.sentencesWithSentiment.clear()
+    }
 
-    onMounted(() => {
-      let queryParam = store.sentencesWithSentiment.size ? store.sentencesWithSentiment.size : 0;
-      if (store.sentencesWithSentiment.size) {
-        store.sentencesWithSentiment.clear()
-      }
-
-      ({ unsub } = store.setSentencesWithSentiment(queryParam));
-    });
-
-
+    let unsub = store.setSentencesWithSentiment(queryParam);
 
 
     watchEffect((onInvalidate) => {
@@ -40,12 +34,12 @@ export default {
     const scrollReload = () => {
       unsub()
 
-      unsub = store.setSentencesWithSentiment(5).unsub
+      unsub = store.setSentencesWithSentiment(store.sentencesWithSentiment.size + 8)
     }
 
     return {
       sidebarOpen,
-      sentences: computed(() => store.sentencesWithSentiment),
+      sentences:store.sentencesWithSentiment,
       scrollReload,
     };
   },

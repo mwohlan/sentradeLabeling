@@ -1,13 +1,15 @@
 
 <template>
-  <base-layout @scrollReload="scrollReload()" :sentences="sentences" />
+
+    <base-layout @scrollReload="scrollReload()" :sentences="sentences" />
+ 
 </template>
 
 <script>
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
-import { onMounted, onBeforeMount, ref, computed, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 export default {
   components: {
@@ -16,20 +18,17 @@ export default {
   setup() {
     const sidebarOpen = ref(false);
     const store = useMainStore();
-    let unsub;
 
-    onMounted(() => {
-      let queryParam = store.sentencesWithoutSentiment.size ? store.sentencesWithoutSentiment.size : 0;
-      if (store.sentencesWithoutSentiment.size) {
-        store.sentencesWithoutSentiment.clear()
-      }
+    let queryParam = store.sentencesWithoutSentiment.size ? store.sentencesWithoutSentiment.size : 0;
+    if (store.sentencesWithoutSentiment.size) {
+      store.sentencesWithoutSentiment.clear()
+    }
 
-      ({ unsub } = store.setSentencesWithoutSentiment(queryParam));
-    });
+    let unsub = store.setSentencesWithoutSentiment(queryParam);
 
     const scrollReload = async () => {
       unsub();
-      unsub = store.setSentencesWithoutSentiment(5).unsub;
+      unsub = store.setSentencesWithoutSentiment(store.sentencesWithoutSentiment.size + 8);
     };
 
     watchEffect((onInvalidate) => {
@@ -40,7 +39,7 @@ export default {
 
     return {
       sidebarOpen,
-      sentences: computed(() => store.sentencesWithoutSentiment),
+      sentences: store.sentencesWithoutSentiment,
       scrollReload,
     };
   },

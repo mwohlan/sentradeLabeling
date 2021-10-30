@@ -1,24 +1,24 @@
 
 <template>
   <div class="h-full">
-    <div class="h-screen flex bg-gray-100">
+    <div class="h-screen flex bg-slate-200/70">
       <MobileSidebar
         @closeSidebar="sidebarOpen = false"
         :sidebarOpen="sidebarOpen"
         :navigation="navigation"
-      /> 
+      />
       <DesktopSidebar :navigation="navigation" />
 
       <div
         id="scrollArea"
-        class="flex-1 overflow-x-hidden overflow-y-auto focus:outline-none relative pb-20 lg:pb-32"
+        class="flex-1 overflow-x-hidden overflow-y-scroll focus:outline-none relative pb-20 lg:pb-32"
       >
         <SearchHeader
           v-model:filterTerm="filterTerm"
           @openSidebar="sidebarOpen = true"
           :currentRouteName="currentRouteName"
         />
-
+         
         <transition-group
           class="relative mt-8 max-w-2xl xl:max-w-4xl 2xl:max-w-5xl sm:mx-auto space-y-6 mx-3 lg:space-y-9"
           :name="disableListAnimation ? 'search' : 'list'"
@@ -37,6 +37,8 @@
       </div>
     </div>
   </div>
+  <!-- <Toast :showToast="showToast" @closeToast="showToast = false">
+  <div class="border-l-4 border-r-4 shadow-md border-indigo-400 rounded-md z-10  text-indigo-800 bg-indigo-200 py-3 px-3">Unread Posts: {{store.unreadPostsCount}}</div></Toast>-->
 </template>
 
 <script setup>
@@ -50,17 +52,19 @@ import navigation from "../composables/navigationItems";
 import { useMainStore } from "../store";
 import { useRoute } from "vue-router";
 import { onMounted, ref, watchEffect, computed, watch } from "vue";
+import Toast from "./Toast.vue";
 const props = defineProps({
   sentences: Map,
 });
 const emit = defineEmits(["scrollReload"]);
-
+const showToast = ref(false)
 const sidebarOpen = ref(false);
 const store = useMainStore();
 const route = useRoute();
 const currentRouteName = ref("");
 
 const filterTerm = ref("")
+
 
 const disableListAnimation = ref(false);
 
@@ -92,13 +96,21 @@ const hideSentiments = computed(() => {
 )
 let intersectionObserver
 onMounted(() => {
-  intersectionObserver = createIntersectionObserver('#scrollArea', '#intersect', filterTerm, emit)
+  intersectionObserver = createIntersectionObserver('#scrollArea', '#intersect',()=> {
+      if (filterTerm.value === "") {
+            emit('scrollReload')
+        }
+  })
   if (store.users.length == 0) {
     store.setUsers();
   }
 
+  setTimeout(() => {
+    showToast.value = true
+  }, 500)
 
 });
+
 
 watchEffect((onInvalidate) => {
   currentRouteName.value = route.name;

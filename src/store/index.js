@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
-import { projectFirestore, timestamp, increment, documentId } from "../firebase/config";
-import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, addDoc, collection, deleteDoc, getDocs, deleteField, getDoc } from '@firebase/firestore';
+import { isConflict, updateUserLabelCounts, updateLabelCounts } from '../helper/storeHelpers';
+import { projectFirestore, timestamp, documentId } from "../firebase/config";
+import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, collection, getDocs, getDoc } from '@firebase/firestore';
 import getCollection from '../composables/getCollection'
+
+
 
 
 export const useMainStore = defineStore({
@@ -14,10 +17,12 @@ export const useMainStore = defineStore({
     sentencesWithDiscussions: new Map(),
     sentencesWithConflicts: new Map(),
     current_user: null,
-    stats: {},
+    userStats: new Map(),
+    generalStats: {},
     users: [],
     linkSentence: new Map(),
     loading: false,
+   
 
   }),
   getters: {
@@ -31,23 +36,19 @@ export const useMainStore = defineStore({
     unreadPostsCount() {
       let unreadPostsCount = 0
 
-      if (!this.stats.unreadPosts) {
+      if (!this.userStats.get(this.current_user.id)?.unreadPosts) {
         return unreadPostsCount;
       }
 
-      Object.values(this.stats.unreadPosts).forEach(value => unreadPostsCount += value.length);
+      Object.values(this.userStats.get(this.current_user.id)?.unreadPosts).forEach(value => unreadPostsCount += value.length);
 
       return unreadPostsCount;
 
-
-
     }
-
-
-
   }
   ,
   actions: {
+
     setCurrentUser(user) {
       this.current_user = user
       localStorage.setItem('current_user', JSON.stringify(user));
@@ -56,133 +57,103 @@ export const useMainStore = defineStore({
     },
     setSentencesWithoutSentiment(reloadAmount) {
 
+      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.labeled", "==", false), orderBy("created"), limit(Math.max(8, reloadAmount)))
+      const unsub = getCollection(watchQuery, this.sentencesWithoutSentiment)
 
-      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.labeled", "==", false), orderBy("created"), limit(Math.max(8, this.sentencesWithoutSentiment.size + reloadAmount)))
-      const { unsub } = getCollection(watchQuery, this.sentencesWithoutSentiment)
-
-      return { unsub }
+      return unsub
 
     },
     setRecentlyLabeledSentences(reloadAmount) {
 
+      const watchQuery = query(collection(projectFirestore, "sentences"), orderBy(`sentiments.${this.current_user.name}.updated`, 'desc'), limit(Math.max(8, reloadAmount)))
+      const unsub = getCollection(watchQuery, this.recentlyLabeledSentences)
 
-      const watchQuery = query(collection(projectFirestore, "sentences"), orderBy(`sentiments.${this.current_user.name}.updated`, 'desc'), limit(Math.max(8, this.recentlyLabeledSentences.size + reloadAmount)))
-      const { unsub } = getCollection(watchQuery, this.recentlyLabeledSentences)
-
-      return { unsub }
+      return unsub
 
     },
 
     setSentencesWithSentiment(reloadAmount) {
 
+      const watchQuery = query(collection(projectFirestore, "sentences"), where(`sentiments.${this.current_user.name}.value`, "==", -2), where("sentiments.labeled", "==", true), orderBy("created"), limit(Math.max(8, reloadAmount)));
+      const unsub = getCollection(watchQuery, this.sentencesWithSentiment)
 
-
-
-      const watchQuery = query(collection(projectFirestore, "sentences"), where(`sentiments.${this.current_user.name}.value`, "==", -2), where("sentiments.labeled", "==", true), orderBy("created"), limit(Math.max(8, this.sentencesWithSentiment.size + reloadAmount)));
-      const { unsub } = getCollection(watchQuery, this.sentencesWithSentiment)
-
-      return { unsub }
+      return unsub
 
     },
     setAllSentences(reloadAmount) {
 
-      const watchQuery = query(collection(projectFirestore, "sentences"), orderBy("created"), limit(Math.max(8, this.sentences.size + reloadAmount)));
+
+      const watchQuery = query(collection(projectFirestore, "sentences"), orderBy("created"), limit(Math.max(8, reloadAmount)));
 
 
-      const { unsub } = getCollection(watchQuery, this.sentences)
+      const unsub = getCollection(watchQuery, this.sentences)
 
-      return { unsub }
+      return unsub
 
     },
     setSentencesWithConflicts(reloadAmount) {
-      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.conflict", "==", true), orderBy("created"), limit(Math.max(8, this.sentencesWithConflicts.size + reloadAmount)));
-      const { unsub } = getCollection(watchQuery, this.sentencesWithConflicts)
+      const watchQuery = query(collection(projectFirestore, "sentences"), where("sentiments.conflict", "==", true), orderBy("created"), limit(Math.max(8, reloadAmount)));
+      const unsub = getCollection(watchQuery, this.sentencesWithConflicts)
 
-      return { unsub }
+      return unsub
 
 
     },
 
     setSentencesWithDiscussions() {
 
-
       const watchQuery = query(collection(projectFirestore, "sentences"), where("discussion.discussionResolved", "==", false), where("discussion.latestDiscussionComment", ">", 0));
-
-      const { unsub } = getCollection(watchQuery, this.sentencesWithDiscussions)
+      const unsub = getCollection(watchQuery, this.sentencesWithDiscussions)
 
       const updateUnreadPosts = () => {
         updateDoc(doc(projectFirestore, "users", this.current_user.id), {
           unreadPosts: {}
         })
       }
-
-
-
       return { unsub, updateUnreadPosts }
-
-
 
     },
     setLinkSentence(id) {
 
-
       const watchQuery = query(collection(projectFirestore, "sentences"), where(documentId(), "==", id));
-
-
-      const { unsub } = getCollection(watchQuery, this.linkSentence)
-
+      const unsub = getCollection(watchQuery, this.linkSentence)
 
       return unsub
 
-
-
     },
 
-
-
-
-
     setStats() {
-      const unreadPosts = onSnapshot(query(collection(projectFirestore, "users"), where("name", "==", this.current_user.name)), (snap) => {
-        this.stats.unreadPosts = snap.docs[0].data().unreadPosts;
+
+
+
+
+
+      const userStats = onSnapshot(collection(projectFirestore, "users"), (snap) => {
+        snap.forEach(doc => {
+          let stats = {}
+          stats.unreadPosts = doc.data().unreadPosts;
+          stats.sentimentCounts = doc.data().sentimentCounts
+          stats.sentimentCountHistory = doc.data().sentimentCountHistory
+          stats.name = doc.data().name
+          this.userStats.set(doc.id, stats)
+        })
+
       });
-      const setSentimentCount = onSnapshot(query(collection(projectFirestore, "users"), where("name", "==", this.current_user.name)), (snap) => {
-        this.stats.sentimentCount = snap.docs[0].data().sentimentCount
+
+
+      const generalStats = onSnapshot(doc(projectFirestore, "stats", "stats"), (snap) => {
+        this.generalStats.unlabeledSentences = snap.data().unlabeledSentences
+        this.generalStats.labeledSentences = snap.data().labeledSentences
+        this.generalStats.conflictHistory = snap.data().conflictHistory
       });
 
-
-
-      const unlabeledSentences = onSnapshot(doc(projectFirestore, "stats", "stats"), (snap) => {
-        this.stats.unlabeledSentences = snap.data().unlabeledSentences;
-      });
-
-      const labeledSentences = onSnapshot(doc(projectFirestore, "stats", "stats"), (snap) => {
-        this.stats.labeledSentences = snap.data().labeledSentences;
-      });
-
-
-
-
-
-
-
-
-
-
-      return () => { setSentimentCount(); unlabeledSentences(); unreadPosts(); labeledSentences(); }
+      return () => { userStats(); generalStats(); }
 
     },
 
 
     async addSentiment(sentence, sentiment) {
-      let conflict = false;
 
-
-      for (const user of this.users.filter((u) => u.name !== this.current_user.name)) {
-        if (sentence.sentiments[user.name].value != -2 && sentence.sentiments[user.name].value != sentiment) {
-          conflict = true;
-        }
-      }
 
       try {
 
@@ -191,55 +162,23 @@ export const useMainStore = defineStore({
             ...sentence.sentiments,
             [this.current_user.name]: { value: sentiment, updated: timestamp() },
             labeled: true,
-            conflict: conflict
+            conflict: isConflict(sentence, sentiment, this.current_user, this.users)
           },
           updated: timestamp()
         })
 
-        if (sentence.sentiments[this.current_user.name].value == -2) {
-          updateDoc(doc(projectFirestore, "users", this.current_user.id), {
-            sentimentCount: increment(1)
-          })
-        }
-        if (!sentence.sentiments.labeled) {
-          updateDoc(doc(projectFirestore, "stats", "stats"), {
-            unlabeledSentences: increment(-1)
-          })
-
-          updateDoc(doc(projectFirestore, "stats", "stats"), {
-            labeledSentences: increment(1)
-          })
-        }
+        updateLabelCounts(sentence, this.current_user, this.users, sentiment)
+        updateUserLabelCounts(sentence, this.current_user, sentiment)
 
       } catch (error) {
         console.log(error.message);
 
       }
 
-
-
-
-
     },
-    async removeSentence(sentence) {
-      try {
-        await deleteDoc(doc(projectFirestore, "sentences", sentence.id))
-
-        updateDoc(doc(projectFirestore, "stats", "stats"), {
-          labeledSentences: increment(-1)
-        })
-
-      } catch (error) {
-        console.error(error.message)
-      }
-
-    },
-
     async addUserDiscussion(sentence, body) {
 
       const now = Date.now();
-
-
 
       const userComment = {
         user: this.current_user.name,
@@ -291,12 +230,6 @@ export const useMainStore = defineStore({
 
       }
 
-
-
-
-
-
-
     },
 
     async removeUserDiscussion(sentence, discussionTimestamp) {
@@ -347,47 +280,8 @@ export const useMainStore = defineStore({
 
 
     },
-    addRandomComment() {
-      const names = ['Yannik', 'Markus']
-
-      const phrases = [' ist doof. ', " ist cool. ", " weiss nicht, was er tut. ", " ist ein Genie, dass seinesgleichen sucht. ", " ist zum dumm zum scheissen. ", " wird Sentrade in den Olymp befördern."]
-
-      const randomTitle = names[Math.floor(Math.random() * names.length)] + phrases[Math.floor(Math.random() * phrases.length)]
-
-      let randomComment = ""
-
-      for (let index = 0; index < 6; index++) {
-        randomComment += names[Math.floor(Math.random() * names.length)] + phrases[Math.floor(Math.random() * phrases.length)]
-
-      }
-
-
-
-
-
-      addDoc(collection(projectFirestore, "sentences"), {
-        submissionTitle: randomTitle,
-        body: randomComment,
-        labeled: false,
-        permalink: "https://www.google.com",
-        yanikovic: -2,
-        starkus: -2,
-        conflict: false,
-        created: timestamp(),
-        updated: timestamp(),
-        subredditName: "random",
-        score: -1
-
-      })
-
-
-
-    },
-
 
     async setUsers() {
-
-
       try {
         const querySnapshot = await getDocs(collection(projectFirestore, "users"))
 
@@ -400,10 +294,6 @@ export const useMainStore = defineStore({
       } catch (error) {
         console.log(error.message)
       }
-
-
-
-
 
     },
 
@@ -418,7 +308,6 @@ export const useMainStore = defineStore({
 
       })
     }
-
-
   },
 })
+

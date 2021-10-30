@@ -11,7 +11,7 @@
                     leave-from="opacity-100"
                     leave-to="opacity-0"
                 >
-                    <DialogOverlay class="fixed inset-0 bg-gray-500/75" />
+                    <DialogOverlay class="fixed inset-0 bg-slate-500/75" />
                 </TransitionChild>
 
                 <TransitionChild
@@ -26,18 +26,18 @@
                     <div class="bg-white rounded-lg p-4 transform overflow-hidden shadow-xl">
                         <div>
                             <div
-                                class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100"
+                                class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-emerald-100"
                             >
                                
                             </div>
                             <div class="mt-3 text-center sm:mt-5">
                                 <DialogTitle
                                     as="h3"
-                                    class="text-lg leading-6 font-medium text-gray-900"
+                                    class="text-lg leading-6 font-medium text-slate-900"
                                 >Payment successful</DialogTitle>
                                 <div class="mt-2">
                                     <p
-                                        class="text-sm text-gray-500"
+                                        class="text-sm text-slate-500"
                                     >Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.</p>
                                 </div>
                             </div>

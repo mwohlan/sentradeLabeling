@@ -6,6 +6,7 @@ dist-ssr
 debug.log
 .idea
 .vscode/*
+.VSCodeCounter/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -14,3 +15,4 @@ debug.log
 secret.js
 # Local History for Visual Studio Code
 .history/
+.env

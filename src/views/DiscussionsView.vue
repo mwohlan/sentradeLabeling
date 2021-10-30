@@ -1,6 +1,5 @@
 
 <template>
-
   <base-layout :sentences="sentences" />
 </template>
 
@@ -8,7 +7,7 @@
 import BaseLayout from "../components/BaseLayout.vue";
 import { useMainStore } from "../store";
 
-import { onMounted,onBeforeMount, ref, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect} from "vue";
 
 export default {
   components: {
@@ -17,20 +16,16 @@ export default {
   setup() {
     const sidebarOpen = ref(false);
     const store = useMainStore();
-    
-    let unsub, updateUnreadPosts;
+
+    if (store.sentencesWithDiscussions.size) {
+      store.sentencesWithDiscussions.clear()
+    }
+    const{ unsub, updateUnreadPosts } = store.setSentencesWithDiscussions();
+  
+
+  
 
 
-
-    onMounted(()=>{
-       if (store.sentencesWithDiscussions.size) {
-        store.sentencesWithDiscussions.clear()
-      }
-      ({ unsub,updateUnreadPosts} = store.setSentencesWithDiscussions(0));
-    })
-
-    
-    
     watchEffect((onInvalidate) => {
       onInvalidate(() => {
         unsub();
@@ -38,12 +33,12 @@ export default {
       });
     });
 
-   
+
 
     return {
       sidebarOpen,
-      sentences: computed (() => store.sortedSentencesWithDiscussions),
-      
+      sentences: computed(() => store.sortedSentencesWithDiscussions),
+
     };
   },
 };

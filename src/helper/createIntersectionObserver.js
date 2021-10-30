@@ -1,12 +1,15 @@
 
-export default (root, target,filterTerm,emit) => {
+
+export default (root, target,callback) => {
     
 
- 
-  let  observer = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && filterTerm.value === "") {
-            emit('scrollReload')
+    let firstCall = true;
+    let observer = new IntersectionObserver((entries) => {
+
+        if (entries[0].isIntersecting && !firstCall) {
+           callback()
         }
+        firstCall = false;
     }, {
         root: document.querySelector(root),
         rootMargin: '400px'

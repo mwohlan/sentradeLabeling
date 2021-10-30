@@ -8,13 +8,11 @@ const getCollection = (watchQuery, storeReference) => {
 
     function snapShotHandler(snap) {
 
-
         let t0 = performance.now();
 
-       
-
         if (!snap.metadata.hasPendingWrites) {
-            if (snap.docs.length > storeReference.size +1) {
+
+            if (snap.docs.length > storeReference.size + 1) {
                 store.loading = true;
             }
 
@@ -30,23 +28,11 @@ const getCollection = (watchQuery, storeReference) => {
                 else if (type === "removed") {
                     storeReference.delete(doc.id);
                 }
-
-
-
-
             });
-
-
-
-
-
-
 
         }
 
         let loadtime = performance.now() - t0;
-
-
 
         setTimeout(() => {
             store.loading = false;
@@ -54,21 +40,13 @@ const getCollection = (watchQuery, storeReference) => {
             loadtime > 600 ? 0 : 600 - loadtime);
     }
 
-
-
-
     function errorHandler(error) {
         console.log(error.message);
     }
 
-
     const unsub = onSnapshot(watchQuery, snapShotHandler, errorHandler);
 
-
-
-
-
-    return { unsub }
+    return  unsub                   
 }
 
 export default getCollection
