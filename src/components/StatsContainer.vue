@@ -1,21 +1,23 @@
 <template>
-    <div class="mx-auto space-y-8 max-w-5xl p-8">
-        <div class="grid mx-auto  max-w-md xl:max-w-full xl:grid-cols-3 gap-4">
-            <SentimentStats  :sentiments="overallSentiments">Overall Sentiments</SentimentStats>
-            <SentimentStats
-                :sentiments="sentimentCountHistory.oneWeekSentiments"
-            >Sentiments last week</SentimentStats>
-            <SentimentStats
-                :sentiments="sentimentCountHistory.oneMonthSentiments"
-            >Sentiments last month</SentimentStats>
+    <Transition name="stats" appear>
+        <div class="mx-auto space-y-8 max-w-5xl p-8">
+            <div class="grid mx-auto max-w-md xl:max-w-full xl:grid-cols-3 gap-4">
+                <SentimentStats :sentiments="overallSentiments">Overall Sentiments</SentimentStats>
+                <SentimentStats
+                    :sentiments="sentimentCountHistory.oneWeekSentiments"
+                >Sentiments last week</SentimentStats>
+                <SentimentStats
+                    :sentiments="sentimentCountHistory.oneMonthSentiments"
+                >Sentiments last month</SentimentStats>
+            </div>
+            <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+                <GeneralStats :generalStats="generalStats" />
+                <ConflictRatios :conflictRatios="conflictRatios" />
+                <LabeledRatios :ratios="labeledRatios">Labeled ratios</LabeledRatios>
+                <LabeledRatios :ratios="fullyLabeledRatios">Fully labeled ratios</LabeledRatios>
+            </div>
         </div>
-        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <GeneralStats :generalStats="generalStats" />
-            <ConflictRatios :conflictRatios="conflictRatios" />
-            <LabeledRatios :ratios="labeledRatios">Labeled ratios</LabeledRatios>
-            <LabeledRatios :ratios="fullyLabeledRatios">Fully labeled ratios</LabeledRatios>
-        </div>
-    </div>
+    </Transition>
 </template>
 
 
@@ -57,7 +59,7 @@ const sentimentCountHistory = computed(() => {
                     aggregatedMonthCount[key] += value
                 }
             }
-            if (day >= oneMonthAgoInMillis() && day < oneWeekAgoInMillis()) {
+            else if (day >= oneMonthAgoInMillis() && day < oneWeekAgoInMillis()) {
                 for (const [key, value] of Object.entries(sentimentCounts)) {
                     aggregatedMonthCount[key] += value
                 }
@@ -146,3 +148,22 @@ const labeledRatios = computed(() => {
 })
 
 </script>
+
+
+<style scoped>
+.stats-enter-from,
+.stats-leave-to {
+    opacity: 0;
+    transform: translateX(15%);
+}
+
+.stats-enter-active {
+    transition: transform 0.8s, opacity 0.8s;
+}
+
+.stats-leave-active {
+    position: absolute;
+    width: 100%;
+    transition: transform 0.8s, opacity 0.8s;
+}
+</style>
