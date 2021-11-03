@@ -19,7 +19,7 @@
                                 />
                                 <div
                                     class="text-emerald-500 font-semibold"
-                                >{{ Math.round(sentiments[0]?.sentimentCounts['1'] * 100 / sentiments[0]?.sentimentCounts.total) }}%</div>
+                                >{{ Math.round(sentiments[0]?.sentimentCounts['1'] * 100 / sentiments[0]?.sentimentCounts.total ) ||0}}%</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <ThumbDownIcon
@@ -29,7 +29,7 @@
                                 />
                                 <div
                                     class="text-red-500 font-semibold"
-                                >{{ Math.round(sentiments[0]?.sentimentCounts['-1'] * 100 / sentiments[0]?.sentimentCounts.total) }}%</div>
+                                >{{ Math.round(sentiments[0]?.sentimentCounts['-1'] * 100 / sentiments[0]?.sentimentCounts.total) || 0 }}%</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <SwitchVerticalIcon
@@ -39,7 +39,7 @@
                                 />
                                 <div
                                     class="text-amber-500 font-semibold"
-                                >{{ Math.round(sentiments[0]?.sentimentCounts['0'] * 100 / sentiments[0]?.sentimentCounts.total) }}%</div>
+                                >{{ Math.round(sentiments[0]?.sentimentCounts['0'] * 100 / sentiments[0]?.sentimentCounts.total) || 0}}%</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <HandIcon
@@ -49,7 +49,7 @@
                                 />
                                 <div
                                     class="text-slate-500 font-semibold"
-                                >{{ Math.round(sentiments[0]?.sentimentCounts['-3'] * 100 / sentiments[0]?.sentimentCounts.total) }}%</div>
+                                >{{ Math.round(sentiments[0]?.sentimentCounts['-3'] * 100 / sentiments[0]?.sentimentCounts.total) || 0}}%</div>
                             </div>
 
                             <div class="flex gap-x-4 items-center">
@@ -70,22 +70,22 @@
                             <div class="gap-x-4 flex">
                                 <div
                                     class="text-emerald-500 font-semibold"
-                                >{{ Math.round(sentiments[1]?.sentimentCounts['1'] * 100 / sentiments[1]?.sentimentCounts.total) }}%</div>
+                                >{{ Math.round(sentiments[1]?.sentimentCounts['1'] * 100 / sentiments[1]?.sentimentCounts.total) || 0}}%</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <div
                                     class="text-red-500 font-semibold"
-                                >{{ Math.round(sentiments[1]?.sentimentCounts['-1'] * 100 / sentiments[1]?.sentimentCounts.total) }}%</div>
+                                >{{ Math.round(sentiments[1]?.sentimentCounts['-1'] * 100 / sentiments[1]?.sentimentCounts.total) || 0}}%</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <div
                                     class="text-amber-500 font-semibold"
-                                >{{ Math.round(sentiments[1]?.sentimentCounts['0'] * 100 / sentiments[1]?.sentimentCounts.total) }}%</div>
+                                >{{ Math.round(sentiments[1]?.sentimentCounts['0'] * 100 / sentiments[1]?.sentimentCounts.total)|| 0 }}%</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <div
                                     class="text-slate-500 font-semibold"
-                                >{{ Math.round(sentiments[1]?.sentimentCounts['-3'] * 100 / sentiments[1]?.sentimentCounts.total) }}%</div>
+                                >{{ Math.round(sentiments[1]?.sentimentCounts['-3'] * 100 / sentiments[1]?.sentimentCounts.total) || 0}}%</div>
                             </div>
                             <div class="flex items-center gap-x-4">
                                 <div
