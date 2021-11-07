@@ -4,17 +4,18 @@
             <div
                 class="bg-slate-100 flex flex-col mt-3 shadow rounded sm:rounded-lg overflow-hidden"
             >
-                <div class="flex justify-center mt-2">
+                <div v-if="discussionExists" class="flex justify-center mt-2">
                     <button
-                        :class="[{ 'cursor-pointer': !isMobileDevice },'flex  w-[5.5rem] duration-500 items-center py-[0.06125rem] px-2 rounded-full text-xs shadow font-semibold border', resolvedDiscussion  ? 'border-emerald-300 bg-emerald-200/70 text-emerald-700': ' gap-x-2 border-amber-300 bg-amber-200/70 text-amber-700']"
+                        :class="[{ 'cursor-pointer': !isMobileDevice }, 'flex  w-[5.5rem] duration-500 items-center py-[0.06125rem] px-2 rounded-full text-xs shadow font-semibold border', resolvedDiscussion ? 'border-emerald-300 bg-emerald-200/70 text-emerald-700' : ' gap-x-2 border-amber-300 bg-amber-200/70 text-amber-700']"
                         @click.prevent="changeDiscussionStatus"
-                        v-if="discussionExists"
-                      
-                      
                     >
-                        <RefreshIcon class="h-4 w-4 mr-1 flex-shrink-0" :class="{'animate-spin': statusChange}" aria-hidden="true"></RefreshIcon>{{resolvedDiscussion ? 'Resolved' : 'Active'}}
+                        <RefreshIcon
+                            class="h-4 w-4 mr-1 flex-shrink-0"
+                            :class="{ 'animate-spin': statusChange }"
+                            aria-hidden="true"
+                        ></RefreshIcon>
+                        {{ resolvedDiscussion ? 'Resolved' : 'Active' }}
                     </button>
-               
                 </div>
                 <ul class="space-y-3 px-4 sm:px-6" v-if="discussionExists">
                     <li
@@ -40,15 +41,15 @@
                                 </div>
                                 <div class="flex flex-wrap justify-between">
                                     <div class="mt-2 text-xs space-x-2">
-                                        <span class="text-slate-500">
-                                           {{ getTimeAgo(userComment.created) }}
-                                        </span>
+                                        <span
+                                            class="text-slate-500"
+                                        >{{ getTimeAgo(userComment.created) }}</span>
                                     </div>
                                     <div class="text-sm">
                                         <button
                                             class="text-slate-500 hover:text-slate-600"
                                             @click="
-                                            removeUserDiscussion(sentence, userComment.created)
+                                                removeUserDiscussion(sentence, userComment.created)
                                             "
                                             :class="{ 'cursor-default': isMobileDevice }"
                                         >
@@ -68,65 +69,58 @@
                 </ul>
                 <div class="flex items-center justify-center">
                     <button
-                        class="pb-1"
+                        class="pb-2"
                         v-if="discussionExists"
                         @click="openTextAreaWithButton = !openTextAreaWithButton"
                         :class="{ 'cursor-default': isMobileDevice }"
                     >
-                        <ArrowCircleDownIcon
+                        <PlusCircleIcon
                             class="h-6 w-6 ease duration-500"
-                            :class="[openTextAreaWithButton ? 'rotate-180 text-red-500 hover:text-red-600' : 'rotate-0 text-emerald-500 hover:text-emerald-600']"
-                        ></ArrowCircleDownIcon>
+                            :class="[openTextAreaWithButton ? 'rotate-45 text-red-500 hover:text-red-600' : 'rotate-0 text-emerald-500 hover:text-emerald-600']"
+                        ></PlusCircleIcon>
                     </button>
                 </div>
-                <transition
-                    enter-active-class=" duration-300 ease-out"
-                    enter-from-class=" scale-90 opacity-0"
-                    enter-to-class=" scale-100 opacity-100"
-                    leave-active-class=" duration-200 ease-out"
-                    leave-from-class=" scale-100 opacity-100"
-                    leave-to-class=" scale-90 opacity-0"
-                >
-                    <div
-                        class="bg-slate-100 px-4 py-2 sm:px-6"
-                        v-if="
-                            openTextAreaSection
-                        "
-                    >
-                        <div class="flex space-x-3">
-                            <div class="min-w-0 flex-1">
-                                <form
-                                    class="block sm:flex sm:gap-x-6"
-                                    @submit.prevent="addUserDiscussion()"
-                                >
-                                    <div class="sm:flex-1">
-                                        <textarea
-                                            class="shadow-inner block w-full focus:ring-slate-400 focus:border-slate-400 sm:text-sm border border-slate-300 rounded-md"
-                                            id="sentence"
-                                            v-model="userDiscussion"
-                                            ref="textInput"
-                                            name="sentence"
-                                            rows="2"
-                                            placeholder="Add to discussion"
-                                        ></textarea>
-                                    </div>
-                                    <div class="mt-3 flex items-center justify-end">
-                                        <button
-                                            type="submit"
-                                            :class="{ 'cursor-default': isMobileDevice }"
-                                        >
-                                            <ReplyIcon
-                                                class="h-6 w-6 text-slate-400 hover:text-slate-500"
-                                                aria-hidden="true"
-                                            ></ReplyIcon>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </transition>
             </div>
+            <transition
+                enter-active-class=" duration-300 ease-out"
+                enter-from-class=" scale-90 opacity-0"
+                enter-to-class=" scale-100 opacity-100"
+                leave-active-class=" duration-200 ease-out"
+                leave-from-class=" scale-100 opacity-100"
+                leave-to-class=" scale-90 opacity-0"
+                
+            >
+                <div
+                    class="bg-white mt-3"
+                    v-if="
+                        openTextAreaSection
+                    "
+                >
+                    <form class="relative flex " @submit.prevent="addUserDiscussion()">
+                        <textarea
+                            class=" shadow-inner flex-grow focus:ring-transparent focus:border-indigo-300 sm:text-sm border-2 border-slate-300 rounded-md"
+                            id="sentence"
+                            v-model="userDiscussion"
+                            ref="textInput"
+                            name="sentence"
+                            rows="4"
+                            placeholder="Write your comment here.."
+                        ></textarea>
+
+                        <button
+                            type="submit"
+                            class="absolute gap-x-2 flex  bottom-2 right-3 text-sm text-white font-semibold bg-indigo-500/80 py-1 px-2 rounded  shadow"
+                            :class="{ 'cursor-default': isMobileDevice }"
+                        >
+                            <ReplyIcon
+                                class=" self-start h-[1.08rem]"
+                               
+                            ></ReplyIcon>
+                            <div class="self-center">Post</div> 
+                        </button>
+                    </form>
+                </div>
+            </transition>
         </DisclosurePanel>
     </div>
 </template>
@@ -139,7 +133,7 @@ import {
 
     ReplyIcon,
     TrashIcon,
-    ArrowCircleDownIcon,
+   PlusCircleIcon,
     RefreshIcon,
 
 } from "@heroicons/vue/outline";
@@ -171,7 +165,7 @@ const openTextAreaSection = computed(() =>
 )
 
 const getTimeAgo = (date) => {
-  return useTimeAgo(new Date(date)).value
+    return useTimeAgo(new Date(date)).value
 }
 const userDiscussion = ref("");
 
@@ -182,7 +176,7 @@ const addUserDiscussion = () => {
 };
 const changeDiscussionStatus = () => {
     statusChange.value = true;
-    setTimeout(()=> statusChange.value = false,1000)
+    setTimeout(() => statusChange.value = false, 1000)
     store.changeDiscussionStatus(props.sentence);
 }
 
@@ -207,7 +201,7 @@ watchEffect(() => {
 
 
 
-const current_user = computed(() =>store.current_user.name)
+const current_user = computed(() => store.current_user.name)
 
 
 

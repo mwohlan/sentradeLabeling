@@ -20,7 +20,6 @@
 </template>
 
 <script setup>
-import checkForMobileDevice from "../helper/checkForMobileDevice"
 import MobileSidebar from "../components/MobileSidebar.vue";
 import DesktopSidebar from "./DesktopSidebar.vue";
 import navigation from "../composables/navigationItems";
