@@ -88,36 +88,38 @@
                 leave-active-class=" duration-200 ease-out"
                 leave-from-class=" scale-100 opacity-100"
                 leave-to-class=" scale-90 opacity-0"
-                
             >
                 <div
-                    class="bg-white mt-3"
+                    class="relative bg-white mt-3"
                     v-if="
                         openTextAreaSection
                     "
                 >
-                    <form class="relative flex " @submit.prevent="addUserDiscussion()">
+                    <form
+                        class="p-0.5 shadow-inner focus-within:border-indigo-300 sm:text-sm border-2 border-slate-300 rounded-md"
+                        @submit.prevent="addUserDiscussion()"
+                    >
                         <textarea
-                            class=" shadow-inner flex-grow focus:ring-transparent focus:border-indigo-300 sm:text-sm border-2 border-slate-300 rounded-md"
+                            class="w-full p-1 border-0 focus:ring-0"
                             id="sentence"
                             v-model="userDiscussion"
                             ref="textInput"
                             name="sentence"
-                            rows="4"
+                            rows="3"
                             placeholder="Write your comment here.."
+                            style="resize: none;"
                         ></textarea>
 
-                        <button
-                            type="submit"
-                            class="absolute gap-x-2 flex  bottom-2 right-3 text-sm text-white font-semibold bg-indigo-500/80 py-1 px-2 rounded  shadow"
-                            :class="{ 'cursor-default': isMobileDevice }"
-                        >
-                            <ReplyIcon
-                                class=" self-start h-[1.08rem]"
-                               
-                            ></ReplyIcon>
-                            <div class="self-center">Post</div> 
-                        </button>
+                        <div class="flex justify-end">
+                            <button
+                                type="submit"
+                                class="mr-2 mb-1 gap-x-2 flex  text-sm text-white font-semibold bg-indigo-500/80 py-1 px-2 rounded shadow"
+                                :class="{ 'cursor-default': isMobileDevice }"
+                            >
+                                <ReplyIcon class="self-start h-[1.08rem]"></ReplyIcon>
+                                <div class="self-center">Post</div>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </transition>
@@ -133,7 +135,7 @@ import {
 
     ReplyIcon,
     TrashIcon,
-   PlusCircleIcon,
+    PlusCircleIcon,
     RefreshIcon,
 
 } from "@heroicons/vue/outline";
