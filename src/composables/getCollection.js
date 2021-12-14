@@ -32,12 +32,12 @@ const getCollection = (watchQuery, storeReference) => {
 
         }
 
-        let loadtime = performance.now() - t0;
+        let loadtime = performance.now() - t0;                                                                                                                                                                                                                                                                                                                                                                                     
 
         setTimeout(() => {
             store.loading = false;
         },
-            loadtime > 600 ? 0 : 600 - loadtime);
+            loadtime > 800 ? 0 : 800 - loadtime);
     }
 
     function errorHandler(error) {

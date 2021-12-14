@@ -19,7 +19,7 @@
                                 />
                                 <div
                                     class="text-emerald-500 font-semibold"
-                                >{{ Math.round(sentiments[0]?.sentimentCounts['1'] * 100 / sentiments[0]?.sentimentCounts.total ) ||0}}%</div>
+                                >{{getPercentage(0,1)}}</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <ThumbDownIcon
@@ -29,7 +29,7 @@
                                 />
                                 <div
                                     class="text-red-500 font-semibold"
-                                >{{ Math.round(sentiments[0]?.sentimentCounts['-1'] * 100 / sentiments[0]?.sentimentCounts.total) || 0 }}%</div>
+                                >{{getPercentage(0,-1)}}</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <SwitchVerticalIcon
@@ -39,7 +39,7 @@
                                 />
                                 <div
                                     class="text-amber-500 font-semibold"
-                                >{{ Math.round(sentiments[0]?.sentimentCounts['0'] * 100 / sentiments[0]?.sentimentCounts.total) || 0}}%</div>
+                                >{{getPercentage(0,0)}}</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <HandIcon
@@ -49,13 +49,13 @@
                                 />
                                 <div
                                     class="text-slate-500 font-semibold"
-                                >{{ Math.round(sentiments[0]?.sentimentCounts['-3'] * 100 / sentiments[0]?.sentimentCounts.total) || 0}}%</div>
+                                >{{getPercentage(0,-3)}}</div>
                             </div>
 
                             <div class="flex gap-x-4 items-center">
-                                <DocumentDuplicateIcon
+                                <div
                                     :class="['text-slate-500/80']"
-                                    class="h-[1.35rem]"
+                                    class="h-[1.35rem] w-[1.35rem] i-fluent-autosum-24-filled"
                                     aria-hidden="true"
                                 />
                                 <div
@@ -70,22 +70,22 @@
                             <div class="gap-x-4 flex">
                                 <div
                                     class="text-emerald-500 font-semibold"
-                                >{{ Math.round(sentiments[1]?.sentimentCounts['1'] * 100 / sentiments[1]?.sentimentCounts.total) || 0}}%</div>
+                                >{{getPercentage(1,1)}}</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <div
                                     class="text-red-500 font-semibold"
-                                >{{ Math.round(sentiments[1]?.sentimentCounts['-1'] * 100 / sentiments[1]?.sentimentCounts.total) || 0}}%</div>
+                                >{{getPercentage(1,-1)}}</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <div
                                     class="text-amber-500 font-semibold"
-                                >{{ Math.round(sentiments[1]?.sentimentCounts['0'] * 100 / sentiments[1]?.sentimentCounts.total)|| 0 }}%</div>
+                                >{{getPercentage(1,0)}}</div>
                             </div>
                             <div class="gap-x-4 flex items-center">
                                 <div
                                     class="text-slate-500 font-semibold"
-                                >{{ Math.round(sentiments[1]?.sentimentCounts['-3'] * 100 / sentiments[1]?.sentimentCounts.total) || 0}}%</div>
+                                >{{getPercentage(1,-3)}}</div>
                             </div>
                             <div class="flex items-center gap-x-4">
                                 <div
@@ -105,11 +105,25 @@
 import {
     SwitchVerticalIcon,
 
-    ThumbUpIcon, ThumbDownIcon, HandIcon, DocumentDuplicateIcon
+    ThumbUpIcon, ThumbDownIcon, HandIcon
 } from "@heroicons/vue/outline";
+
 
 const props = defineProps({
     sentiments: Array
 })
+
+
+const getPercentage = (user,sentiment) => {
+   return `${Math.round(props?.sentiments[user]?.sentimentCounts[sentiment] * 100 / props?.sentiments[user]?.sentimentCounts.total) || 0}%`
+}
+
+
+
+
+
+
+
+
 
 </script>

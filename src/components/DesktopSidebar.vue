@@ -18,6 +18,7 @@
               v-for="item in navigation"
               :key="item.name"
               :to="item.to"
+              class="duration-500"
               :class="[, item.current ? 'bg-slate-100 border-indigo-400 text-slate-800' : 'border-transparent  text-slate-700 hover:bg-slate-100 hover:text-slate-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
               :aria-current="item.current ? 'page' : undefined"
             >
@@ -62,6 +63,8 @@ import {
   FireIcon
 
 } from "@heroicons/vue/solid";
+
+import navigation from "@/composables/navigationItems"
 import {
   LoginIcon,
 
@@ -74,18 +77,16 @@ export default {
     FireIcon
   },
 
-  props: {
-    navigation: Array
-  },
   setup() {
     const store = useMainStore();
-  
+
 
     return {
       unreadPostsAvailable: computed(() => store.unreadPostsCount > 0),
-      unreadPostsCount:  computed(()=>(store.unreadPostsCount)),
-      username: store.current_user.name,
-    
+      unreadPostsCount: computed(() => (store.unreadPostsCount)),
+      username: computed(()=>store.current_user?.name),
+      navigation
+
     }
   },
 };

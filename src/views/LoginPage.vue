@@ -64,14 +64,6 @@ export default {
 
 
 
-
-    onMounted(() => {
-      if (store.users.length == 0) {
-        store.setUsers();
-      }
-
-    });
-
     const forwardToMainPage = () => {
       if (router.currentRoute.value.query.redirect) {
         router.push({

@@ -5,13 +5,13 @@
     #="{ open: openPanel }"
     as="li"
   >
-    <div>
-      <h2 class="text-xs font-medium text-slate-600">{{ sentence.submissionTitle }}</h2>
-    </div>
+   
+      <h2 class="text-xs text-slate-700">{{ sentence.submissionTitle }}</h2>
+  
     <div
       @click.prevent="sentence.commentBody.length > 1 ? fullComment = !fullComment : fullComment"
       :class="{ 'cursor-pointer': !isMobileDevice && sentence.commentBody.length > 1 }"
-      class="mt-4 lg:mt-6 text-slate-800/90 text-[0.95rem] font-bold leading-relaxed"
+      class="mt-4 lg:mt-6 text-slate-800/90 font-[600]"
     >
       <transition
         enter-from-class="opacity-25"
@@ -54,7 +54,12 @@
           v-if="sentence.sentiments.conflict"
           @click="acceptConflict"
           class="px-2 py-0.5 border border-indigo-300 rounded-full text-xs font-medium shadow-md bg-indigo-200 text-indigo-700"
-        >Accept Conflict</button>
+        >Accept</button>
+         <button
+          v-if="!sentence.sentiments.conflict && wasConflict(sentence,store.users)"
+          @click="renewConflict"
+          class="px-2 py-0.5 border border-green-300 rounded-full text-xs font-medium shadow-md bg-green-200 text-green-700"
+        >Accepted</button>
         <template v-for="[user, value] of userMap" :key="user">
           <div
             v-if="sentence.sentiments[user].value != -2"
@@ -140,9 +145,12 @@
         </DisclosureButton>
 
         <Menu as="div" class="relative">
-          <MenuButton class="w-full h-full" :class="{
-            'cursor-default': isMobileDevice
-          }">
+          <MenuButton
+            class="w-full h-full"
+            :class="{
+              'cursor-default': isMobileDevice
+            }"
+          >
             <DotsVerticalIcon
               class="text-slate-500/75 hover:text-slate-600 h-6 w-6"
               aria-hidden="true"
@@ -230,6 +238,7 @@ import { useMainStore } from "../store";
 import { watchEffect } from 'vue';
 import Toast from './Toast.vue';
 import { useClipboard } from "@vueuse/core";
+import { wasConflict } from '../helper/storeHelpers';
 import {
   Disclosure,
   DisclosureButton,
@@ -250,11 +259,10 @@ import { ChatIcon } from "@heroicons/vue/outline";
 
 
 import CommentSection from "./CommentSection.vue";
+import { storeToRefs } from "pinia";
 
 const props = defineProps({
   sentence: Object,
-  isMobileDevice: Boolean,
-  hideSentiments: Boolean,
 });
 
 const store = useMainStore();
@@ -268,9 +276,17 @@ watchEffect(() => {
   }
 })
 
+
+ const {isMobileDevice,hideSentiments} =  storeToRefs(store)
+
 const acceptConflict = () => {
   store.acceptConflict(props.sentence)
 }
+
+const renewConflict = () => {
+  store.renewConflict(props.sentence)
+}
+
 
 let userMap = $computed(
   () =>
@@ -310,6 +326,7 @@ let activeDiscussion = $computed(() => !props.sentence.discussion?.discussionRes
 let discussionExists = $computed(() => props.sentence.discussion?.comments.length > 0)
 
 let resolvedDiscussion = $computed(() => props.sentence.discussion?.discussionResolved && props.sentence.discussion.comments.length > 0)
+
 
 
 

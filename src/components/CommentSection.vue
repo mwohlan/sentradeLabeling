@@ -96,11 +96,11 @@
                     "
                 >
                     <form
-                        class="p-0.5 shadow-inner focus-within:border-indigo-300 sm:text-sm border-2 border-slate-300 rounded-md"
+                        class="p-0.5 shadow-inner  focus-within:border-indigo-300 sm:text-sm border-2 border-slate-300 rounded-md"
                         @submit.prevent="addUserDiscussion()"
                     >
                         <textarea
-                            class="w-full p-1 border-0 focus:ring-0"
+                            class="w-full p-1 border-0 focus:ring-0 caret-indigo-500"
                             id="sentence"
                             v-model="userDiscussion"
                             ref="textInput"

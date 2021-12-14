@@ -22,6 +22,10 @@ export const useMainStore = defineStore({
     users: [],
     linkSentence: new Map(),
     loading: false,
+    openMobileMenu: false,
+    filterTerm: "",
+    isMobileDevice: false,
+    hideSentiments: false
    
 
   }),
@@ -36,11 +40,11 @@ export const useMainStore = defineStore({
     unreadPostsCount() {
       let unreadPostsCount = 0
 
-      if (!this.userStats.get(this.current_user.id)?.unreadPosts) {
+      if (!this.userStats.get(this.current_user?.id)?.unreadPosts) {
         return unreadPostsCount;
       }
 
-      Object.values(this.userStats.get(this.current_user.id)?.unreadPosts).forEach(value => unreadPostsCount += value.length);
+      Object.values(this.userStats.get(this.current_user?.id)?.unreadPosts).forEach(value => unreadPostsCount += value.length);
 
       return unreadPostsCount;
 
@@ -303,6 +307,17 @@ export const useMainStore = defineStore({
         sentiments: {
           ...sentence.sentiments,
           conflict: false
+        },
+        updated: timestamp(),
+
+      })
+    },
+
+      renewConflict(sentence) {
+      updateDoc(doc(projectFirestore, "sentences", sentence.id), {
+        sentiments: {
+          ...sentence.sentiments,
+          conflict: true
         },
         updated: timestamp(),
 

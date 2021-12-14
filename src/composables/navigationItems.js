@@ -7,8 +7,11 @@ import {
     ClockIcon,
     ChartPieIcon
 } from "@heroicons/vue/outline";
+import { ref } from "vue";
 
-export default [
+
+
+ const navgiation = ref([
     {
         name: "Unlabeled",
         to: { name: "unlabeled" },
@@ -51,4 +54,6 @@ export default [
         icon: ChartPieIcon,
         current: false,
     },
-];
+ ])
+
+ export default navgiation

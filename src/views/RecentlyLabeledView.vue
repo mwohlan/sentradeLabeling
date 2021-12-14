@@ -1,52 +1,76 @@
-
 <template>
-
-    <base-layout @scrollReload="scrollReload()" :sentences="sentences" />
-
+  <div>
+    <ListTransition>
+      <LabelCard v-for="sentence in sentences" :key="sentence.id" :sentence="sentence" />
+    </ListTransition>
+    <div id="intersect"></div>
+  </div>
 </template>
 
-<script>
-import BaseLayout from "../components/BaseLayout.vue";
+<script setup>
 import { useMainStore } from "../store";
-
-import { ref, watchEffect } from "vue";
-
-export default {
-  components: {
-    BaseLayout,
-  },
-  setup() {
-    const sidebarOpen = ref(false);
-    const store = useMainStore();
+import LabelCard from "@/components/LabelCard.vue";
+import createIntersectionObserver from "../helper/createIntersectionObserver"
+import { onMounted, ref, watchEffect, computed, watch } from "vue";
+import Fuse from 'fuse.js'
+import { storeToRefs } from "pinia";
+import ListTransition from "@/components/ListTransition.vue";
 
 
-    let queryParam = store.recentlyLabeledSentences.size ? store.recentlyLabeledSentences.size : 0;
-    if (store.recentlyLabeledSentences.size) {
-      store.recentlyLabeledSentences.clear()
-    }
 
-    let unsub = store.setRecentlyLabeledSentences(queryParam);
+const store = useMainStore();
 
-    const scrollReload = async () => {
-      unsub();
-      unsub = store.setRecentlyLabeledSentences(store.recentlyLabeledSentences.size + 8);
-    };
+let queryParam = store.recentlyLabeledSentences.size ? store.recentlyLabeledSentences.size : 0;
+if (store.recentlyLabeledSentences.size) {
+  store.recentlyLabeledSentences.clear()
+}
 
-    watchEffect((onInvalidate) => {
-      onInvalidate(() => {
-        unsub();
-      });
-    });
+let unsub = store.setRecentlyLabeledSentences(queryParam);
 
-    return {
-      sidebarOpen,
-      sentences: store.recentlyLabeledSentences,
-      scrollReload,
-    };
-  },
+const scrollReload = async () => {
+  unsub();
+  unsub = store.setRecentlyLabeledSentences(store.recentlyLabeledSentences.size + 8);
 };
-</script>
 
+watchEffect((onInvalidate) => {
+  onInvalidate(() => {
+    unsub();
+  });
+});
+
+
+
+const { recentlyLabeledSentences: originalSentences, filterTerm } = storeToRefs(store)
+
+
+const fuse = computed(() => new Fuse([...originalSentences.value.values()], {
+  keys: ['body', 'submissionTitle', 'subredditName', 'flair'],
+  threshold: 0.3,
+
+}))
+
+const sentences = computed(() =>
+  filterTerm.value != "" ?
+    fuse.value.search(filterTerm.value).map(fuse => fuse.item) :
+    [...originalSentences.value.values()])
+
+
+
+
+let intersectionObserver
+onMounted(() => {
+  intersectionObserver = createIntersectionObserver('#scrollArea', '#intersect', () => {
+    if (filterTerm.value === "") {
+      scrollReload()
+       intersectionObserver.disconnect()
+    }
+  })
+
+});
+
+
+
+</script>
 
 
 

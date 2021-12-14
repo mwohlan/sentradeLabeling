@@ -1,6 +1,6 @@
 <template>
-    <Transition name="stats" appear>
-        <div class="mx-auto space-y-8 max-w-5xl p-8">
+    <div class="mx-auto space-y-8 max-w-5xl p-8">
+        <Transition name="stats" appear>
             <div class="grid mx-auto max-w-md xl:max-w-full xl:grid-cols-3 gap-4">
                 <SentimentStats :sentiments="overallSentiments">Overall Sentiments</SentimentStats>
                 <SentimentStats
@@ -10,14 +10,16 @@
                     :sentiments="sentimentCountHistory.oneMonthSentiments"
                 >Sentiments last month</SentimentStats>
             </div>
+        </Transition>
+        <Transition name="stats" appear>
             <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
                 <GeneralStats :generalStats="generalStats" />
                 <ConflictRatios :conflictRatios="conflictRatios" />
                 <LabeledRatios :ratios="labeledRatios">Labeled ratios</LabeledRatios>
                 <LabeledRatios :ratios="fullyLabeledRatios">Fully labeled ratios</LabeledRatios>
             </div>
-        </div>
-    </Transition>
+        </Transition>
+    </div>
 </template>
 
 
@@ -151,19 +153,14 @@ const labeledRatios = computed(() => {
 
 
 <style scoped>
-.stats-enter-from,
-.stats-leave-to {
+.stats-enter-from {
     opacity: 0;
     transform: translateX(15%);
 }
 
 .stats-enter-active {
-    transition: transform 0.8s, opacity 0.8s;
+    transition: transform 0.4s, opacity 0.4s;
 }
 
-.stats-leave-active {
-    position: absolute;
-    width: 100%;
-    transition: transform 0.8s, opacity 0.8s;
-}
+
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <TransitionRoot as="template" :show="sidebarOpen">
+  <TransitionRoot as="template" :show="store.openMobileMenu">
     <Dialog
       as="div"
       static
       class="fixed inset-0 flex z-40 lg:hidden"
-      @close="$emit('closeSidebar')"
+      @close="store.openMobileMenu = false"
       :open="sidebarOpen"
     >
       <TransitionChild
@@ -27,9 +27,7 @@
         leave-from="translate-x-0"
         leave-to="-translate-x-full"
       >
-        <div class="relative  flex flex-col w-9/12 pt-5 pb-4 bg-white">
-
-
+        <div class="relative flex flex-col w-9/12 pt-5 pb-4 bg-white">
           <div class="flex gap-x-2 px-4 filter drop-shadow-xl">
             <img
               class="h-8 w-auto"
@@ -38,14 +36,19 @@
             />
             <div class="text-2xl text-slate-500 font-bold">Sentrade</div>
           </div>
-          <nav class="mt-5 flex flex-col gap-y-6 flex-shrink-0 h-full overflow-y-auto" aria-label="Sidebar">
+          <nav
+            class="mt-5 flex flex-col gap-y-6 flex-shrink-0 h-full overflow-y-auto"
+            aria-label="Sidebar"
+          >
             <div class="px-2 space-y-1">
               <router-link
                 v-for="item in navigation"
                 :key="item.name"
                 :to="item.to"
-                :class="['outline-none','cursor-default', item.current ? 'bg-slate-100 border-indigo-400 text-slate-700' : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+                class="duration-500"
+                :class="['outline-none', 'cursor-default', item.current ? 'bg-slate-100 border-indigo-400 text-slate-700' : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
                 :aria-current="item.current ? 'page' : undefined"
+                @click="store.openMobileMenu = false"
               >
                 <component
                   :is="item.icon"
@@ -70,21 +73,24 @@
             </div>
 
             <div class="mx-4 rounded-full bg-indigo-400 h-[0.1rem] shadow drop-shadow"></div>
-          <div class="flex  px-6 text-sm  text-slate-600 font-medium sm:mr-6">
-                <router-link class="flex gap-x-2 items-center capitalize" :to="{ name: 'Login' } " >
-                  <LoginIcon class="h-[1.625rem] w-[1.625rem] " aria-hidden="true" />
-                  {{username}}
-                </router-link>
-              </div>
+            <div class="flex px-6 text-sm text-slate-600 font-medium sm:mr-6">
+              <router-link
+                @click="store.openMobileMenu = false"
+                class="flex gap-x-2 items-center capitalize"
+                :to="{ name: 'Login' }"
+              >
+                <LoginIcon class="h-[1.625rem] w-[1.625rem]" aria-hidden="true" />
+                {{ username }}
+              </router-link>
+            </div>
           </nav>
         </div>
       </TransitionChild>
-    
     </Dialog>
   </TransitionRoot>
 </template>
 
-<script>
+<script setup>
 import { computed } from "@vue/runtime-core";
 import { useMainStore } from "../store";
 import {
@@ -93,7 +99,7 @@ import {
 } from "@heroicons/vue/solid";
 import {
   LoginIcon,
- 
+
 
 } from "@heroicons/vue/outline";
 import {
@@ -102,28 +108,18 @@ import {
   TransitionChild,
   TransitionRoot,
 } from "@headlessui/vue";
-export default {
-  components: {
-    Dialog,
-    DialogOverlay,
-    TransitionChild,
-    TransitionRoot,
-    FireIcon,
-    LoginIcon
-  },
-  props: { sidebarOpen: Boolean, navigation: Array},
-  emits: ["closeSidebar"],
-  setup() {
-    const store = useMainStore();
+
+import navigation from "@/composables/navigationItems";
+
+const store = useMainStore();
 
 
-    return {
-      unreadPostsAvailable: computed(() => store.unreadPostsCount > 0),
-      unreadPostsCount: computed(() => store.unreadPostsCount),
-      username: computed(() => store.current_user.name),
-    }
-  },
-};
+
+const unreadPostsAvailable = computed(() => store.unreadPostsCount > 0)
+const unreadPostsCount = computed(() => store.unreadPostsCount)
+const username = computed(() => store.current_user.name)
+
+
 </script>
 
 <style>

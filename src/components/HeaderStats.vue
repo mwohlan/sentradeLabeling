@@ -11,7 +11,7 @@
               <div class="capitalize flex group items-center text-sm text-slate-500 font-medium">
                 <div
                   class="-top-6 px-2 flex flex-nowrap rounded shadow-md opacity-0 bg-indigo-200 text-indigo-500 absolute group-hover:opacity-100 invisible group-hover:visible"
-                >{{ userStats?.sentimentCounts.total }} sentences labeled by {{ current_user.name }}</div>
+                >{{ userStats?.sentimentCounts.total }} sentences labeled by {{ current_user?.name }}</div>
                 <UserIcon class="mr-0.5 h-5 w-5 text-emerald-400" aria-hidden="true" />
                 {{ userStats?.sentimentCounts.total }}
               </div>
@@ -73,7 +73,7 @@ export default {
 
     return {
       current_user: computed(() =>  store.current_user),
-      userStats: computed(() => store.userStats.get(store.current_user.id)),
+      userStats: computed(() => store.userStats.get(store.current_user?.id)),
       generalStats: computed(() => store.generalStats),
       unreadPostsCount: computed(() => (store.unreadPostsCount)),
     

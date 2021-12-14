@@ -1,9 +1,9 @@
 <template>
   <div
-    class="sticky overflow-hidden  drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 sm:rounded-lg"
+    class="duration-300 sticky overflow-hidden drop-shadow top-0 lg:mx-4 shadow-md z-10 bg-white flex-1 sm:rounded-lg"
   >
     <div class="flex">
-      <div class="flex items-center text-slate-500 lg:hidden" @click="$emit('openSidebar')">
+      <div class="flex items-center text-slate-500 lg:hidden" @click="toggleMobileMenu()">
         <MenuIcon class="h-[3.25rem] w-[3.25rem]" aria-hidden="true" />
       </div>
 
@@ -16,12 +16,13 @@
               <input
                 id="search-field"
                 name="search-field"
-                :class="[filterTerm !== '' ? 'focus:!border-red-400 border-red-400 border-2' : 'border-transparent']"
+                :class="[filterTerm !== '' ? 'focus:!border-red-400 border-red-400 border-2' : 'border-transparent', { 'cursor-not-allowed': route.name === 'link' }]"
                 class="block w-full h-full pl-9 pr-2 text-slate-900 bg-slate-200/60 shadow md:shadow-md placeholder-slate-500 rounded-xl focus:outline-none focus:ring-0 focus:border-transparent"
-                :placeholder="'Search ' + currentRouteName"
+                :placeholder="'Search ' + route.name"
                 type="text"
+                :disabled="route.name === 'link'"
                 :value="filterTerm"
-                @input="handleInput($event.target.value)"
+                @input="e => filterTerm = e.target.value"
               />
               <div
                 class="absolute inset-y-0 left-2 flex items-center pointer-events-none"
@@ -49,16 +50,7 @@
     </div>
 
     <HeaderStats />
-    <div class="relative mt-0.5 bg-white">
-      <transition name="fade">
-        <div
-          v-if="isLoading"
-          class="absolute w-full z-40 bottom-0 h-[0.2rem] bg-emerald-200 rounded-lg"
-        >
-          <div class="animation h-full w-1/3 bg-emerald-400"></div>
-        </div>
-      </transition>
-    </div>
+    <HeaderLoadingBar />
   </div>
 </template>
 
@@ -66,19 +58,31 @@
 import { MenuIcon, RefreshIcon } from "@heroicons/vue/outline";
 import { SearchIcon } from "@heroicons/vue/solid";
 import HeaderStats from './HeaderStats.vue';
-
+import HeaderLoadingBar from "./HeaderLoadingBar.vue";
 import { useMainStore } from '../store'
-import { computed, ref } from 'vue'
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
 
-defineProps({
-  currentRouteName: String,
-  filterTerm: String
 
-});
+const store = useMainStore();
 
-const emit = defineEmits(['update:filterTerm', 'openSidebar'])
+const route = useRoute();
 
+const filterTerm = ref("")
+
+
+
+
+
+
+
+
+
+const toggleMobileMenu = () => {
+  store.openMobileMenu = !store.openMobileMenu;
+
+}
 const searchLoading = ref(false)
 const debounce = (fn, ms = 600) => {
   let timeout;
@@ -92,37 +96,16 @@ const debounce = (fn, ms = 600) => {
   };
 };
 
-const handleInput = debounce(inputValue => {
+const handleInput = debounce(() => {
+  store.filterTerm = filterTerm.value
 
-  emit('update:filterTerm', inputValue)
 
 }, 600)
 
 
-const isLoading = computed(() => store.loading)
+watch(filterTerm,() => {
+  handleInput()
+})
 
-const store = useMainStore();
+
 </script>
-<style scoped>
-@keyframes changewidth {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(300%);
-  }
-}
-
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-leave-active {
-  transition: opacity 0.2s linear;
-}
-
-.animation {
-  animation: changewidth 0.8s linear 0s infinite;
-}
-</style>

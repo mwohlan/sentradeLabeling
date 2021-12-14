@@ -1,53 +1,77 @@
-
 <template>
-  <base-layout @scrollReload="scrollReload()" :sentences="sentences"></base-layout>
+  <div>
+    <ListTransition>
+
+      <LabelCard v-for="sentence in sentences" :key="sentence.id" :sentence="sentence" />
+    </ListTransition>
+  
+    <div id="intersect"></div>
+  </div>
 </template>
 
-<script>
-import BaseLayout from "../components/BaseLayout.vue";
+<script setup>
 import { useMainStore } from "../store";
-
-import { ref, watchEffect } from "vue";
-
-export default {
-  components: {
-    BaseLayout,
-  },
-  setup() {
-    const sidebarOpen = ref(false);
-    const store = useMainStore();
-    let queryParam = store.sentencesWithConflicts.size ? store.sentencesWithConflicts.size : 0;
-    if (store.sentencesWithConflicts.size) {
-      store.sentencesWithConflicts.clear()
-    }
-    let unsub = store.setSentencesWithConflicts(queryParam);
+import LabelCard from "@/components/LabelCard.vue";
+import createIntersectionObserver from "../helper/createIntersectionObserver"
+import { onMounted, ref, watchEffect, computed, watch } from "vue";
+import Fuse from 'fuse.js'
+import { storeToRefs } from "pinia";
+import ListTransition from "@/components/ListTransition.vue";
 
 
 
+const store = useMainStore();
 
+let queryParam = store.sentencesWithConflicts.size ? store.sentencesWithConflicts.size : 0;
+if (store.sentencesWithConflicts.size) {
+  store.sentencesWithConflicts.clear()
+}
 
-    const scrollReload = async () => {
-      unsub()
+let unsub = store.setSentencesWithConflicts(queryParam);
 
-      unsub = store.setSentencesWithConflicts(store.sentencesWithConflicts.size + 8);
-    };
-
-    watchEffect((onInvalidate) => {
-      onInvalidate(() => {
-        unsub();
-      });
-    });
-
-    return {
-      sidebarOpen,
-      sentences:  store.sentencesWithConflicts,
-      scrollReload,
-    };
-  },
+const scrollReload = async () => {
+  unsub();
+  unsub = store.setSentencesWithConflicts(store.sentencesWithConflicts.size + 8);
 };
+
+watchEffect((onInvalidate) => {
+  onInvalidate(() => {
+    unsub();
+     intersectionObserver.disconnect()
+  });
+});
+
+
+const { sentencesWithConflicts: originalSentences, filterTerm } = storeToRefs(store)
+
+
+const fuse = computed(() => new Fuse([...originalSentences.value.values()], {
+  keys: ['body', 'submissionTitle', 'subredditName', 'flair'],
+  threshold: 0.3,
+
+}))
+
+const sentences = computed(() =>
+  filterTerm.value != "" ?
+    fuse.value.search(filterTerm.value).map(fuse => fuse.item) :
+    [...originalSentences.value.values()])
+
+
+
+
+
+
+let intersectionObserver
+onMounted(() => {
+  intersectionObserver = createIntersectionObserver('#scrollArea', '#intersect', () => {
+    if (filterTerm.value === "") {
+      scrollReload()
+    }
+  })
+
+});
+
+
+
 </script>
-
-
-
-
 
