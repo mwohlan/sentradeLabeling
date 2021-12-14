@@ -72,7 +72,7 @@
           >
             <li
               :class="[
-                active ? 'text-white bg-indigo-400' : 'text-slate-800',
+                active ? 'text-white bg-indigo-400 rounded mx-1' : 'text-slate-800',
                 'cursor-default select-none relative py-2 pl-3 pr-9',
               ]"
             >

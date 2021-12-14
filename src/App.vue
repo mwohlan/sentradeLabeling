@@ -1,28 +1,29 @@
 <template>
-  <main class="h-screen bg-slate-200/70">
+  <main id="main" class="absolute inset-0">
     <login-page v-if="routeName === 'Login'" />
-    <base-layout v-else>
-      <div
-        id="scrollArea"
-        ref="scrollTarget"
-        class="flex-1 overflow-x-hidden overflow-y-scroll focus:outline-none relative pb-20 lg:pb-32"
-      >
-        <search-header v-if="routeName !== 'stats'" />
-        <Header v-else />
+    <template v-else>
+      <base-layout >
+        <div
+          id="scrollArea"
+          ref="scrollTarget"
+          class="flex-1 overflow-x-hidden overflow-y-scroll focus:outline-none relative pb-20 lg:pb-32"
+        >
+          <search-header v-if="routeName !== 'stats'" />
+          <Header v-else />
 
-        <router-view v-slot="{ Component }">
-          <transition
-            leave-active-class="duration-200"
-            leave-to-class="op-0 -translate-x-15%"
-            mode="out-in"
-
-          >
-            <component :key="routeName" :is="Component" />
-          </transition>
-        </router-view>
-      </div>
-    </base-layout>
-    <loading-bar />
+          <router-view v-slot="{ Component }">
+            <transition
+              leave-active-class="duration-200"
+              leave-to-class="op-0 -translate-x-15%"
+              mode="out-in"
+            >
+              <component :key="routeName" :is="Component" />
+            </transition>
+          </router-view>
+        </div>
+      </base-layout>
+      <loading-bar />
+    </template>
   </main>
 </template>
 
@@ -70,6 +71,12 @@ watch(() => route.name, () => {
 onUnmounted(() => unsubStats.value())
 
 </script>
+
+
+<style  >
+
+
+</style>
 
 
 

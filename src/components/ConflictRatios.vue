@@ -68,7 +68,7 @@ const weekRatio = computed(()=>{
 )
 
 const monthRatio = computed(()=>{
-   return getRatio(props.conflictRatios.overall.conflicts, props.conflictRatios.overall.fullyLabeled)
+   return getRatio(props.conflictRatios.month.conflicts, props.conflictRatios.month.fullyLabeled)
 }
 )
 

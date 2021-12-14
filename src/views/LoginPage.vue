@@ -1,9 +1,7 @@
 <template>
-  <div class="min-h-screen bg-white grid grid-rows-12 px-2 sm:px-6 lg:px-8">
-    <div
-      class="row-start-1 row-end-3 sm:row-end-4 pb-12 mx-auto self-end filter drop-shadow-xl blur-xs"
-    >
-      <div class="flex-shrink-0 flex items-center gap-x-2 px-4">
+  <div class="min-h-full flex flex-col bg-white">
+    <div class="flex flex-col mt-auto">
+      <div class="mx-auto flex items-center gap-x-2">
         <img
           class="h-8 w-auto"
           src="https://tailwindui.com/img/logos/workflow-mark-indigo-300.svg"
@@ -11,11 +9,11 @@
         />
         <div class="text-3xl text-slate-600 font-bold">Sentrade</div>
       </div>
-    </div>
 
-    <div class="self-start row-start-4 row-end-10 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="pb-8 pt-5 px-4 shadow-xl rounded-xl bg-slate-200 sm:px-10">
-        <h2 class="text-center text-2xl font-bold text-slate-900 mb-3">Choose User for Labeling</h2>
+      <div
+        class="max-w-md sm:w-full mt-10 mx-2 sm:mx-auto pb-14 pt-10 px-4 shadow-xl drop-shadow-2xl rounded-xl bg-slate-200/70 sm:px-10"
+      >
+        <h2 class="text-center text-2xl font-bold text-slate-700 mb-3">Choose User for Labeling</h2>
         <form @submit.prevent="forwardToMainPage" class="space-y-6">
           <select-menu @selected="changeUser" :people="people" />
 
@@ -30,7 +28,7 @@
       </div>
     </div>
 
-    <footer class="row-span-2 self-end bg-grey-800 border-blue-700 px-6">
+    <footer class="mt-auto px-6">
       <div class="border-t-2 border-slate-300">
         <div class="flex justify-between py-6">
           <p class="text-sm text-slate-700 font-extrabold mb-2">© 2021 Sentrade</p>
