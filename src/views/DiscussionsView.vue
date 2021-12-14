@@ -30,7 +30,7 @@ watchEffect((onInvalidate) => {
 });
 
 
-const { sentencesWithDiscussions: originalSentences, filterTerm } = storeToRefs(store)
+const { sortedSentencesWithDiscussions: originalSentences, filterTerm } = storeToRefs(store)
 
 
 const fuse = computed(() => new Fuse([...originalSentences.value.values()], {
