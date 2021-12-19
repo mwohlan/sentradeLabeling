@@ -55,7 +55,7 @@ import {
 import { PlusIcon, FireIcon } from "@heroicons/vue/solid";
 import { UserIcon, LoginIcon, UserGroupIcon } from "@heroicons/vue/outline";
 import { computed } from 'vue';
-import { useMainStore } from "../store";
+import { useMainStore } from "../../store";
 export default {
   components: {
     ClipboardCheckIcon,

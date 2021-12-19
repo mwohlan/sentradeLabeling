@@ -24,6 +24,7 @@
                 :value="filterTerm"
                 @input="e => filterTerm = e.target.value"
               />
+
               <div
                 class="absolute inset-y-0 left-2 flex items-center pointer-events-none"
                 aria-hidden="true"
@@ -58,8 +59,8 @@
 import { MenuIcon, RefreshIcon } from "@heroicons/vue/outline";
 import { SearchIcon } from "@heroicons/vue/solid";
 import HeaderStats from './HeaderStats.vue';
-import HeaderLoadingBar from "./HeaderLoadingBar.vue";
-import { useMainStore } from '../store'
+import HeaderLoadingBar from "../loading/HeaderLoadingBar.vue";
+import { useMainStore } from '../../store'
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -103,7 +104,7 @@ const handleInput = debounce(() => {
 }, 600)
 
 
-watch(filterTerm,() => {
+watch(filterTerm, () => {
   handleInput()
 })
 

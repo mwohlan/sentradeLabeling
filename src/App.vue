@@ -29,12 +29,12 @@
 
 
 <script setup>
-import LoadingBar from "./components/BottomLoadingBar.vue"
-import BaseLayout from "./components/BaseLayout.vue";
+import LoadingBar from "./components/loading/BottomLoadingBar.vue"
+import BaseLayout from "./components/layout/BaseLayout.vue";
 import { useRoute } from "vue-router";
 import LoginPage from "./views/LoginPage.vue";
-import SearchHeader from "./components/SearchHeader.vue";
-import Header from "./components/Header.vue";
+import SearchHeader from "./components/header/SearchHeader.vue";
+import Header from "./components/header/Header.vue";
 import { computed, onUnmounted, ref, watch } from "vue";
 import { useMainStore } from './store';
 import navigation from './composables/navigationItems'

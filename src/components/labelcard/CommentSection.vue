@@ -145,7 +145,7 @@ import { ref, computed } from "@vue/reactivity";
 import { watchEffect } from "@vue/runtime-core"
 
 
-import { useMainStore } from "../store";
+import { useMainStore } from "../../store";
 
 const props = defineProps({
     openPanel: Boolean,

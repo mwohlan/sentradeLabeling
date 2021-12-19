@@ -58,7 +58,7 @@
 
 <script>
 import { computed } from "@vue/runtime-core";
-import { useMainStore } from "../store";
+import { useMainStore } from "../../store";
 import {
   FireIcon
 

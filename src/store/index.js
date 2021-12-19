@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { isConflict, updateUserLabelCounts, updateLabelCounts } from '../helper/storeHelpers';
+import { isConflict, updateUserLabelCounts, updateLabelCounts, wasConflict } from '../helper/storeHelpers';
 import { projectFirestore, timestamp, documentId } from "../firebase/config";
 import { where, query, orderBy, limit, onSnapshot, updateDoc, doc, collection, getDocs, getDoc } from '@firebase/firestore';
 import getCollection from '../composables/getCollection'
@@ -161,15 +161,22 @@ export const useMainStore = defineStore({
 
       try {
 
+        const conflict = isConflict(sentence, sentiment, this.current_user, this.users)
+        const pastConflict = wasConflict(sentence,this.users)
+
         await updateDoc(doc(projectFirestore, "sentences", sentence.id), {
           sentiments: {
             ...sentence.sentiments,
             [this.current_user.name]: { value: sentiment, updated: timestamp() },
             labeled: true,
-            conflict: isConflict(sentence, sentiment, this.current_user, this.users)
+            conflict: conflict
           },
           updated: timestamp()
         })
+
+        if (conflict && !pastConflict) {
+          this.addBotDiscussion(sentence)
+        }
 
         updateLabelCounts(sentence, this.current_user, this.users, sentiment)
         updateUserLabelCounts(sentence, this.current_user, sentiment)
@@ -235,6 +242,58 @@ export const useMainStore = defineStore({
       }
 
     },
+
+    async addBotDiscussion(sentence) {
+
+      const now = Date.now();
+
+      const botComment = {
+        user: 'Sentrade',
+        body: 'This comment was generated because of a new conflict',
+        created: now
+      }
+
+      if (sentence.discussion) {
+        sentence.discussion.comments.push(botComment)
+      } else {
+        sentence.discussion = {}
+        sentence.discussion.comments = [botComment]
+      }
+
+
+
+      updateDoc(doc(projectFirestore, "sentences", sentence.id), {
+        discussion: {
+          discussionResolved: false,
+          comments: sentence.discussion.comments,
+          latestDiscussionComment: now
+        },
+
+        updated: timestamp(),
+
+      })
+
+
+      for (const user of this.users) {
+        let docRef = doc(projectFirestore, "users", user.id)
+        let userObject = await getDoc(docRef)
+        let unreadPosts = userObject.data().unreadPosts
+        if (unreadPosts[sentence.id]) {
+          let unreadPostsArray = [...unreadPosts[sentence.id], now]
+          unreadPosts[sentence.id] = unreadPostsArray
+
+        } else {
+          unreadPosts[sentence.id] = [now]
+        }
+        updateDoc(docRef, {
+          unreadPosts: unreadPosts
+        })
+
+
+      }
+
+    },
+
 
     async removeUserDiscussion(sentence, discussionTimestamp) {
       sentence.discussion.comments = sentence.discussion.comments.filter((discussion) => discussion.created != discussionTimestamp);

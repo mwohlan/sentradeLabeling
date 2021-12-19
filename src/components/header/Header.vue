@@ -17,7 +17,7 @@
 
 <script setup>
 import { MenuIcon } from "@heroicons/vue/outline";
-import {useMainStore} from "../store"
+import {useMainStore} from "../../store"
 
 const store = useMainStore()
 

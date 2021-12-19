@@ -11,12 +11,12 @@
 
 <script setup>
 import { useMainStore } from "../store";
-import LabelCard from "@/components/LabelCard.vue";
+import LabelCard from "@/components/labelcard/LabelCard.vue";
 import createIntersectionObserver from "../helper/createIntersectionObserver"
 import { onMounted, ref, watchEffect, computed, watch } from "vue";
 import Fuse from 'fuse.js'
 import { storeToRefs } from "pinia";
-import ListTransition from "@/components/ListTransition.vue";
+import ListTransition from "@/components/labelcard/ListTransition.vue";
 
 
 

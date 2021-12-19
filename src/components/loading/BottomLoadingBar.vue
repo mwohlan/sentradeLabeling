@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { useMainStore } from '../store'
+import { useMainStore } from '../../store'
 import { computed } from 'vue'
 const store = useMainStore();
 

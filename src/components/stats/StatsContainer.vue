@@ -26,8 +26,8 @@
 <script setup>
 import SentimentStats from "./SentimentStats.vue";
 import ConflictRatios from './ConflictRatios.vue';
-import { oneWeekAgoInMillis, oneMonthAgoInMillis } from '../helper/storeHelpers';
-import { useMainStore } from '../store';
+import { oneWeekAgoInMillis, oneMonthAgoInMillis } from '../../helper/storeHelpers';
+import { useMainStore } from '../../store';
 import { computed } from "@vue/reactivity";
 import LabeledRatios from "./LabeledRatios.vue";
 import GeneralStats from "./GeneralStats.vue";

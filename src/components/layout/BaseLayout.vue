@@ -16,7 +16,7 @@
 
 <script setup>
 import { useMainStore } from "@/store";
-import MobileSidebar from "../components/MobileSidebar.vue";
+import MobileSidebar from "./MobileSidebar.vue";
 import DesktopSidebar from "./DesktopSidebar.vue";
 const store = useMainStore();
 

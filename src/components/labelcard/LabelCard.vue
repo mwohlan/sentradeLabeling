@@ -234,11 +234,11 @@
 </template>
 
 <script setup>
-import { useMainStore } from "../store";
+import { useMainStore } from "../../store";
 import { watchEffect } from 'vue';
-import Toast from './Toast.vue';
+import Toast from '../Toast.vue';
 import { useClipboard } from "@vueuse/core";
-import { wasConflict } from '../helper/storeHelpers';
+import { wasConflict } from '../../helper/storeHelpers';
 import {
   Disclosure,
   DisclosureButton,

@@ -5,7 +5,7 @@
 
 <script setup>
 
-import StatsContainer from "@/components/StatsContainer.vue";
+import StatsContainer from "@/components/stats/StatsContainer.vue";
 
 
 </script>

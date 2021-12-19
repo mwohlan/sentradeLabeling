@@ -14,7 +14,7 @@
 
 <script setup>
 
-import { useMainStore } from "../store";
+import { useMainStore } from "../../store";
 
 import { ref, watch } from "vue";
 
