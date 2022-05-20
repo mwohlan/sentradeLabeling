@@ -6,7 +6,7 @@
             >
                 <div
                     ref="commentArea"
-                    class="bg-slate-100 flex flex-col mt-3 shadow rounded sm:rounded-lg overflow-hidden"
+                    class="bg-slate-100 flex flex-col mt-3 shadow rounded-md sm:rounded-lg overflow-hidden"
                 >
                     <div v-if="discussionExists" class="flex justify-center mt-2">
                         <button
@@ -89,7 +89,7 @@
       
     
             <div
-              
+              mt-2
                 v-if="openTextAreaSection"
                 overflow-hidden
             >
@@ -208,7 +208,7 @@ const textInput = ref(null);
 watchEffect(() => {
 
 
-    if (textInput.value) {
+    if (textInput.value && !props.isMobileDevice) {
 
         setTimeout(() => (textInput.value.focus()), 50);
     }
