@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:ml-72 lg:flex sticky bottom-0">
+  <div class="lg:ml-62 lg:flex sticky bottom-0">
     <transition name="fade">
       <div
         v-if="isLoading"

@@ -20,7 +20,7 @@ import ListTransition from "@/components/labelcard/ListTransition.vue";
 
 
 const store = useMainStore();
-
+store.loading = true
 let queryParam = store.sentences.size ? store.sentences.size : 0;
 if (store.sentences.size) {
   store.sentences.clear()

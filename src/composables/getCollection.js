@@ -8,13 +8,13 @@ const getCollection = (watchQuery, storeReference) => {
 
     function snapShotHandler(snap) {
 
-        let t0 = performance.now();
+       
 
         if (!snap.metadata.hasPendingWrites) {
 
-            if (snap.docs.length > storeReference.size + 1) {
-                store.loading = true;
-            }
+            
+               
+            
 
             snap.docChanges().forEach((change) => {
                 let { newIndex, oldIndex, doc, type } = change;
@@ -32,12 +32,11 @@ const getCollection = (watchQuery, storeReference) => {
 
         }
 
-        let loadtime = performance.now() - t0;                                                                                                                                                                                                                                                                                                                                                                                     
-
-        setTimeout(() => {
-            store.loading = false;
-        },
-            loadtime > 800 ? 0 : 800 - loadtime);
+                                                                                                                                                                                                                                                                                                                                                                               
+       
+        store.loading = false;
+       
+           
     }
 
     function errorHandler(error) {

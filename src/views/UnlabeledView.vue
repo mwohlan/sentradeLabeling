@@ -2,7 +2,7 @@
 <template>
   <div>
     <ListTransition>
-      <LabelCard v-for="sentence in sentences" :key="sentence.id" :sentence="sentence" />
+      <LabelCard  :data-index="index" v-for="sentence,index in sentences" :key="sentence.id" :sentence="sentence" />
     </ListTransition>
     <div id="intersect"></div>
   </div>
@@ -20,7 +20,7 @@ import ListTransition from "@/components/labelcard/ListTransition.vue";
 
 
 const store = useMainStore();
-
+store.loading = true
 let queryParam = store.sentencesWithoutSentiment.size ? store.sentencesWithoutSentiment.size : 0;
 if (store.sentencesWithoutSentiment.size) {
   store.sentencesWithoutSentiment.clear()
@@ -63,6 +63,7 @@ let intersectionObserver
 onMounted(() => {
   intersectionObserver = createIntersectionObserver('#scrollArea', '#intersect', () => {
     if (filterTerm.value === "") {
+      store.loading = true
       scrollReload()
     }
   })

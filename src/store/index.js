@@ -104,9 +104,9 @@ export const useMainStore = defineStore({
 
     },
 
-    setSentencesWithDiscussions() {
+    setSentencesWithDiscussions(reloadAmount) {
 
-      const watchQuery = query(collection(projectFirestore, "sentences"), where("discussion.discussionResolved", "==", false), where("discussion.latestDiscussionComment", ">", 0));
+      const watchQuery = query(collection(projectFirestore, "sentences"), where("discussion.discussionResolved", "==", false), where("discussion.latestDiscussionComment", ">", 0), orderBy("discussion.latestDiscussionComment", "desc"), limit(Math.max(8, reloadAmount)));
       const unsub = getCollection(watchQuery, this.sentencesWithDiscussions)
 
       const updateUnreadPosts = () => {

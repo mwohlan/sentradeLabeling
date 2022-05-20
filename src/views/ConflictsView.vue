@@ -21,7 +21,7 @@ import ListTransition from "@/components/labelcard/ListTransition.vue";
 
 
 const store = useMainStore();
-
+store.loading = true
 let queryParam = store.sentencesWithConflicts.size ? store.sentencesWithConflicts.size : 0;
 if (store.sentencesWithConflicts.size) {
   store.sentencesWithConflicts.clear()
@@ -65,6 +65,7 @@ let intersectionObserver
 onMounted(() => {
   intersectionObserver = createIntersectionObserver('#scrollArea', '#intersect', () => {
     if (filterTerm.value === "") {
+       store.loading = true
       scrollReload()
     }
   })

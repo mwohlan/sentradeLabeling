@@ -10,7 +10,7 @@ export default defineConfig(
   {
   plugins: [vue({
 
-    refTransform: true,
+    reactivityTransform: true,
 
   }),
       Unocss({

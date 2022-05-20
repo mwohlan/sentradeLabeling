@@ -23,7 +23,7 @@ const props = defineProps({ id: String })
 
 
 const store = useMainStore();
-
+store.loading = true
 let unsub = store.setLinkSentence(props.id);
 
 

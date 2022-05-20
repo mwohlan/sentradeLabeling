@@ -1,30 +1,46 @@
 <template>
-    <div class="h-full overflow-auto">
-      <div @click="toggle" m-6 p-1 w-15 h-6 bg-gray-400 rounded-full relative op-30 flex>
-        <div class="shadow bg-white h-4 w-4 rounded-full duration-375" :class=" move ? 'translate-x-8.75' : 'translate-x-0' "></div>
-      </div>
-    <div class="mb-2">
-      Info on the right bottom corner
-    </div>
-    <div ref="el" class="max-w-100 relative area bg-white dark:bg-gray-800 shadow-lg z-60">
-      Target Element (scroll down)
-    </div>
-    <div class="h-screen mt-96 bg-blue-200"></div>
-  </div>
-  <div class="absolute bottom-3  m-3 area shadow-lg">
-    Element
-   {{isVisible}}
-    the viewport
-  </div>
+  <div class="h-full overflow-auto">
+    <button @click="toggle();  timeline(sequence)">Show</button>
+    <!-- <Presence>
+      <Motion
+        :initial="{ opacity: 0, scale: 0.6, rotate: 0 }"
+        :animate="{ opacity: 1, scale: 1, rotate: 45 }"
+        :exit="{ opacity: 0, scale: 0.6, rotate: 0 }"
+        flex
+        items-center
+        justify-center
+        v-if="move"
+      >
+        <div h-30 w-30 bg-blue-500></div>
+      </Motion>
+    </Presence> -->
 
+    <div flex gap-2 ml-5>
+      <div ref="one" class="one" h-30 w-30 bg-blue-500></div>
+      <div ref="two" class="two" h-30 w-30 bg-blue-500></div>
+    </div>
+  </div>
 </template>
 
 
 <script setup>
-
-import { ref } from 'vue'
-import { useElementVisibility,useToggle } from '@vueuse/core'
-const [move,toggle] = useToggle(false)
+import { Motion, Presence } from "motion/vue"
+import { timeline } from 'motion';
+import { onMounted, ref } from 'vue'
+import { useElementVisibility, useToggle } from '@vueuse/core'
+const [move, toggle] = useToggle(true)
 const el = ref(null)
+const show = ref(true)
+const one = ref(null)
+const two = ref(null)
+const sequence = [
+ 
+ 
+]
+
+onMounted(() => {
+  sequence.push( [one.value, { rotate: [0,100] }, { duration: 2 }], [two.value, { rotate: [0,100 ]}, { duration: 2,at:"-1.5" }])
+ 
+})
 const isVisible = useElementVisibility(el)
 </script>

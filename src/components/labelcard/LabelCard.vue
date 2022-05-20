@@ -1,13 +1,13 @@
 <template>
+
   <Disclosure
     class="bg-white border border-slate-400/60 shadow-md sm:shadow-lg px-3 py-3 md:px-7 rounded-lg"
     :defaultOpen="activeDiscussion"
-    #="{ open: openPanel }"
+    #default="{ open: openPanel }"
     as="li"
   >
-   
-      <h2 class="text-xs text-slate-700">{{ sentence.submissionTitle }}</h2>
-  
+    <h2 class="text-xs text-slate-700">{{ sentence.submissionTitle }}</h2>
+
     <div
       @click.prevent="sentence.commentBody.length > 1 ? fullComment = !fullComment : fullComment"
       :class="{ 'cursor-pointer': !isMobileDevice && sentence.commentBody.length > 1 }"
@@ -55,8 +55,8 @@
           @click="acceptConflict"
           class="px-2 py-0.5 border border-indigo-300 rounded-full text-xs font-medium shadow-md bg-indigo-200 text-indigo-700"
         >Accept</button>
-         <button
-          v-if="!sentence.sentiments.conflict && wasConflict(sentence,store.users)"
+        <button
+          v-if="!sentence.sentiments.conflict && wasConflict(sentence, store.users)"
           @click="renewConflict"
           class="px-2 py-0.5 border border-green-300 rounded-full text-xs font-medium shadow-md bg-green-200 text-green-700"
         >Accepted</button>
@@ -210,21 +210,15 @@
         </Menu>
       </div>
     </div>
-    <transition
-      enter-active-class="duration-300 ease-out"
-      enter-from-class="scale-90 opacity-0"
-      enter-to-class="scale-100 opacity-100"
-      leave-active-class="duration-200 ease-out"
-      leave-from-class=" scale-100 opacity-100"
-      leave-to-class="scale-90 opacity-0"
-    >
-      <CommentSection
-        :sentence="sentence"
-        :isMobileDevice="isMobileDevice
-        "
-        :openPanel="openPanel"
-      />
-    </transition>
+
+    <CommentSection
+      :sentence="sentence"
+      :isMobileDevice="isMobileDevice
+      "
+      :openPanel="openPanel"
+      v-auto-animate
+    />
+
     <Toast :showToast="showToast" @closeToast="showToast = false">
       <div
         class="z-10 px-3 font-semibold py-3 text-indigo-500 bg-indigo-200 border-l-4 border-indigo-300 rounded-md shadow-md"
@@ -239,6 +233,7 @@ import { watchEffect } from 'vue';
 import Toast from '../Toast.vue';
 import { useClipboard } from "@vueuse/core";
 import { wasConflict } from '../../helper/storeHelpers';
+
 import {
   Disclosure,
   DisclosureButton,
@@ -264,7 +259,6 @@ import { storeToRefs } from "pinia";
 const props = defineProps({
   sentence: Object,
 });
-
 const store = useMainStore();
 
 let copyLink = $ref("https://peaceful-murdock-181b26.netlify.app/link/" + props.sentence.id);
@@ -277,7 +271,7 @@ watchEffect(() => {
 })
 
 
- const {isMobileDevice,hideSentiments} =  storeToRefs(store)
+const { isMobileDevice, hideSentiments } = storeToRefs(store)
 
 const acceptConflict = () => {
   store.acceptConflict(props.sentence)

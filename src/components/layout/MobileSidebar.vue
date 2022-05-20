@@ -1,18 +1,18 @@
 <template>
-  <TransitionRoot as="template" :show="store.openMobileMenu">
+  <TransitionRoot  ref="whereAreYou"  as="template" :show="store.openMobileMenu">
     <Dialog
       as="div"
-      static
       class="fixed inset-0 flex z-40 lg:hidden"
       @close="store.openMobileMenu = false"
-      :open="sidebarOpen"
+      v-slot:default="{open}"
+     
     >
       <TransitionChild
         as="template"
         enter="transition-opacity ease-linear duration-300"
         enter-from="opacity-0"
         enter-to="opacity-100"
-        leave="transition-opacity ease-linear duration-300"
+        leave="transition-opacity ease-linear duration-300 delay-200"
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
@@ -20,14 +20,16 @@
       </TransitionChild>
       <TransitionChild
         as="template"
-        enter="transition ease-in-out duration-300 transform"
+        enter="transition ease-in-out duration-300"
         enter-from="-translate-x-full"
         enter-to="translate-x-0"
-        leave="transition ease-in-out duration-300 transform"
+        leave="transition ease-in-out duration-300 delay-200"
         leave-from="translate-x-0"
         leave-to="-translate-x-full"
+        @beforeEnter="afterEnter"
+        @beforeLeave="beforeLeave"
       >
-        <div class="relative flex flex-col w-9/12 pt-5 pb-4 bg-white">
+        <div  class="relative h-full  flex flex-col w-9/12 pt-5 pb-4 bg-white">
           <div class="flex gap-x-2 px-4 filter drop-shadow-xl">
             <img
               class="h-8 w-auto"
@@ -45,8 +47,8 @@
                 v-for="item in navigation"
                 :key="item.name"
                 :to="item.to"
-                class="duration-500"
-                :class="['outline-none', 'cursor-default', item.current ? 'bg-slate-100 border-indigo-400 text-slate-700' : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
+                class="navItemM op-0"
+                :class="[ 'outline-none','cursor-default', item.current ? 'bg-slate-100 border-indigo-400 text-slate-700' : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
                 :aria-current="item.current ? 'page' : undefined"
                 @click="store.openMobileMenu = false"
               >
@@ -91,7 +93,8 @@
 </template>
 
 <script setup>
-import { computed } from "@vue/runtime-core";
+import { computed, ref, watch,onMounted } from "@vue/runtime-core";
+import { animate, stagger } from 'motion';
 import { useMainStore } from "../../store";
 import {
   FireIcon
@@ -113,7 +116,30 @@ import navigation from "@/composables/navigationItems";
 
 const store = useMainStore();
 
+defineProps({
+  sidebarOpen: Boolean
+})
 
+const afterEnter = () => {
+
+  animate('.navItemM', { x: [20, 0], opacity:[0,1] }, { duration: 0.5, delay: stagger(0.05, { start: 0.2 }) })
+}
+
+const whereAreYou = ref(null)
+onMounted(()=>{
+
+  setInterval(() => {
+     console.log(whereAreYou.value);
+  }, 5000);
+ 
+})
+
+const beforeLeave = () => {
+
+  const animation = animate('.navItemM', { x: [0, 20], opacity:[1,0] }, { duration: 0.2, delay: stagger(0.05, { start: 0,from:'last' }) })
+
+  
+}
 
 const unreadPostsAvailable = computed(() => store.unreadPostsCount > 0)
 const unreadPostsCount = computed(() => store.unreadPostsCount)

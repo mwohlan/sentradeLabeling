@@ -1,15 +1,15 @@
 <template>
   <div class="hidden lg:flex lg:flex-shrink-0 drop-shadow-xl shadow-lg">
-    <div class="flex flex-col w-72">
+    <div class="flex flex-col w-62 duration-500 overflow-hidden">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex flex-col flex-1 bg-white pt-5">
         <div class="flex items-center gap-x-2 flex-shrink-0 px-4 drop-shadow-xl">
           <img
-            class="h-8 w-auto"
+            class="h-8 flex-shrink-0"
             src="https://tailwindui.com/img/logos/workflow-mark-indigo-400.svg"
             alt="Sentrade Logo"
           />
-          <div class="text-2xl text-slate-500 font-bold">Sentrade</div>
+          <div class="text-2xl flex-shrink text-slate-500 font-bold">Sentrade</div>
         </div>
 
         <nav class="mt-5 flex-1 flex flex-col gap-y-6" aria-label="Sidebar">
@@ -18,7 +18,7 @@
               v-for="item in navigation"
               :key="item.name"
               :to="item.to"
-              class="duration-500"
+              class="duration-500 navItem"
               :class="[, item.current ? 'bg-slate-100 border-indigo-400 text-slate-800' : 'border-transparent  text-slate-700 hover:bg-slate-100 hover:text-slate-900', 'group rounded flex items-center px-3 py-2 text-sm font-medium border-l-4']"
               :aria-current="item.current ? 'page' : undefined"
             >
@@ -57,12 +57,14 @@
 </template>
 
 <script>
-import { computed } from "@vue/runtime-core";
+import { computed,onMounted } from "@vue/runtime-core";
 import { useMainStore } from "../../store";
 import {
   FireIcon
 
 } from "@heroicons/vue/solid";
+
+import { stagger,animate } from 'motion';  
 
 import navigation from "@/composables/navigationItems"
 import {
@@ -80,7 +82,9 @@ export default {
   setup() {
     const store = useMainStore();
 
-
+    onMounted(()=>{
+      animate(".navItem",{x:[20,0],opacity:[0,1]},{duration:0.3, delay:stagger(0.1,{from:"last"})})
+    })
     return {
       unreadPostsAvailable: computed(() => store.unreadPostsCount > 0),
       unreadPostsCount: computed(() => (store.unreadPostsCount)),

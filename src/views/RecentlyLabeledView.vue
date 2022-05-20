@@ -19,7 +19,7 @@ import ListTransition from "@/components/labelcard/ListTransition.vue";
 
 
 const store = useMainStore();
-
+store.loading = true
 let queryParam = store.recentlyLabeledSentences.size ? store.recentlyLabeledSentences.size : 0;
 if (store.recentlyLabeledSentences.size) {
   store.recentlyLabeledSentences.clear()
@@ -35,6 +35,7 @@ const scrollReload = async () => {
 watchEffect((onInvalidate) => {
   onInvalidate(() => {
     unsub();
+    intersectionObserver.disconnect();
   });
 });
 
@@ -61,8 +62,9 @@ let intersectionObserver
 onMounted(() => {
   intersectionObserver = createIntersectionObserver('#scrollArea', '#intersect', () => {
     if (filterTerm.value === "") {
+       store.loading = true
       scrollReload()
-       intersectionObserver.disconnect()
+     
     }
   })
 

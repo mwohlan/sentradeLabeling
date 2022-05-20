@@ -10,7 +10,8 @@
 <script setup>
 import { useMainStore } from "../store";
 import LabelCard from "@/components/labelcard/LabelCard.vue";
-import { ref, watchEffect, computed, watch } from "vue";
+import { watchEffect, computed, onMounted } from "vue";
+import createIntersectionObserver from "@/helper/createIntersectionObserver";
 import Fuse from 'fuse.js'
 import { storeToRefs } from "pinia";
 import ListTransition from "@/components/labelcard/ListTransition.vue";
@@ -19,8 +20,23 @@ import ListTransition from "@/components/labelcard/ListTransition.vue";
 
 const store = useMainStore();
 
-const { unsub, updateUnreadPosts } = store.setSentencesWithDiscussions();
+store.loading = true
 
+
+const { sortedSentencesWithDiscussions: originalSentences, filterTerm } = storeToRefs(store)
+
+let queryParam = originalSentences.value.size ? originalSentences.value.size : 0;
+if (originalSentences.value.size) {
+  store.sentencesWithDiscussions.clear()
+}
+
+
+let { unsub, updateUnreadPosts } = store.setSentencesWithDiscussions(queryParam);
+
+const scrollReload = async () => {
+  unsub();
+  unsub = store.setSentencesWithDiscussions(originalSentences.value.size + 8).unsub;
+};
 
 watchEffect((onInvalidate) => {
   onInvalidate(() => {
@@ -30,7 +46,8 @@ watchEffect((onInvalidate) => {
 });
 
 
-const { sortedSentencesWithDiscussions: originalSentences, filterTerm } = storeToRefs(store)
+
+
 
 
 const fuse = computed(() => new Fuse([...originalSentences.value.values()], {
@@ -45,6 +62,16 @@ const sentences = computed(() =>
     [...originalSentences.value.values()])
 
 
+let intersectionObserver
+onMounted(() => {
+  intersectionObserver = createIntersectionObserver('#scrollArea', '#intersect', () => {
+    if (filterTerm.value === "") {
+      store.loading = true
+      scrollReload()
+    }
+  })
+
+});
 
 </script>
 

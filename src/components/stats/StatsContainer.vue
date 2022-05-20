@@ -155,7 +155,7 @@ const labeledRatios = computed(() => {
 <style scoped>
 .stats-enter-from {
     opacity: 0;
-    transform: translateX(15%);
+    transform: translateX(10%);
 }
 
 .stats-enter-active {

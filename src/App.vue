@@ -2,7 +2,7 @@
   <main id="main" class="absolute inset-0">
     <login-page v-if="routeName === 'Login'" />
     <template v-else>
-      <base-layout >
+      <base-layout>
         <div
           id="scrollArea"
           ref="scrollTarget"
@@ -14,7 +14,7 @@
           <router-view v-slot="{ Component }">
             <transition
               leave-active-class="duration-200"
-              leave-to-class="op-0 -translate-x-15%"
+              leave-to-class="op-0 -translate-x-10%"
               mode="out-in"
             >
               <component :key="routeName" :is="Component" />
@@ -74,8 +74,6 @@ onUnmounted(() => unsubStats.value())
 
 
 <style  >
-
-
 </style>
 
 
